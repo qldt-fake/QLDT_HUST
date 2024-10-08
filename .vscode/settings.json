@@ -1,0 +1,7 @@
+{
+    "editor.codeActionsOnSave": {
+      "source.fixAll.tslint": "explicit",
+      "source.fixAll.eslint": "explicit"
+    },
+      "java.compile.nullAnalysis.mode": "automatic",
+}

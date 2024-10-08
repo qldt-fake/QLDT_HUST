@@ -1,0 +1,9 @@
+export { default as BirthDayScreen } from './BirthdayScreen';
+export { default as ConfirmPolicyScreen } from './ConfirmPolicyScreen';
+export { default as FirstScreen } from './FirstScreen';
+export { default as GenderScreen } from './GenderScreen';
+export { default as NameScreen } from './NameScreen';
+export { default as EmailScreen } from './EmailScreen';
+export { default as PasswordScreen } from './PasswordScreen';
+export { default as VerifyOTPScreen } from './VerifyOTPScreen';
+export { default as SaveInfoAccountScreen } from './SaveInfoAccountScreen';

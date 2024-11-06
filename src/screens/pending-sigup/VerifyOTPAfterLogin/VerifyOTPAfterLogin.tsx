@@ -36,9 +36,9 @@ function VerifyOTPAfterLogin() {
       setIsLoadingGetCode(true);
       const res = await getVerifyCodeApi({ email: auth.user?.email as string });
       if (!res.success) {
-        return setTextError(res.message);
+        return setTextError("Lỗi");
       }
-      setValue('otpCode', res.data.verify_code);
+      setValue('otpCode', res.data);
       setIsLoadingGetCode(false);
     } catch (err) {
       setTextError('server availability');
@@ -53,7 +53,7 @@ function VerifyOTPAfterLogin() {
     try {
       setIsLoading(true);
       const res = await checkVerifyCodeApi({
-        code_verify: data.otpCode,
+        verify_code: data.otpCode,
         email: auth.user?.email as string
       });
       if (!res.success) {

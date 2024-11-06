@@ -45,22 +45,21 @@ const initialState: IAuthState = {
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (data: ILoginData, { rejectWithValue }) => {
+  async (data: ILoginData, { rejectWithValue }) => {  
     try {
       const res = await loginApi(data);
-      if (!res.success) {
+      if (!res) {
         return rejectWithValue(res);
       }
-      const { token, ...remainData } = res.data;
-      await saveTokenIntoKeychain(remainData.id, token);
+      const { ...remainData } = res;
+      await saveTokenIntoKeychain(remainData.username, remainData.token);
       return { ...remainData, email: data.email };
-    } catch (err) {
+    } catch (err) {  
       console.log(err);
       return rejectWithValue({ message: 'sever availability' });
     }
-  }
+  } 
 );
-
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
     await logoutApi();

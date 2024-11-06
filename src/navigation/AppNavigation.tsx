@@ -75,7 +75,7 @@ function AppNavigation() {
           gestureDirection: 'vertical'
         }}
       >
-        {true ? (
+        {auth.isAuthenticated ? (
           auth.user?.active === AccountStatus.Inactive ? (
             <Stack.Screen
               name={AppNaviagtionName.VerifyOTPAfterLogin}

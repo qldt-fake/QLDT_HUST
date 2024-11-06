@@ -13,7 +13,7 @@ export const color = {
   activeOutlineColor: '#6a7787',
   linearBackgroundColor: ['#8e1f1f', '#8e1f1f', '#8e1f1f'],
   iconButtonBackgroundColor: '#f1f2f6',
-  iconButtonColor: 'black',
+  iconButtonColor: 'white',
   sureface: 'rgb(255, 251, 255)',
   backgroundColor: '#f2f2f2',
   isNotLookBg: '#e7f3ff',
@@ -28,5 +28,6 @@ export const color = {
   laughtIcon: '#FFF298',
   Comment: 'rgba(240,242,245,1.0)',
   backgroundButton: '#E5DFE3',
-  red: '#f63a39'
+  red: '#f63a39',
+  successPrimary: 'green'
 };

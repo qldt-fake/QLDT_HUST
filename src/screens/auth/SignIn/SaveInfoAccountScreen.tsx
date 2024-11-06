@@ -15,10 +15,10 @@ function SaveInfoAccountScreen() {
   };
   return (
     <WraperAuthScreen linnerGradient>
-      <Text variant='titleLarge' style={{ fontWeight: 'bold' }}>
+      <Text variant='titleLarge' style={{ fontWeight: 'bold', color: color.white }}>
         Lưu thông tin đăng nhập?
       </Text>
-      <Text variant='bodyMedium'>
+      <Text variant='bodyMedium' style={{ color: color.white }}>
         Chúng tôi sẽ lưu thông tin đăng nhập cho để bạn không cần nhập vào lần sau.
       </Text>
       <BaseButton onPress={onPressSaveButton}>Lưu</BaseButton>

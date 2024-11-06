@@ -79,3 +79,7 @@ export enum booleanReponse {
   False = '0',
   True = '1'
 }
+export enum Roles {
+  LECTURER = 'LECTURER',
+  STUDENT = 'STUDENT',  
+}

@@ -1,15 +1,9 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from 'src/screens/auth/Login';
 import {
-  ConfirmPolicyScreen,
   FirstScreen,
-  GenderScreen,
-  NameScreen,
-  EmailScreen,
-  PasswordScreen,
   VerifyOTPScreen,
   SaveInfoAccountScreen,
-  BirthDayScreen
 } from 'src/screens/auth/SignIn';
 import { BaseHeader } from 'src/components/BaseHeader';
 import ForgetPassword from 'src/screens/auth/ForgotPassword';
@@ -35,15 +29,6 @@ function AuthNavigation() {
       <Stack.Screen name={AuthNavigationName.AccountLogin} component={AccountLogin} />
       <Stack.Group>
         <Stack.Screen name={AuthNavigationName.FirstScreen} component={FirstScreen} />
-        <Stack.Screen name={AuthNavigationName.NameScreen} component={NameScreen} />
-        <Stack.Screen name={AuthNavigationName.BirthdayScreen} component={BirthDayScreen} />
-        <Stack.Screen name={AuthNavigationName.GenderScreen} component={GenderScreen} />
-        <Stack.Screen name={AuthNavigationName.EmailScreen} component={EmailScreen} />
-        <Stack.Screen name={AuthNavigationName.PasswordScreen} component={PasswordScreen} />
-        <Stack.Screen
-          name={AuthNavigationName.ConfirmPolicyScreen}
-          component={ConfirmPolicyScreen}
-        />
         <Stack.Screen name={AuthNavigationName.VerifyOTPScreen} component={VerifyOTPScreen} />
         <Stack.Screen
           name={AuthNavigationName.SaveInfoAccountScreen}

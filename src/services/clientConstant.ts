@@ -1,18 +1,18 @@
 /* eslint-disable no-unused-vars */
 export enum AuthAPi {
-  LOGIN = '/login',
-  SIGNUP = '/signup',
+  LOGIN = '/it4788/login',
+  SIGNUP = '/it4788/signup',
   LOGOUT = '/logout',
-  CHANGEPASSWORD = '/change_password',
-  GETVERIFYTOKEN = '/get_verify_code',
-  CHECKVERIFYTOKEN = '/check_verify_code',
+  CHANGEPASSWORD = '/it4788/change_password',
+  GETVERIFYTOKEN = '/it4788/get_verify_code',
+  CHECKVERIFYTOKEN = '/it4788/check_verify_code',
   RESETPASSWORD = '/reset_password',
   CHECK_EMAIL = '/check_email'
 }
 
 export enum ProfileApi {
   CHANGE_PROFILE_AFTER_SIGNUP = '/change_profile_after_signup',
-  GET_USER_INFO = '/get_user_info',
+  GET_USER_INFO = '/it4788/get_user_info',
   SET_USER_INFO = '/set_user_info'
 }
 

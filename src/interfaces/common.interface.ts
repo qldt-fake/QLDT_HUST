@@ -8,11 +8,16 @@ export interface IErrorData {
   statuCode: HttpStatus;
 }
 
+export interface IGetVerifyCodeData {
+  data: string;
+  success: boolean;
+}
 export interface IBodyResponse<T> extends AxiosResponse {
   success: boolean;
-  code: ReponseCode;
+  status_code: ReponseCode;
   message: string;
   data: T;
+  verify_code?:string;
   error?: IErrorData | IErrorData[] | string;
 }
 
@@ -30,7 +35,7 @@ export interface ICommonListQuery {
 }
 
 export interface IUser {
-  id: string;
+  id: number;
   username: string;
   avatar: string;
   active: string;

@@ -8,7 +8,7 @@ import {color} from "src/common/constants/color";
 import baseHeader from "src/components/BaseHeader/BaseHeader";
 import NotificationDetail from "src/screens/notification/NotificationDetails/NotificationDetail";
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<NotificationNavigationType>();
 function NotificationNavigation() {
     return (
         <Stack.Navigator

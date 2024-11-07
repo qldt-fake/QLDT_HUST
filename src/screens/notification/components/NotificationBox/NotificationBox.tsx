@@ -1,32 +1,24 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import {RouteProp, useRoute} from "@react-navigation/native";
-import {NotificationNavigationName} from "src/common/constants/nameScreen";
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 
-interface CardProps {
+interface NotificationProps {
     title: string;
     content: string;
     date: string;
     read: boolean;
 }
-const routes: RouteProp<NotificationNavigationType, NotificationNavigationName.NotificationDetail> = useRoute();
-const NotificationBox: React.FC<CardProps> = ({ title, content, date, read }) => {
+
+const NotificationBox: React.FC<NotificationProps> = ({title, content, date, read}) => {
     return (
         <View style={[styles.boxContainer, read ? styles.readCard : styles.unreadCard]}>
-
             <View style={styles.headerContainer}>
                 <Text style={styles.QLDTText}>QLDT</Text>
                 <Text style={styles.dateText}>{date}</Text>
             </View>
-
-
             <Text style={styles.titleText}>{title}</Text>
-            <View style={styles.divider} />
+            <View style={styles.divider}/>
             <Text style={styles.contentText}>{content}</Text>
-
-            <TouchableOpacity style={styles.detailsButton}>
-                <Text style={styles.detailsText}>Chi tiết</Text>
-            </TouchableOpacity>
+            <Text style={styles.detailsText}>Chi tiết</Text>
         </View>
     );
 };
@@ -40,7 +32,7 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOpacity: 0.1,
         shadowRadius: 6,
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: {width: 0, height: 2},
         marginVertical: 8,
         marginHorizontal: 16,
     },
@@ -82,10 +74,8 @@ const styles = StyleSheet.create({
         marginBottom: 16,
         fontFamily: 'monospace',
     },
-    detailsButton: {
-        alignSelf: 'flex-end',
-    },
     detailsText: {
+        alignSelf: 'flex-end',
         color: '#007bff',
         fontSize: 16,
     },

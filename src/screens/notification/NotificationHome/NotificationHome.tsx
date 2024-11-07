@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {View, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity} from 'react-native';
 import NotificationBox from "src/screens/notification/components/NotificationBox/NotificationBox";
+import {NavigationProp, useNavigation} from "@react-navigation/native";
 
-interface Notification {
+type Notification = {
     id: string;
     title: string;
     content: string;
@@ -12,24 +13,19 @@ interface Notification {
 const NotificationHome: React.FC = () => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
-
-
-    const fetchNotifications = async () => {
-        try {
-            const response = await fetch('https://api.example.com/notifications'); // Thay bằng API của bạn
-            const data = await response.json();
-            setNotifications(data);
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const navigation: NavigationProp<NotificationNavigationType> = useNavigation();
     const markAsRead = (id: string) => {
         const updatedNotifications = notifications.map((notification) =>
             notification.id === id ? { ...notification, read: true } : notification
         );
         setNotifications(updatedNotifications);
+        const selectedNotification = updatedNotifications.find(notification => notification.id === id);
+        if (selectedNotification) {
+            navigation.navigate('NotificationDetail', {
+                title: selectedNotification.title,
+                content: selectedNotification.content,
+            });
+        }
     };
     const loadNotifications = () => {
         try {

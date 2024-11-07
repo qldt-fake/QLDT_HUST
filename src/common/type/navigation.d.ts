@@ -160,10 +160,7 @@ type ReportNavigationType = {
 type NotificationNavigationType = {
     NotificationHome: undefined;
     NotificationDetail: {
-        id: string,
-        title: string,
-        content: string,
-        date: string,
-        read: boolean
+        title: string;
+        content: string;
     };
 }

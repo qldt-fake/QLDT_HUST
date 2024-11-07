@@ -12,7 +12,8 @@ export enum AppNaviagtionName {
   ChatNavigation = 'ChatNavigation',
   VerifyOTPAfterLogin = 'VerifyOTPAfterLogin',
   ChangeProfileAfterSign = 'ChangeProfileAfterSign',
-  NotFoundScreen = 'NotFoundScreen'
+  NotFoundScreen = 'NotFoundScreen',
+  NotificationNavigation = 'NotificationNavigation'
 }
 
 export enum AuthNavigationName {
@@ -88,4 +89,9 @@ export enum ChatNavigationName {
 
 export enum AddMoneyNavigationName {
   AddMoneyScreen = 'AddMoneyScreen'
+}
+
+export enum NotificationNavigationName {
+  NotificationHome = 'NotificationHome',
+  NotificationDetail = 'NotificationDetail'
 }

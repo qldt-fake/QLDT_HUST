@@ -13,7 +13,8 @@ function BaseHeader(props: BaseHeaderProps) {
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
     >
-      <Appbar.BackAction onPress={() => navigation.goBack()} />
+      <Appbar.BackAction onPress={() => navigation.goBack()} color={'white'} />
+      <Appbar>title</Appbar>
     </LinearGradient>
   );
 }

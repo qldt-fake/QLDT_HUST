@@ -13,7 +13,7 @@ import {
 import BaseModal from 'src/components/BaseModal';
 import { color } from 'src/common/constants/color';
 import { View } from 'react-native';
-import { useScrollToTop } from '@react-navigation/native';
+import {NavigationProp, useNavigation, useScrollToTop} from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import {
   getNextNotifications,
@@ -24,10 +24,15 @@ import { useAppDispatch } from 'src/redux';
 import { INotificationItem } from 'src/services/notification.service';
 import { ReadNotification } from 'src/common/enum/commom';
 import globalStyles from 'src/common/styles/globalStyles';
+import {AppNaviagtionName, NotificationNavigationName} from "src/common/constants/nameScreen";
+
 const COUNT_ITEM = 10;
 
 function NotificationTab() {
-  const [isVisibleModal, setIsVisibleModal] = useState(false);
+    //for testing Ezioquyen
+    const navigation: NavigationProp<AppNavigationType> = useNavigation();
+  //
+    const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [modalContent, setModalContent] = useState<INotificationItem | null>(null);
   const [isVisibleSnackbar, setIsVisibleSnackbar] = useState<boolean>(false);
   const onDismissSnackBar = () => setIsVisibleSnackbar(false);
@@ -56,7 +61,11 @@ function NotificationTab() {
     dispatch(getNotifications({ index: 0, count: COUNT_ITEM }));
     setSkip(COUNT_ITEM);
   }, [dispatch]);
-
+  //for testing Ezioquyen
+  const onPressSearch = () =>
+      navigation.navigate(AppNaviagtionName.NotificationNavigation, {
+          screen: NotificationNavigationName.NotificationHome
+      });
   const onRefresh = async () => {
     setRefreshing(true);
     dispatch(getNotifications({ index: 0, count: COUNT_ITEM }));
@@ -85,7 +94,7 @@ function NotificationTab() {
         ]}
       >
         <Text style={{ fontSize: 24, fontWeight: 'bold', marginLeft: 10 }}>Thông báo</Text>
-        <IconButton icon='magnify' size={30} />
+        <IconButton icon='magnify' size={30} onPress={onPressSearch} />
       </View>
       <BaseFlatList
         ref={ref}
@@ -107,7 +116,7 @@ function NotificationTab() {
         )}
         ListEmptyComponent={
           <Text variant='bodyLarge' style={{ textAlign: 'center', marginTop: '50%' }}>
-            Không có thông báo
+            Không có thông báo test
           </Text>
         }
         ItemSeparatorComponent={Divider}
@@ -160,7 +169,7 @@ function NotificationTab() {
         action={{
           label: 'Hoàn tác',
           onPress: () => {
-            // Do something
+
           }
         }}
       >

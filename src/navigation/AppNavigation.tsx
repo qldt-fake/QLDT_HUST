@@ -21,6 +21,7 @@ import ChangeInfoAfterSignUpScreen from 'src/screens/pending-sigup/ChangeInfoAft
 import axiosInstance from 'src/services/axiosInstance';
 import { Snackbar } from 'react-native-paper';
 import { useNetInfoInstance } from '@react-native-community/netinfo';
+import NotificationNavigationWrapper from "src/navigation/NotificationNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -75,47 +76,45 @@ function AppNavigation() {
           gestureDirection: 'vertical'
         }}
       >
-        {true ? (
-          auth.user?.active === AccountStatus.Inactive ? (
-            <Stack.Screen
-              name={AppNaviagtionName.VerifyOTPAfterLogin}
-              component={VerifyOTPAfterLogin}
-              options={{ headerShown: false }}
-            />
-          ) : auth.user?.active === AccountStatus.Pending ? (
-            <Stack.Screen
-              name={AppNaviagtionName.ChangeProfileAfterSign}
-              options={{ headerShown: false }}
-              component={ChangeInfoAfterSignUpScreen}
-            />
-          ) : (
-            <>  
-              <Stack.Screen
-                name={AppNaviagtionName.TabNavigation}
-                options={{ headerShown: false, header: () => <Header /> }}
-                component={TabNavigationWrapper}
-              />
-              <Stack.Screen
-                name={AppNaviagtionName.SettingNavigation}
-                component={SettingNavigationWrapper}
-              />
-              <Stack.Screen
-                name={AppNaviagtionName.SearchNavigation}
-                component={SearchNavigationWrapper}
-              />
-              <Stack.Screen
-                name={AppNaviagtionName.NotFoundScreen}
-                component={NotFoundScreen}
-                options={{ headerTitle: 'Không tìm thấy nội dung' }}
-              />
-            </>
-          )
-        ) : (
-          <Stack.Screen
-            name='AuthNavigation'
-            options={{ headerShown: false }}
-            component={AuthNavigation}
-          />
+        {(
+            auth.user?.active === AccountStatus.Inactive ? (
+                <Stack.Screen
+                    name={AppNaviagtionName.VerifyOTPAfterLogin}
+                    component={VerifyOTPAfterLogin}
+                    options={{headerShown: false}}
+                />
+            ) : auth.user?.active === AccountStatus.Pending ? (
+                <Stack.Screen
+                    name={AppNaviagtionName.ChangeProfileAfterSign}
+                    options={{headerShown: false}}
+                    component={ChangeInfoAfterSignUpScreen}
+                />
+            ) : (
+                <>
+                    <Stack.Screen
+                        name={AppNaviagtionName.TabNavigation}
+                        options={{headerShown: false, header: () => <Header/>}}
+                        component={TabNavigationWrapper}
+                    />
+                    <Stack.Screen
+                        name={AppNaviagtionName.SettingNavigation}
+                        component={SettingNavigationWrapper}
+                    />
+                    <Stack.Screen
+                        name={AppNaviagtionName.NotificationNavigation}
+                        component={NotificationNavigationWrapper}
+                    />
+                    <Stack.Screen
+                        name={AppNaviagtionName.SearchNavigation}
+                        component={SearchNavigationWrapper}
+                    />
+                    <Stack.Screen
+                        name={AppNaviagtionName.NotFoundScreen}
+                        component={NotFoundScreen}
+                        options={{headerTitle: 'Không tìm thấy nội dung'}}
+                    />
+                </>
+            )
         )}
       </Stack.Navigator>
       <BaseModalError

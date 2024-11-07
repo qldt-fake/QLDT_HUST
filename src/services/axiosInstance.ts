@@ -21,6 +21,7 @@ const axiosInstance = axios.create(options);
 
 axiosInstance.interceptors.request.use(async (config: any) => {
   const token = await getTokenFromKeychain();
+  console.log('Request URL:', config.baseURL + config.url);
   Object.assign(config, {
     headers: {
       ...config.headers,

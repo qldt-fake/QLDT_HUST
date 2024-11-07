@@ -29,9 +29,15 @@ function LoginScreen() {
   const { handleSubmit, setValue } = methods;
 
   const onSubmit = async (data: ILoginData) => {
-    const uuid = await getUniqueId();
-    dispatch(login({ ...data, uuid }));
+    try {
+      const deviceId = await getUniqueId();
+      dispatch(login({ ...data, deviceId }));
+    } catch (error) {
+      console.log(error);
+    }
+
   };
+  const onSubmitHandler = handleSubmit(onSubmit);
 
   const onBackdropPress = () => {
     dispatch(deleteErrorMessage());
@@ -49,18 +55,18 @@ function LoginScreen() {
       <BaseForm methods={methods}>
         <View style={styles.formGroup}>
           <BaseInputEmail
-            hideLabel 
+            hideLabel
             label='Email'
             mode='outlined'
             name='email'
             rules={{ required: 'email is required' }}
           />
           <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
-          <BaseButton  style={{ marginTop: 16 }}  width={350} onPress={handleSubmit(onSubmit)} loading={auth.isLoading}>
+          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler}>
             Đăng nhập
           </BaseButton>
           <BaseTextTitle color='white' onPress={onNavigateForgotPasswordScreen}>
-            Bạn quên mật khẩu ư? 
+            Bạn quên mật khẩu ư?
           </BaseTextTitle>
         </View>
       </BaseForm>

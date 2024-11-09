@@ -83,3 +83,7 @@ export enum ChatNavigationName {
 export enum AddMoneyNavigationName {
   AddMoneyScreen = 'AddMoneyScreen'
 }
+export enum HomeNavigationName {
+  Home = 'HomeTab',
+  Class = 'Class',
+}

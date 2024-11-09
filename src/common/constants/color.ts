@@ -1,5 +1,5 @@
 export const color = {
-  primary: '#1977F3',
+  primary: '#f63a39',
   second: "#8e1f1f",
   error: '#ddc713',
   white: '#FFFFFF',
@@ -7,7 +7,7 @@ export const color = {
   yellow: '#F7B928',
   black: '#000',
   blackOpacity: 'rgba(0, 0, 0, 0.5)',
-  borderColor: '#CDD2D8',
+  borderColor: '#E9C4C4',
   textColor: 'white',
   outlineColor: '#ced2db',
   activeOutlineColor: '#6a7787',

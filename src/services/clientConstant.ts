@@ -11,7 +11,7 @@ export enum AuthAPi {
 }
 
 export enum ProfileApi {
-  CHANGE_PROFILE_AFTER_SIGNUP = '/change_profile_after_signup',
+  CHANGE_PROFILE_AFTER_SIGNUP = '/it4788/change_profile_after_signup',
   GET_USER_INFO = '/it4788/get_user_info',
   SET_USER_INFO = '/set_user_info'
 }

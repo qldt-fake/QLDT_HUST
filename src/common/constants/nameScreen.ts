@@ -89,3 +89,7 @@ export enum NotificationNavigationName {
   NotificationHome = 'NotificationHome',
   NotificationDetail = 'NotificationDetail'
 }
+export enum HomeNavigationName {
+  Home = 'HomeTab',
+  Class = 'Class',
+}

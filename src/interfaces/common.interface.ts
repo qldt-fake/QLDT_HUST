@@ -9,15 +9,16 @@ export interface IErrorData {
 }
 
 export interface IGetVerifyCodeData {
-  data: string;
-  success: boolean;
+  status_code: number;
+  message: string;
+  verify_code: string;
 }
 export interface IBodyResponse<T> extends AxiosResponse {
   success: boolean;
   status_code: ReponseCode;
   message: string;
   data: T;
-  verify_code?:string;
+  verify_code?: string;
   error?: IErrorData | IErrorData[] | string;
 }
 
@@ -36,21 +37,14 @@ export interface ICommonListQuery {
 
 export interface IUser {
   id: number;
-  username: string;
-  avatar: string;
-  active: string;
-  coins: string;
-  email: string;
-  description: string;
-  cover_image: string;
-  link: string;
-  address: string;
-  city: string;
-  country: string;
-  listing: string;
-  is_friend: string;
-  online: string;
-  created: Date;
+  ho: string;
+  ten: string;
+  user_name: string;
+  token: string;
+  role: string;
+  status: string;
+  avatar: string | null;
+  class_list: any[];
 }
 
 export interface ICommonGetListQuery {

@@ -59,7 +59,7 @@ export const getVerifyCodeApi = async (data: {
 
 export const checkVerifyCodeApi = async (
   data: ICheckVerifyCodeBody
-): Promise<IBodyResponse<any>> => {
+): Promise<any> => {
   return postMethodApi(AuthAPi.CHECKVERIFYTOKEN, data);
 };
 

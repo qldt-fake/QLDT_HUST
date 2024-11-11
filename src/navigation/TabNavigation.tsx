@@ -10,6 +10,7 @@ import WraperScreen from 'src/components/WraperScreen';
 import { Avatar } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import HomeNavigation from './HomeNavigation';
+import SettingTabNavigation from './SettingTabNavigation';
 // import { useCallback, useEffect, useState } from 'react';
 // import {
 //   checkNewFriendItem,
@@ -92,8 +93,8 @@ function TabNavigation() {
         }}
       />
       <tab.Screen
-        name='Setting'
-        component={SettingTab}
+        name='SettingTabNavigation'
+        component={SettingTabNavigation}
         options={{
           tabBarIcon: ({ focused, color }) =>
             focused ? (

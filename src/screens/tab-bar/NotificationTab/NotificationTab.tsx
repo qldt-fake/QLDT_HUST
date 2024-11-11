@@ -64,7 +64,7 @@ function NotificationTab() {
   //for testing Ezioquyen
   const onPressSearch = () =>
       navigation.navigate(AppNaviagtionName.NotificationNavigation, {
-          screen: NotificationNavigationName.NotificationHome
+          screen: NotificationNavigationName.NotificationDetail
       });
   const onRefresh = async () => {
     setRefreshing(true);

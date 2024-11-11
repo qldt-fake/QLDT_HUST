@@ -3,9 +3,6 @@ import {TransitionPresets} from "@react-navigation/stack";
 import {NotificationNavigationName} from "src/common/constants/nameScreen";
 import WraperScreen from "src/components/WraperScreen/WraperScreen";
 import NotificationHome from "src/screens/notification/NotificationHome";
-import {BaseHeader} from "src/components/BaseHeader";
-import {color} from "src/common/constants/color";
-import baseHeader from "src/components/BaseHeader/BaseHeader";
 import NotificationDetail from "src/screens/notification/NotificationDetails/NotificationDetail";
 
 const Stack = createNativeStackNavigator<NotificationNavigationType>();
@@ -20,10 +17,6 @@ function NotificationNavigation() {
                 gestureDirection: 'vertical',
             }}
         >
-            <Stack.Screen
-                name={NotificationNavigationName.NotificationHome}
-                component={NotificationHome}
-            />
             <Stack.Screen
                 name={NotificationNavigationName.NotificationDetail}
                 component={NotificationDetail}

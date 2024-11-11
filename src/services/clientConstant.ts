@@ -67,6 +67,8 @@ export enum CommentApi {
 }
 
 export enum NotificationApi {
-  CHECK_NEW_iTEMS = '/check_new_items',
-  GET_NOTIFICATION = '/get_notification'
+  SEND_NOTIFICATIONS = '/it5023e/send_notification',
+  GET_NOTIFICATIONS = '/it5023e/get_notifications',
+  MARK_NOTIFICATION_AS_READ = '/it5023e/mark_notification_as_read',
+  GET_UNREAD_NOTIFICATION_COUNT = '/it5023e/get_unread_notification_count'
 }

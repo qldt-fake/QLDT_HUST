@@ -4,12 +4,12 @@ import AntdIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import FontAwesomeIcon6 from 'react-native-vector-icons/FontAwesome6';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import Octicons from 'react-native-vector-icons/Octicons';
 import { color as colors } from 'src/common/constants/color';
 import WraperScreen from 'src/components/WraperScreen';
 import { Avatar } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import HomeNavigation from './HomeNavigation';
+import NotificationHome from "src/screens/notification/NotificationHome";
 // import { useCallback, useEffect, useState } from 'react';
 // import {
 //   checkNewFriendItem,
@@ -73,7 +73,7 @@ function TabNavigation() {
       />
       <tab.Screen
         name='Notification'
-        component={NotificationTab}
+        component={NotificationHome}
         options={{
           tabBarIcon: ({ focused, color }) =>
             focused ? (

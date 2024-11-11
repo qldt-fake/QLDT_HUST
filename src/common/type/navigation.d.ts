@@ -56,7 +56,10 @@ type AppNavigationType = {
     ChangeProfileAfterSign: undefined;
     NotFoundScreen: undefined;
     AddMoneyNavigation: { screen: AddMoneyNavigationName };
-    NotificationNavigation: { screen: NotificationNavigationName };
+    NotificationNavigation: { screen: NotificationNavigationName, params: {
+            title: string;
+            content: string;
+        } };
 };
 
 type AuthNavigationType = {
@@ -158,7 +161,6 @@ type ReportNavigationType = {
     ReportScreen: { id: string; username: string; userId: string };
 };
 type NotificationNavigationType = {
-    NotificationHome: undefined;
     NotificationDetail: {
         title: string;
         content: string;

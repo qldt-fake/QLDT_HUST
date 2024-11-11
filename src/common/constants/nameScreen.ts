@@ -86,8 +86,7 @@ export enum AddMoneyNavigationName {
 }
 
 export enum NotificationNavigationName {
-  NotificationHome = 'NotificationHome',
-  NotificationDetail = 'NotificationDetail'
+  NotificationDetail = 'NotificationDetail',
 }
 export enum HomeNavigationName {
   Home = 'HomeTab',

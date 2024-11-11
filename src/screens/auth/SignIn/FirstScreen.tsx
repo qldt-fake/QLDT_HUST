@@ -21,7 +21,7 @@ import RoleRadioOptinons from 'src/components/RolesOption/RoleRadioOptions';
 import { useState } from 'react';
 import { signUpApi } from 'src/services/auth.services';
 import { KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
-import { USER_IS_EXISTED } from 'src/common/constants/responseCode';
+import { NO_DATA, USER_IS_EXISTED } from 'src/common/constants/responseCode';
 import BaseModalSuccess from 'src/components/BaseModalSuccess';
 import * as yup from 'yup';
 
@@ -48,6 +48,7 @@ function FirstScreen() {
       
       if (!res.success) {
         if (res.status_code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');
+        if (res.status_code === NO_DATA) return setTextError(res.message);
       }
       else {
         setVerifyCode(res.verify_code || '')

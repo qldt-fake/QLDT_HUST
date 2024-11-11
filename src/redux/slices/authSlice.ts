@@ -13,23 +13,23 @@ import {
 } from 'src/services/profile.services';
 import { MyFormData } from 'src/common/type/type';
 import { date } from 'yup';
+import { USER_NOT_FOUND } from 'src/common/constants/responseCode';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+
 
 export interface IAccount {
   avatar: string;
   username: string;
-  email: string;
-}
-
-export interface IAccount {
-  avatar: string;
-  username: string;
-  email: string;
+  // email: string;
+  role: string;
+  class_list: string[]
 }
 
 export type MapAccount = Record<string, IAccount>;
 interface IAuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
+  isAccountLocked: boolean;
   error: IErrorData | IErrorData[] | string | null;
   user: IUser | null;
   accounts: MapAccount;
@@ -38,6 +38,7 @@ interface IAuthState {
 const initialState: IAuthState = {
   isLoading: false,
   isAuthenticated: true,
+  isAccountLocked: false,
   error: null,
   user: null,
   accounts: {}
@@ -45,20 +46,21 @@ const initialState: IAuthState = {
 
 export const login = createAsyncThunk(
   'auth/login',
-  async (data: ILoginData, { rejectWithValue }) => {  
+  async (data: ILoginData, { rejectWithValue }) => {
     try {
       const res = await loginApi(data);
       if (!res) {
         return rejectWithValue(res);
       }
+      if (res.status_code === USER_NOT_FOUND && res.message === "User not found or wrong password") return rejectWithValue({ message: "Không tìm thấy tài khoản hoặc mật khẩu sai" });
       const { ...remainData } = res;
-      await saveTokenIntoKeychain(remainData.username, remainData.token);
+      if (remainData.data.user_name && remainData.data.token) await saveTokenIntoKeychain(remainData.data.user_name, remainData.data.token);
       return { ...remainData, email: data.email };
-    } catch (err) {  
-      console.log(err);
-      return rejectWithValue({ message: 'sever availability' });
+    } catch (err) {
+      console.log("login Api error = ", err);
+      return rejectWithValue({ message: 'Máy chủ lỗi' });
     }
-  } 
+  }
 );
 export const logout = createAsyncThunk('auth/logout', async () => {
   try {
@@ -125,22 +127,20 @@ const authSlice = createSlice({
 
     build.addCase(login.fulfilled, (state, action) => {
       state.isAuthenticated = true;
-      state.user = action.payload as IUser;
+      state.user = action.payload.data as IUser
       state.isLoading = false;
+      state.isAccountLocked = false;
       state.accounts[action.payload.id] = {
-        avatar: action.payload.avatar,
-        email: action.payload.email,
-        username: action.payload.username
-      };
-      state.accounts[action.payload.id] = {
-        avatar: action.payload.avatar,
-        email: action.payload.email,
-        username: action.payload.username
+        avatar: action.payload.data.avatar,
+        username: action.payload.data.user_name,
+        role: action.payload.data.role,
+        class_list: action.payload.data.class_list
       };
     });
 
     build.addCase(login.pending, state => {
       state.isLoading = true;
+      state.isAccountLocked = true;
     });
 
     //logout
@@ -200,24 +200,23 @@ const authSlice = createSlice({
       ...state,
       user: { ...state.user, active: action.payload } as IUser
     }),
-    changeCoins: (state, action: PayloadAction<string>) => {
-      if (state.user) {
-        state.user.coins = action.payload;
-      }
-    },
+
     setAuthentication: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
     },
     setUsername: (state, action: PayloadAction<string>) => {
       if (state.user) {
-        state.user.username = action.payload;
+        state.user.user_name = action.payload;
       }
     },
     deleteAccount: (state, action: PayloadAction<string>) => {
       const accounts = state.accounts;
       delete accounts[action.payload];
       state.accounts = accounts;
-    }
+    },
+    resetAccountLocked: (state) => {
+      state.isAccountLocked = false;
+    },
   }
 });
 export const selectAuth = (state: RootState) => state.auth;
@@ -225,9 +224,9 @@ export const {
   deleteErrorMessage,
   reset,
   modifyAccountAtivity,
-  changeCoins,
   setAuthentication,
   deleteAccount,
-  setUsername
+  setUsername,
+  resetAccountLocked
 } = authSlice.actions;
 export default authSlice.reducer;

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Button, Text } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, FlatList, ActivityIndicator, StyleSheet, TouchableOpacity, Button, Text} from 'react-native';
 import NotificationBox from "src/screens/notification/components/NotificationBox/NotificationBox";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import { AppNaviagtionName, NotificationNavigationName } from "src/common/constants/nameScreen";
+import {NavigationProp, useNavigation} from "@react-navigation/native";
+import {AppNaviagtionName, NotificationNavigationName} from "src/common/constants/nameScreen";
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 type Notification = {
@@ -22,14 +22,14 @@ const NotificationHome: React.FC = () => {
 
     const markAsRead = (id: string) => {
         const updatedNotifications = notifications.map((notification) =>
-            notification.id === id ? { ...notification, read: true } : notification
+            notification.id === id ? {...notification, read: true} : notification
         );
         setNotifications(updatedNotifications);
     };
 
     const markSelectedAsRead = () => {
         const updatedNotifications = notifications.map((notification) =>
-            selectedIds.includes(notification.id) ? { ...notification, read: true } : notification
+            selectedIds.includes(notification.id) ? {...notification, read: true} : notification
         );
         setNotifications(updatedNotifications);
         setSelectMode(false);
@@ -62,7 +62,7 @@ const NotificationHome: React.FC = () => {
     if (loading) {
         return (
             <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#007bff" />
+                <ActivityIndicator size="large" color="#007bff"/>
             </View>
         );
     }
@@ -72,21 +72,23 @@ const NotificationHome: React.FC = () => {
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>Thông báo</Text>
                 <TouchableOpacity onPress={() => setSelectMode(!selectMode)}>
-                    <Icon name="more-vert" size={24} color="#000" />
+                    <Icon name="more-vert" size={24} color="#000"/>
                 </TouchableOpacity>
             </View>
-
             {selectMode && (
                 <View style={styles.selectModeActions}>
-                    <Button title="Đánh dấu đã đọc" onPress={markSelectedAsRead} />
-                    <Button title="Hủy" onPress={() => setSelectMode(false)} />
+                    <Button title="Đánh dấu đã đọc" onPress={markSelectedAsRead}/>
+                    <Button title="Hủy" onPress={() => {
+                        setSelectMode(false);
+                        setSelectedIds([]);
+                    }}/>
                 </View>
             )}
 
             <FlatList
                 data={notifications}
                 keyExtractor={(item) => item.id}
-                renderItem={({ item }) => {
+                renderItem={({item}) => {
                     const isSelected = selectedIds.includes(item.id);
                     return (
                         <TouchableOpacity

@@ -58,7 +58,7 @@ function SettingTab() {
   //     iconName: 'user-cog',
   //     onPress: onPressSettingItem
   //   },
- 
+
   //   {
   //     title: 'Thông báo',
   //     iconName: 'volume-up',

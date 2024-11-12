@@ -10,6 +10,7 @@ import WraperScreen from 'src/components/WraperScreen';
 import { Avatar } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
 import HomeNavigation from './HomeNavigation';
+import NotificationHome from "src/screens/notification/NotificationHome";
 import SettingTabNavigation from './SettingTabNavigation';
 // import { useCallback, useEffect, useState } from 'react';
 // import {
@@ -74,7 +75,7 @@ function TabNavigation() {
       />
       <tab.Screen
         name='Notification'
-        component={NotificationTab}
+        component={NotificationHome}
         options={{
           tabBarIcon: ({ focused, color }) =>
             focused ? (

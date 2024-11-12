@@ -21,6 +21,7 @@ import ChangeInfoAfterSignUpScreen from 'src/screens/pending-sigup/ChangeInfoAft
 import axiosInstance from 'src/services/axiosInstance';
 import { Snackbar } from 'react-native-paper';
 import { useNetInfoInstance } from '@react-native-community/netinfo';
+import NotificationNavigationWrapper from "src/navigation/NotificationNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -89,7 +90,7 @@ function AppNavigation() {
               component={ChangeInfoAfterSignUpScreen}
             />
           ) : (
-            <>  
+            <>
               <Stack.Screen
                 name={AppNaviagtionName.TabNavigation}
                 options={{ headerShown: false, header: () => <Header /> }}
@@ -99,6 +100,10 @@ function AppNavigation() {
                 name={AppNaviagtionName.SettingNavigation}
                 component={SettingNavigationWrapper}
               />
+                <Stack.Screen
+                    name={AppNaviagtionName.NotificationNavigation}
+                    component={NotificationNavigationWrapper}
+                />
               <Stack.Screen
                 name={AppNaviagtionName.SearchNavigation}
                 component={SearchNavigationWrapper}

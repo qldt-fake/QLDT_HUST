@@ -13,7 +13,7 @@ export enum AppNaviagtionName {
   VerifyOTPAfterLogin = 'VerifyOTPAfterLogin',
   ChangeProfileAfterSign = 'ChangeProfileAfterSign',
   NotFoundScreen = 'NotFoundScreen',
-  NotificationNavigation = 'NotificationNavigation'
+  HomeNavigationName = 'HomeNavigationName'
 }
 
 export enum AuthNavigationName {

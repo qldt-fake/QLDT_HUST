@@ -5,10 +5,10 @@ type AppNavigationType = {
   SettingNavigation: { screen: SettingNavigationName };
   FriendNavigation: { screen: FriendNavigationName };
   ProfileNavigation:
-  | { screen: ProfileNavigationName.Profile; params: { user_id: string } }
+  | { screen: ProfileNavigationName.Profile }
   | {
     screen: ProfileNavigationName.SettingProfile;
-    params: { user_id: string; username: string };
+    params: { user_id: number; username?: string };
   }
   | { screen: ProfileNavigationName.EditProfile };
   PostNavigation:
@@ -76,7 +76,7 @@ type AuthNavigationType = {
 };
 
 type PropfileNavigationType = {
-  Profile: { user_id: string };
+  Profile: undefined;
   EditProfile: undefined;
   SettingProfile: { user_id: string; username: string };
 };
@@ -153,3 +153,7 @@ type NotificationNavigationType = {
         content: string;
     };
 }
+
+type HomeNavigationType = {
+  Class: undefined;
+};

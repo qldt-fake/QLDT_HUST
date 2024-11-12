@@ -1,6 +1,6 @@
 import { View } from 'react-native';
 import { useForm } from 'react-hook-form';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-paper';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { getUniqueId } from 'react-native-device-info';
@@ -16,18 +16,27 @@ import BaseForm from 'src/components/BaseForm';
 import styles from './styles';
 import { ILoginData } from 'src/interfaces/auth.interface';
 import { loginFormSchema } from 'src/validation/login.validate';
-import { deleteErrorMessage, login, selectAuth } from 'src/redux/slices/authSlice';
+import { deleteErrorMessage, login, resetAccountLocked, selectAuth } from 'src/redux/slices/authSlice';
 import { useAppSelector, useAppDispatch } from 'src/redux';
+import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+
 
 function LoginScreen() {
-  const navigation = useNavigation();
+  const navigation: NavigationProp<AuthNavigationType, 'VerifyOTPScreen'> = useNavigation();
   const methods = useForm({ resolver: yupResolver(loginFormSchema) });
-
+  const { isAccountLocked, error } = useSelector(selectAuth);
   const auth = useAppSelector(selectAuth);
   const dispatch = useAppDispatch();
-
   const { handleSubmit, setValue } = methods;
-
+  useEffect(() => {
+    if (isAccountLocked) {
+      const email = methods.getValues('email');
+      const password = methods.getValues('password');
+      navigation.navigate('VerifyOTPScreen', { email: email, verifyCode: '', password: password});
+      dispatch(resetAccountLocked());
+    }
+  }, [isAccountLocked, navigation, dispatch]);
   const onSubmit = async (data: ILoginData) => {
     try {
       const deviceId = await getUniqueId();
@@ -62,7 +71,7 @@ function LoginScreen() {
             rules={{ required: 'email is required' }}
           />
           <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
-          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler}>
+          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler} loading = {auth.isLoading}>
             Đăng nhập
           </BaseButton>
           <BaseTextTitle color='white' onPress={onNavigateForgotPasswordScreen}>

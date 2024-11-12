@@ -12,6 +12,7 @@ import { IVerifyOtpSceenForm } from 'src/interfaces/auth.interface';
 import { useEffect, useState } from 'react';
 import { checkVerifyCodeApi, getVerifyCodeApi } from 'src/services/auth.services';
 import BaseModalError from 'src/components/BaseModalError';
+import { CODE_OK } from 'src/common/constants/responseCode';
 
 function VerifyOTPScreen() {
   const [textError, setTextError] = useState<string>('');
@@ -31,7 +32,7 @@ function VerifyOTPScreen() {
     try {
       setIsLoading(true);
       const res = await checkVerifyCodeApi({ email: email, verify_code: data.otpCode });
-      if (!res.success) {
+      if (res.code !== CODE_OK) {
         return setTextError(res.message);
       }
       navigation.navigate('SaveInfoAccountScreen');
@@ -45,17 +46,17 @@ function VerifyOTPScreen() {
   const onGetVerifyCode = async () => {
     try {
       setIsLoadingGetCode(true);
-      console.log(email,password);
-      
+      console.log(email, password);
+
       const res = await getVerifyCodeApi({ email, password });
-      if (!res.success) {
-        return setTextError("Lỗi");
+      if (res.status_code !== CODE_OK) {
+        return setTextError(res.message)
       }
-      setValue('otpCode', res.data);
+      setValue('otpCode', res.verify_code);
       setIsLoadingGetCode(false);
     } catch (err) {
       console.log(err);
-      
+
       setTextError('server availability');
     }
   };
@@ -87,7 +88,7 @@ function VerifyOTPScreen() {
         loading={isLoadingGetCode}
         onPress={onGetVerifyCode}
       >
-        Tôi không nhận được mã
+        Gửi lại mã
       </BaseButton>
       <BaseModalError title={textError} isVisible={!!textError} onBackdropPress={onBackdropPress} />
     </WraperAuthScreen>

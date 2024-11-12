@@ -78,6 +78,8 @@ export const postMethodApi = async function <P, T>(
   client: string,
   data?: P
 ): Promise<IBodyResponse<T>> {
+  console.log('client', client);
+  console.log('data', data);
   return await axiosInstance.post(client, data);
 };
 

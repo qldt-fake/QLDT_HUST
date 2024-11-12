@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+export const baseUrl: string = 'http://160.30.168.228:8080/it5023e'
+
 export enum AuthAPi {
   LOGIN = '/login',
   SIGNUP = '/signup',
@@ -69,4 +71,20 @@ export enum CommentApi {
 export enum NotificationApi {
   CHECK_NEW_iTEMS = '/check_new_items',
   GET_NOTIFICATION = '/get_notification'
+}
+
+export enum ClassApi {
+  CREATE_CLASS = '/create_class',
+  GET_CLASS = '/get_class_info',
+  GET_CLASS_LIST = '/get_class_list',
+  EDIT_CLASS = '/edit_class',
+  DELETE_CLASS = '/delete_class',
+}
+
+export enum SurveyApi {
+  CREATE_SURVEY = '/create_survey',
+  GET_ALL_SURVEYS = '/get_all_surveys',
+  EDIT_SURVEY = '/edit_survey',
+  DELETE_SURVEY = '/delete_survey',
+  GET_SURVEY = '/get_survey_response',
 }

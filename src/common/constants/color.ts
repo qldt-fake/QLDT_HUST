@@ -28,5 +28,11 @@ export const color = {
   laughtIcon: '#FFF298',
   Comment: 'rgba(240,242,245,1.0)',
   backgroundButton: '#E5DFE3',
-  red: '#f63a39'
+  red: '#f63a39',
+  borderRed: '#D3310B',
+  textRed: '#D3310B',
+  submitBtnRed: '#b30000',
+  backGroundgGray: '#f2f2f2',
+  cardClassBg: '#ffe6e6',
+  textGray: '#999999'
 };

@@ -7,13 +7,33 @@ interface NotificationProps {
     date: string;
     read: boolean;
 }
+function formatTimeDifference(dateString: string): string {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
 
+    const secondsInMinute = 60;
+    const secondsInHour = 3600;
+    const secondsInDay = 86400;
+
+    if (diffInSeconds < secondsInMinute) {
+        return `${diffInSeconds} giây trước`;
+    } else if (diffInSeconds < secondsInHour) {
+        const minutes = Math.floor(diffInSeconds / secondsInMinute);
+        return `${minutes} phút trước`;
+    } else if (diffInSeconds < secondsInDay) {
+        const hours = Math.floor(diffInSeconds / secondsInHour);
+        return `${hours} giờ trước`;
+    } else {
+        return date.toLocaleDateString('vi-VN');
+    }
+}
 const NotificationBox: React.FC<NotificationProps> = ({title, content, date, read}) => {
     return (
         <View style={[styles.boxContainer, read ? styles.readCard : styles.unreadCard]}>
             <View style={styles.headerContainer}>
                 <Text style={styles.QLDTText}>QLDT</Text>
-                <Text style={styles.dateText}>{date}</Text>
+                <Text style={styles.dateText}>{formatTimeDifference(date)}</Text>
             </View>
             <Text style={styles.titleText}>{title}</Text>
             <View style={styles.divider}/>

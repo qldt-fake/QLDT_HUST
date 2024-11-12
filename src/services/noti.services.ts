@@ -14,7 +14,7 @@ export interface IGetUnreadNotificationBody {
 
 export interface IMarkNotificationAsReadBody {
     token: string;
-    notification_ids: string[];
+    notification_ids: number[];
 }
 
 export interface IGetNotificationsBody {
@@ -25,10 +25,12 @@ export interface IGetNotificationsBody {
 
 export interface INotificationResponse {
     id: number;
-    title: string;
+    type: string;
+    status: string;
+    from_user: number;
     message: string;
-    read: boolean;
-    created_at: string;
+    recipient_id: number;
+    sent_time: string;
 }
 
 export interface IBodyResponse<T> {

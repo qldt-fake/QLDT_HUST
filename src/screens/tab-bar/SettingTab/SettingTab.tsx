@@ -36,59 +36,35 @@ function SettingTab() {
     return () => setLoadingSettingTab(false);
   });
 
-  const navigation: NavigationProp<AppNavigationType> = useNavigation();
+  const navigation: NavigationProp<PropfileNavigationType> = useNavigation();
   const dispatch = useAppDispatch();
   const auth = useAppSelector(selectAuth);
 
-  const onPressSettingItem = () =>
-    navigation.navigate(AppNaviagtionName.SettingNavigation, {
-      screen: SettingNavigationName.SettingScreen
-    });
-  const onPressPrivacyItem = () =>
-    navigation.navigate(AppNaviagtionName.SettingNavigation, {
-      screen: SettingNavigationName.BlockFriendScreen
-    });
-  const onPressNotificationItem = () =>
-    navigation.navigate(AppNaviagtionName.SettingNavigation, {
-      screen: SettingNavigationName.SettingNotification
-    });
-
-  const onPressAddMoney = () =>
-    navigation.navigate(AppNaviagtionName.AddMoneyNavigation, {
-      screen: AddMoneyNavigationName.AddMoneyScreen
-    });
-
-  const navigaProfileScreen = () =>
-    navigation.navigate(AppNaviagtionName.ProfileNavigation, {
-      screen: ProfileNavigationName.Profile,
-      params: { user_id: auth.user?.id as string }
-    });
+  // const onPressSettingItem = () =>
+  //   navigation.navigate(AppNaviagtionName.SettingNavigation, {
+  //     screen: SettingNavigationName.SettingScreen
+  //   });
+  // const onPressNotificationItem = () =>
+  //   navigation.navigate(AppNaviagtionName.SettingNavigation, {
+  //     screen: SettingNavigationName.SettingNotification
+  //   });
   const onPressExit = () => BackHandler.exitApp();
   const onPressLogout = () => {
     dispatch(logout());
   };
-  const settingAccordion: ISettingAcordion[] = [
-    {
-      title: 'Cài đặt',
-      iconName: 'user-cog',
-      onPress: onPressSettingItem
-    },
-    {
-      title: 'Quyền riêng tư',
-      iconName: 'user-lock',
-      onPress: onPressPrivacyItem
-    },
-    {
-      title: 'Thông báo',
-      iconName: 'volume-up',
-      onPress: onPressNotificationItem
-    },
-    {
-      title: 'Nạp tiền',
-      iconName: 'coins',
-      onPress: onPressAddMoney
-    }
-  ];
+  // const settingAccordion: ISettingAcordion[] = [
+  //   {
+  //     title: 'Cài đặt',
+  //     iconName: 'user-cog',
+  //     onPress: onPressSettingItem
+  //   },
+
+  //   {
+  //     title: 'Thông báo',
+  //     iconName: 'volume-up',
+  //     onPress: onPressNotificationItem
+  //   },
+  // ];
 
   // scroll to top
   const ref = useRef(null);
@@ -107,9 +83,9 @@ function SettingTab() {
         <IconButton icon='magnify' size={30} />
       </View>
       <Card style={styles.wrapperAcountCard}>
-        <TouchableRipple onPress={navigaProfileScreen}>
+        <TouchableRipple onPress={() => navigation.navigate('Profile')}>
           <Card.Title
-            title={<Text variant='titleMedium'>{auth.user?.username}</Text>}
+            title={<Text variant='titleMedium'>{auth.user?.user_name}</Text>}
             left={props => (
               <Avatar.Image
                 {...props}
@@ -131,7 +107,7 @@ function SettingTab() {
           />
         </TouchableRipple>
         <Divider />
-        <Card.Title
+        {/* <Card.Title
           title={
             <Text variant='titleMedium' style={{ color: color.activeOutlineColor }}>
               Tạo trang cá nhân khác
@@ -145,12 +121,12 @@ function SettingTab() {
               style={[globalStyles.flexRow, globalStyles.centerAlignItem]}
             />
           )}
-        />
+        /> */}
       </Card>
       <List.Section>
         <Divider />
 
-        <List.Accordion
+        {/* <List.Accordion
           style={{ backgroundColor: color.backgroundColor }}
           title={<TextTitle>Trợ giúp và hỗ trợ</TextTitle>}
           left={props => <List.Icon {...props} icon='help-circle' color={color.primary} />}
@@ -159,10 +135,10 @@ function SettingTab() {
             title='Điều khoản và chính sách'
             left={<IconFont name='envelope-open-text' color={color.textColor} size={20} />}
           />
-        </List.Accordion>
+        </List.Accordion> */}
 
         <Divider />
-        <List.Accordion
+        {/* <List.Accordion
           style={{ backgroundColor: color.backgroundColor }}
           title={<TextTitle>Cài đặt và quyền riêng tư</TextTitle>}
           left={props => <List.Icon {...props} icon='cog' />}
@@ -175,7 +151,7 @@ function SettingTab() {
               onPress={item.onPress}
             />
           ))}
-        </List.Accordion>
+        </List.Accordion> */}
         <Divider />
         <TouchableOpacity activeOpacity={0.6} onPress={onPressExit}>
           <List.Item
@@ -187,7 +163,7 @@ function SettingTab() {
         <TouchableOpacity activeOpacity={0.6} onPress={onPressLogout}>
           <List.Item
             title={<TextTitle>Đăng xuất</TextTitle>}
-            left={props => <List.Icon {...props} icon='logout' color={color.textColor} />}
+            left={props => <List.Icon {...props} icon='logout' color={color.black} />}
           />
         </TouchableOpacity>
       </List.Section>

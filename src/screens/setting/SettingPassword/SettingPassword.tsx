@@ -13,7 +13,8 @@ import BaseModalError from 'src/components/BaseModalError';
 import { changPasswordApi } from 'src/services/auth.services';
 import { useAppSelector } from 'src/redux';
 import { selectAuth } from 'src/redux/slices/authSlice';
-import { saveTokenIntoKeychain } from 'src/utils/kechain';
+import { getTokenFromKeychain, saveTokenIntoKeychain } from 'src/utils/kechain';
+import { CODE_OK } from 'src/common/constants/responseCode';
 
 const SUCCESS_MESSAGE: string = 'Thành công';
 
@@ -46,17 +47,19 @@ function SettingPassword() {
   const methods = useForm({ resolver: yupResolver(changPasswordSchema) });
   const { handleSubmit } = methods;
   const onSubmit = async (data: IChangePassword) => {
+    const token = await getTokenFromKeychain()
     try {
       setIsLoading(true);
       const res = await changPasswordApi({
-        password: data.currPassword,
+        token: token,
+        old_password: data.currPassword,
         new_password: data.newPassword
       });
-      if (!res.success) {
+      if (res.status_code !== CODE_OK) {
         setAlertText(res.message);
         return;
       }
-      await saveTokenIntoKeychain(auth.user?.id as string, res.data.token);
+      await saveTokenIntoKeychain(auth.user?.user_name as string, res.data.token);
       setAlertText(SUCCESS_MESSAGE);
     } catch (err) {
       setAlertText('Vui lòng kiểm tra kết nối internet');

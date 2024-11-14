@@ -14,7 +14,7 @@ export interface IGetVerifyCodeData {
   verify_code: string;
 }
 export interface IBodyResponse<T> extends AxiosResponse {
-  success: boolean;
+  success?: boolean;
   status_code: ReponseCode;
   message: string;
   data: T;

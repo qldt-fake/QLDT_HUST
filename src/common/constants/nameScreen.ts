@@ -13,7 +13,8 @@ export enum AppNaviagtionName {
   VerifyOTPAfterLogin = 'VerifyOTPAfterLogin',
   ChangeProfileAfterSign = 'ChangeProfileAfterSign',
   NotFoundScreen = 'NotFoundScreen',
-  HomeNavigationName = 'HomeNavigationName'
+  HomeNavigationName = 'HomeNavigationName',
+  NotificationNavigation = 'NotificationNavigation'
 }
 
 export enum AuthNavigationName {
@@ -41,7 +42,8 @@ export enum SettingNavigationName {
   SettingSecurityLogin = 'SettingSecurityLogin',
   SettingInfoName = 'SettingInfoName',
   BlockFriendScreen = 'BlockFriendScreen',
-  SearchUserScreen = 'SearchUserScreen'
+  SearchUserScreen = 'SearchUserScreen',
+  Profile = 'Profile'
 }
 
 export enum FriendNavigationName {

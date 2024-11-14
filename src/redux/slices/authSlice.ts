@@ -53,6 +53,13 @@ export const login = createAsyncThunk(
         return rejectWithValue(res);
       }
       if (res.status_code === USER_NOT_FOUND && res.message === "User not found or wrong password") return rejectWithValue({ message: "Không tìm thấy tài khoản hoặc mật khẩu sai" });
+      if (res.status_code === USER_NOT_FOUND && res.message === "Account is locked") return rejectWithValue(
+        {
+          message: "Tài khoản chưa verify",
+          error_code: 2402
+        }
+      );
+
       const { ...remainData } = res;
       if (remainData.data.user_name && remainData.data.token) await saveTokenIntoKeychain(remainData.data.user_name, remainData.data.token);
       return { ...remainData, email: data.email };
@@ -123,6 +130,10 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.error = payload?.message;
       state.isLoading = false;
+      state.isAccountLocked = true;
+      const payload2 = action.payload as { message: string, error_code: number, }
+      state.error = payload2.message;
+      state.isAccountLocked = payload2?.error_code === 2402
     });
 
     build.addCase(login.fulfilled, (state, action) => {
@@ -140,7 +151,6 @@ const authSlice = createSlice({
 
     build.addCase(login.pending, state => {
       state.isLoading = true;
-      state.isAccountLocked = true;
     });
 
     //logout

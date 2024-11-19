@@ -59,12 +59,12 @@ export interface ICheckNewItemResponseData {
   new_items: string;
 }
 export const getNotificationApi = (data: IGetNotification): Promise<IGetNotificationResponse> => {
-  return axiosInstance.post(NotificationApi.GET_NOTIFICATION, data);
+  return axiosInstance.post(NotificationApi.GET_NOTIFICATIONS, data);
 };
 
 export const checkNewItemAPi = (
   data: IGetCheckNewItem
-): Promise<IBodyResponse<ICheckNewItemResponseData>> => {
+): Promise<IBodyResponse<ICheckNewItemResponseData,any>> => {
   return postMethodApi(NotificationApi.CHECK_NEW_iTEMS, data);
 };
 

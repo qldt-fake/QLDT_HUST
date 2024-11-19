@@ -131,7 +131,7 @@ const authSlice = createSlice({
   initialState,
   extraReducers: build => {
     build.addCase(login.rejected, (state, action) => {
-      const payload = action.payload as IBodyResponse<ILoginResponseData>;
+      const payload = action.payload as IBodyResponse<ILoginResponseData,any>;
       state.isAuthenticated = false;
       state.error = payload?.message;
       state.isLoading = false;

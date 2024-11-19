@@ -9,7 +9,8 @@ export type ClassDetailSummaryProps = {
   start_date: string;
   end_date: string;
   class_type: string;
-  max_student_amount: number;
+  student_count: number;
+  lecturer_name: string;
 };
 
 const ClassDetailSummary: React.FC<ClassDetailSummaryProps> = ({
@@ -18,11 +19,12 @@ const ClassDetailSummary: React.FC<ClassDetailSummaryProps> = ({
   start_date,
   end_date,
   class_type,
-  max_student_amount
+  student_count,
+  lecturer_name
 }) => {
   return (
     <View style={styles.container}>
-      <Text>{class_id + ' - ' + class_name}</Text>
+      <View style = {styles.header}><Text>{class_id + ' - ' + class_name}</Text></View>
       <View style={styles.body}>
         <View style={styles.line}>
           <Text style={styles.row}>Mã lớp:</Text>
@@ -41,8 +43,12 @@ const ClassDetailSummary: React.FC<ClassDetailSummaryProps> = ({
           <Text style={styles.row}>{formatDate(end_date)}</Text>
         </View>
         <View style={styles.line}>
-          <Text style={styles.row}>Số lượng sinh viên tối đa:</Text>
-          <Text style={styles.row}>{max_student_amount}</Text>
+          <Text style={styles.row}>Số sinh viên:</Text>
+          <Text style={styles.row}>{student_count}</Text>
+        </View>
+        <View style={styles.line}>
+          <Text style={styles.row}>Giảng viên:</Text>
+          <Text style={styles.row}>{lecturer_name}</Text>
         </View>
       </View>
     </View>
@@ -53,13 +59,22 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: color.white,
     with: '100%',
-    marginHorizontal: 30
+    marginHorizontal: 30,
+    paddingHorizontal: 15,
+    paddingVertical: 20,
+    borderRadius: 12,
+    borderWidth: 0.5,
+  },
+  header : {
+    paddingBottom: 5,
+    borderBottomWidth: .2,
   },
   body: {
+    paddingTop: 10,
     rowGap: 8
-  },/+9
+  },
   line: {
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   row: {
     flex: 1

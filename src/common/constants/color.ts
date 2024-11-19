@@ -1,5 +1,5 @@
 export const color = {
-  primary: '#1977F3',
+  primary: '#f63a39',
   second: "#8e1f1f",
   error: '#ddc713',
   white: '#FFFFFF',
@@ -7,13 +7,13 @@ export const color = {
   yellow: '#F7B928',
   black: '#000',
   blackOpacity: 'rgba(0, 0, 0, 0.5)',
-  borderColor: '#CDD2D8',
+  borderColor: '#E9C4C4',
   textColor: 'white',
   outlineColor: '#ced2db',
   activeOutlineColor: '#6a7787',
   linearBackgroundColor: ['#8e1f1f', '#8e1f1f', '#8e1f1f'],
   iconButtonBackgroundColor: '#f1f2f6',
-  iconButtonColor: 'black',
+  iconButtonColor: 'white',
   sureface: 'rgb(255, 251, 255)',
   backgroundColor: '#f2f2f2',
   isNotLookBg: '#e7f3ff',
@@ -34,5 +34,7 @@ export const color = {
   submitBtnRed: '#b30000',
   backGroundgGray: '#f2f2f2',
   cardClassBg: '#ffe6e6',
-  textGray: '#999999'
+  textGray: '#999999',
+  successPrimary: 'green',
+  bgClassHeader: '#b30000',
 };

@@ -25,8 +25,8 @@ interface NewSurvey {
   deadline: Date | null;
 }
 
-const CreateSurvey: React.FC = ({route}) => {
-
+const EditSurvey: React.FC = ({route}) => {
+const {classId, survey_id} =route.params
   const user = useSelector(state => state.auth.user);
 
   const { token, role } = user;
@@ -129,7 +129,7 @@ const CreateSurvey: React.FC = ({route}) => {
 
       const payload = {
         token: token, // Replace with actual token
-        classId: route.param.classId, // Replace with actual classId
+        classId: classId, // Replace with actual classId
         title: newSurvey.title,
         description: newSurvey.description,
         deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
@@ -292,4 +292,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateSurvey;
+export default EditSurvey;

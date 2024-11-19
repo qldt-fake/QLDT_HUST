@@ -12,7 +12,7 @@ import NotFoundScreen from 'src/screens/notfound/NotFoundScreen';
 import Header from 'src/screens/tab-bar/components/Header';
 import { useAppDispatch, useAppSelector } from 'src/redux';
 import { getProfile, selectAuth, setAuthentication } from 'src/redux/slices/authSlice';
-import { AppNaviagtionName } from 'src/common/constants/nameScreen';
+import { AppNaviagtionName, ClassNavigationName } from 'src/common/constants/nameScreen';
 import { useEffect } from 'react';
 import { AccountStatus } from 'src/common/enum/commom';
 import BaseModalError from 'src/components/BaseModalError';
@@ -21,6 +21,9 @@ import ChangeInfoAfterSignUpScreen from 'src/screens/pending-sigup/ChangeInfoAft
 import axiosInstance from 'src/services/axiosInstance';
 import { Snackbar } from 'react-native-paper';
 import { useNetInfoInstance } from '@react-native-community/netinfo';
+import ClassListPage from 'src/screens/classes/classes-for-teacher/ClassListPage';
+import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
+import ClassNavigation from './ClassNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -75,7 +78,7 @@ function AppNavigation() {
           gestureDirection: 'vertical'
         }}
       >
-        {true ? (
+        {auth.isAuthenticated ? (
           auth.user?.active === AccountStatus.Inactive ? (
             <Stack.Screen
               name={AppNaviagtionName.VerifyOTPAfterLogin}
@@ -108,6 +111,9 @@ function AppNavigation() {
                 component={NotFoundScreen}
                 options={{ headerTitle: 'Không tìm thấy nội dung' }}
               />
+              {
+                ClassNavigation()
+              }
             </>
           )
         ) : (

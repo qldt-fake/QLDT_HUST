@@ -2,19 +2,19 @@
 export const baseUrl: string = 'http://160.30.168.228:8080/it5023e'
 
 export enum AuthAPi {
-  LOGIN = '/login',
-  SIGNUP = '/signup',
+  LOGIN = '/it4788/login',
+  SIGNUP = '/it4788/signup',
   LOGOUT = '/logout',
-  CHANGEPASSWORD = '/change_password',
-  GETVERIFYTOKEN = '/get_verify_code',
-  CHECKVERIFYTOKEN = '/check_verify_code',
+  CHANGEPASSWORD = '/it4788/change_password',
+  GETVERIFYTOKEN = '/it4788/get_verify_code',
+  CHECKVERIFYTOKEN = '/it4788/check_verify_code',
   RESETPASSWORD = '/reset_password',
   CHECK_EMAIL = '/check_email'
 }
 
 export enum ProfileApi {
-  CHANGE_PROFILE_AFTER_SIGNUP = '/change_profile_after_signup',
-  GET_USER_INFO = '/get_user_info',
+  CHANGE_PROFILE_AFTER_SIGNUP = '/it4788/change_profile_after_signup',
+  GET_USER_INFO = '/it4788/get_user_info',
   SET_USER_INFO = '/set_user_info'
 }
 
@@ -74,17 +74,20 @@ export enum NotificationApi {
 }
 
 export enum ClassApi {
-  CREATE_CLASS = '/create_class',
-  GET_CLASS = '/get_class_info',
-  GET_CLASS_LIST = '/get_class_list',
-  EDIT_CLASS = '/edit_class',
-  DELETE_CLASS = '/delete_class',
+  CREATE_CLASS = '/it5023e/create_class',
+  GET_CLASS = '/it5023e/get_class_info',
+  GET_CLASS_LIST = '/it5023e/get_class_list',
+  EDIT_CLASS = '/it5023e/edit_class',
+  DELETE_CLASS = '/it5023e/delete_class',
+  GET_CLASS_DETAIL = '/it5023e/get_class_detail',
+  REGISTER_CLASS = '/it5023e/register_class',
+  GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info',
 }
 
 export enum SurveyApi {
-  CREATE_SURVEY = '/create_survey',
-  GET_ALL_SURVEYS = '/get_all_surveys',
-  EDIT_SURVEY = '/edit_survey',
-  DELETE_SURVEY = '/delete_survey',
-  GET_SURVEY = '/get_survey_response',
+  CREATE_SURVEY = '/it5023e/create_survey',
+  GET_ALL_SURVEYS = '/it5023e/get_all_surveys',
+  EDIT_SURVEY = '/it5023e/edit_survey',
+  DELETE_SURVEY = '/it5023e/delete_survey',
+  GET_SURVEY = '/it5023e/get_survey_response',
 }

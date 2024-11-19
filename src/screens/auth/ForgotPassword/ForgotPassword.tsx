@@ -71,9 +71,9 @@ function ForgetPassword() {
       setIsLoadingGetCode(true);
       const res = await getVerifyCodeApi({ email: data.email });
       if (!res.success) {
-        return setTextError(res.message);
+        return setTextError("lỗi");
       }
-      setValue('otp', res.data.verify_code);
+      setValue('otp', res.data);
       setIsLoadingGetCode(false);
       setIsEmailExits(true);
     } catch (err) {

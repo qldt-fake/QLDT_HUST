@@ -15,8 +15,12 @@ import DateTimePicker from 'react-native-date-picker';
 import { createClassApi } from 'src/services/class.service';
 import { IClassItem } from 'src/services/class.service';
 import { classType } from 'src/common/enum/commom';
+import { useSelector } from 'react-redux';
+import dayjs, { Dayjs } from 'dayjs';
 
 const CreateClass = () => {
+  const user = useSelector(state => state.auth.user);
+  const { role, token, id } = user;
   const [newClass, setNewClass] = useState<IClassItem>({
     class_id: '',
     class_name: '',
@@ -24,8 +28,7 @@ const CreateClass = () => {
     max_student_amount: 0,
     start_date: null,
     end_date: null,
-    token: 'IVOxf4',
-    attached_code: '',
+    token: token
   });
 
   const [selectedPeriod, setSelectedPeriod] = useState<'start_date' | 'end_date'>('start_date');
@@ -56,7 +59,10 @@ const CreateClass = () => {
       Alert.alert('Validation Error', 'Class name length must be less than 50');
       return false;
     }
-    if (newClass.max_student_amount !== null && (newClass.max_student_amount < 1 || newClass.max_student_amount > 50)) {
+    if (
+      newClass.max_student_amount !== null &&
+      (newClass.max_student_amount < 1 || newClass.max_student_amount > 50)
+    ) {
       Alert.alert('Validation Error', 'Max student amount must be between 1 and 50');
       return false;
     }
@@ -68,8 +74,13 @@ const CreateClass = () => {
       return;
     }
     try {
-      console.log(newClass);
-      const res = await createClassApi(newClass);
+      const requestClass = {
+        ...newClass,
+        start_date: dayjs(newClass.start_date).format('YYYY-MM-DD'),
+        end_date: dayjs(newClass.end_date).format('YYYY-MM-DD')
+      };
+      console.log(requestClass);
+      const res = await createClassApi(requestClass);
       console.log(res);
       Alert.alert('Success', `Class created with code: ${res.meta.message}`);
     } catch (error) {
@@ -79,27 +90,21 @@ const CreateClass = () => {
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Create new Class' />
       <View style={styles.body}>
         <TextInput
           style={styles.input}
           placeholder='Mã lớp *'
-          onChangeText={(text) => handleChange('class_id', text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder='Mã lớp kèm *'
-          onChangeText={(text) => handleChange('attached_code', text)}
+          onChangeText={text => handleChange('class_id', text)}
         />
         <TextInput
           style={styles.input}
           placeholder='Tên lớp *'
-          onChangeText={(text) => handleChange('class_name', text)}
+          onChangeText={text => handleChange('class_name', text)}
         />
         <TextInput
           style={styles.input}
-          placeholder='Mã học phần *'
-          onChangeText={(text) => handleChange('class_type', text)}
+          placeholder='Loại lớp *'
+          onChangeText={text => handleChange('class_type', text)}
         />
         {isOpenDatePicker && (
           <DateTimePicker
@@ -122,7 +127,7 @@ const CreateClass = () => {
             onPress={() => handleShowDatePicker('start_date')}
           >
             <Text style={{ color: color.borderRed }}>
-              {newClass.start_date ? newClass.start_date.toLocaleString() : "Bắt đầu"}
+              {newClass.start_date ? newClass.start_date.toLocaleString() : 'Bắt đầu'}
             </Text>
             <Icon name='caret-down' size={20} color={color.borderRed} />
           </TouchableOpacity>
@@ -132,7 +137,7 @@ const CreateClass = () => {
             onPress={() => handleShowDatePicker('end_date')}
           >
             <Text style={{ color: color.borderRed }}>
-              {newClass.end_date ? newClass.end_date.toLocaleString() : "Kết thúc"}
+              {newClass.end_date ? newClass.end_date.toLocaleString() : 'Kết thúc'}
             </Text>
             <Icon name='caret-down' size={20} color={color.borderRed} />
           </TouchableOpacity>
@@ -141,7 +146,7 @@ const CreateClass = () => {
           style={styles.input}
           placeholder='Số lượng sinh viên tối đa *'
           keyboardType='numeric'
-          onChangeText={(text) => handleChange('max_student_amount', parseInt(text))}
+          onChangeText={text => handleChange('max_student_amount', parseInt(text))}
         />
         <TouchableOpacity style={styles.submitButton} onPress={handleCreateClass}>
           <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
@@ -150,15 +155,15 @@ const CreateClass = () => {
       <Text style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   },
   body: {
-    padding: 30,
+    padding: 30
   },
   input: {
     borderWidth: 1,
@@ -209,7 +214,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     fontWeight: 'bold',
     fontSize: 24,
-    paddingHorizontal: 25,
+    paddingHorizontal: 25
   }
 });
 

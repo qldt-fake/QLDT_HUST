@@ -1,72 +1,165 @@
 import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import ClassHeader from './ClassHeader';
 import { color } from 'src/common/constants/color';
-const RegisterClass = () => {
-  // Danh sách lớp mẫu
-  const classListData = [
-    // { classId: 'D14TH05', includedClassId: 'D14TH06', className: 'Lớp học 1' },
-    // { classId: 'D14TH07', includedClassId: 'D14TH08', className: 'Lớp học 2' },
-    // { classId: 'D14TH09', includedClassId: 'D14TH10', className: 'Lớp học 3' },
-    // { classId: 'D14TH11', includedClassId: 'D14TH12', className: 'Lớp học 4' },
-    // { classId: 'D14TH13', includedClassId: 'D14TH14', className: 'Lớp học 5' },
-    // { classId: 'D14TH15', includedClassId: 'D14TH16', className: 'Lớp học 6' },
-    // { classId: 'D14TH17', includedClassId: 'D14TH18', className: 'Lớp học 7' },
-    // { classId: 'D14TH19', includedClassId: 'D14TH20', className: 'Lớp học 8' },
-    // { classId: 'D14TH21', includedClassId: 'D14TH22', className: 'Lớp học 9' },
-    // { classId: 'D14TH23', includedClassId: 'D14TH24', className: 'Lớp học 10' }
-  ];
+import { getBasicClassInfoApi, getClassApi, registerClassApi } from 'src/services/class.service';
+import { ReponseCode } from 'src/common/enum/reponseCode';
+import { Checkbox } from 'react-native-paper';
+import { formatDate } from 'src/utils/helper';
+import { set } from 'lodash';
 
-  const haveZeroClass = () => {
-    return (
-      <Text style={{ marginTop: 'auto', fontSize: 16, fontWeight: 'bold', color: color.red }}>
-        Sinh viên chưa đăng ký lớp
-      </Text>
+const RegisterClass = () => {
+  
+  const [tempClassList, setTempClassList] = React.useState([]);
+  const [searchText, setSearchText] = React.useState('');
+
+  const [selectedClasses, setSelectedClasses] = React.useState({});
+
+  const handleSelectClass = (classId) => {
+    setSelectedClasses(prev => ({
+      ...prev,
+      [classId]: !prev[classId],
+    }));
+  };
+
+  const handleDeleteSelectedClasses = () => {
+    setTempClassList(prevList =>
+      prevList.filter(item => !selectedClasses[item.class_id])
     );
+    setSelectedClasses({});
+  };
+
+
+  // Fetch class information and add to tempClassList
+  const handleSearchClass = async () => {
+    if (!searchText.trim()) return;
+    
+    try {
+      const response = await getBasicClassInfoApi({ class_id: searchText,
+        token: '9mJVhM',
+        role: 'STUDENT',
+        account_id: '245'
+       });
+      console.log(response);
+      
+      if (response && response.data && response.meta.code === ReponseCode.CODE_OK) {
+        const isClassAdded = tempClassList.some(item => item.class_id === response.data.class_id);
+        
+        if (!isClassAdded) {
+          const {
+            class_id,
+            class_name,
+            start_date,
+            end_date,
+          } = response.data;
+          setTempClassList(prevList => [
+            ...prevList,
+            {
+              class_id,
+              class_name,
+              start_date,
+              end_date,
+            }
+          ]);
+        } else {
+          Alert.alert('Thông báo', 'Lớp này đã có trong danh sách');
+        }
+      } else {
+        Alert.alert('Lỗi', 'Không tìm thấy lớp');
+      }
+    } catch (error) {
+      Alert.alert('Lỗi', 'Đã xảy ra lỗi khi tìm kiếm lớp');
+    }
+  };
+
+
+  // Register classes in tempClassList
+  const handleRegisterClasses = async () => {
+    try {
+      const response = await registerClassApi({
+        token: '9mJVhM',
+        class_ids: tempClassList.map(item => item.class_id)
+      }
+      );
+      console .log(tempClassList.map(item => item.class_id));
+      console.log(response);
+
+  
+      
+      if (response.meta.code === ReponseCode.CODE_OK) {
+        Alert.alert('Thành công', 'Đăng ký lớp thành công');
+        const updatedStatusClass = response.data
+        setTempClassList(prevList =>
+          prevList.map(item => {
+            const updatedClass = updatedStatusClass.find(cls => cls.class_id === item.class_id);
+            return updatedClass ? { ...item, status: updatedClass.status } : item;
+          })
+        );
+      } else {
+        Alert.alert('Lỗi', 'Đăng ký lớp thất bại');
+      }
+    } catch (error) {
+      Alert.alert('Lỗi', 'Đã xảy ra lỗi khi đăng ký lớp');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Register for class' />
+      <ClassHeader title="Register for class" />
       <View style={styles.body}>
         <View style={styles.searchContainer}>
-          <TextInput style={styles.input} placeholder='Mã lớp' />
-          <TouchableOpacity style={styles.searchButton}>
-            <Text style={styles.buttonText}>Đăng ký</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Mã lớp"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          <TouchableOpacity style={styles.searchButton} onPress={handleSearchClass}>
+            <Text style={styles.buttonText}>Tìm lớp</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.tableHeader}>
+          <Text style={styles.tableHeaderText}>Chọn</Text>
           <Text style={styles.tableHeaderText}>Mã lớp</Text>
-          <Text style={styles.tableHeaderText}>Mã lớp kèm</Text>
           <Text style={styles.tableHeaderText}>Tên lớp</Text>
+          <Text style={styles.tableHeaderText}>Ngày bắt đầu</Text>
+          <Text style={styles.tableHeaderText}>Ngày kết thúc</Text>
+          <Text style={styles.tableHeaderText}>Trạng thái</Text>
         </View>
         <View style={styles.classList}>
-          {classListData?.length ? (
+          {tempClassList.length ? (
             <FlatList
-              data={classListData}
-              keyExtractor={item => item.classId}
+              data={tempClassList}
+              keyExtractor={item => item.class_id}
               renderItem={({ item }) => (
                 <View style={styles.classItem}>
-                  <Text style={styles.classItemText}>{item.classId}</Text>
-                  <Text style={styles.classItemText}>{item.includedClassId}</Text>
-                  <Text style={styles.classItemText}>{item.className}</Text>
+                  <Checkbox
+                    status={selectedClasses[item.class_id] ? 'checked' : 'unchecked'}
+                    onPress={() => handleSelectClass(item.class_id)}
+                  />
+                  <Text style={styles.classItemText}>{item.class_id}</Text>
+                  <Text style={styles.classItemText}>{item.class_name}</Text>
+                  <Text style={styles.classItemText}>{formatDate(item.start_date)}</Text>
+                  <Text style={styles.classItemText}>{formatDate(item.end_date)}</Text>
+                  <Text style={styles.classItemText}>{item.status?? item.status}</Text>
                 </View>
               )}
             />
           ) : (
-            haveZeroClass()
+            <Text style={{ marginTop: 'auto', fontSize: 16, fontWeight: 'bold', color: color.red }}>
+              Sinh viên chưa đăng ký lớp
+            </Text>
           )}
         </View>
         <View style={styles.actionButtons}>
-          <TouchableOpacity style={[styles.submitButton, { flex: 6 }]}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleRegisterClasses}>
             <Text style={styles.buttonText}>Gửi đăng ký</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.submitButton, { flex: 4 }]}>
+          <TouchableOpacity style={styles.submitButton} onPress={handleDeleteSelectedClasses}>
             <Text style={styles.buttonText}>Xóa lớp</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <Text style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
     </View>
   );
 };

@@ -30,22 +30,63 @@ export const createSurveyApi = async (payload: CreateSurveyPayload) => {
 
   // Add file if present
   if (payload.file) {
-    formData.append('file', {
-      uri: payload.file.uri,
-      name: payload.file.name,
-      type: payload.file.type
-    });
+    formData.append('file', payload.file);
   }
 
-  const response = await axios.post(`${baseUrl}/survey/create`, formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  });
+  console.log('formData', formData);
+  try {
+    const response = await axios.post(`${baseUrl}/create_survey`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log('response', response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.error("Loi tai", error);
+    return null;
+  }
 
-  return response.data;
 };
 
+const editSurveyApi = async (payload: CreateSurveyPayload) => {
+  const formData = new FormData();
+
+  // Add basic fields
+  formData.append('token', payload.token);
+  formData.append('classId', payload.classId);
+  formData.append('title', payload.title);
+  formData.append('deadline', payload.deadline);
+  formData.append('description', payload.description || '');
+
+  // Add file if present
+  if (payload.file) {
+    formData.append('file', payload.file);
+  }
+
+  console.log('formData', formData);
+  try {
+    const response = await axios.post(`${baseUrl}/edit_survey`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    console.log('response', response.data);
+    return response.data;
+  }
+  catch (error) {
+    console.error("Loi tai", error);
+    return null;
+  }
+
+}
+
+
 export const getSurveyListApi = async (data: any): Promise<IBodyResponse<any>> => {
-  return postMethodApi(baseUrl+SurveyApi.GET_ALL_SURVEYS, data);
+  return postMethodApi(SurveyApi.GET_ALL_SURVEYS, data);
+}
+
+export const deleteSurveyApi = async (data: any): Promise<IBodyResponse<any>> => {
+  return postMethodApi(SurveyApi.DELETE_SURVEY, data);
 }

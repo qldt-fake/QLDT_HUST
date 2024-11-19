@@ -9,6 +9,8 @@ import { color as colors } from 'src/common/constants/color';
 import WraperScreen from 'src/components/WraperScreen';
 import { Avatar } from 'react-native-paper';
 import { StyleSheet } from 'react-native';
+import HomeNavigation from './HomeNavigation';
+import SettingTabNavigation from './SettingTabNavigation';
 // import { useCallback, useEffect, useState } from 'react';
 // import {
 //   checkNewFriendItem,
@@ -46,12 +48,13 @@ function TabNavigation() {
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.primary,
         tabBarStyle: { backgroundColor: colors.sureface },
-        tabBarPressColor: colors.borderColor
+        tabBarPressColor: colors.borderColor,
+        tabBarIndicatorStyle: { backgroundColor: colors.primary }
       }}
     >
       <tab.Screen
         name='Home'
-        component={HomeTab}
+        component={HomeNavigation}
         options={{
           tabBarIcon: ({ focused, color }) =>
             focused ? (
@@ -90,8 +93,8 @@ function TabNavigation() {
         }}
       />
       <tab.Screen
-        name='Setting'
-        component={SettingTab}
+        name='SettingTabNavigation'
+        component={SettingTabNavigation}
         options={{
           tabBarIcon: ({ focused, color }) =>
             focused ? (

@@ -5,7 +5,7 @@ import {
   type IGetListResponse
 } from 'src/interfaces/common.interface';
 import { trimData } from 'src/utils/helper';
-import { axiosInstance } from 'src/navigation/AppNavigation';
+import { axiosInstance, } from 'src/navigation/AppNavigation';
 interface IServiceOption {
   baseUrl: string;
 }
@@ -76,10 +76,8 @@ export class ApiService {
 
 export const postMethodApi = async function <P, T>(
   client: string,
-  data?: P
-): Promise<IBodyResponse<T>> {
-  console.log('client', client);
-  console.log('data', data);
+  data?: P,
+): Promise<any> {
   return await axiosInstance.post(client, data);
 };
 

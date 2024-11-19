@@ -90,3 +90,7 @@ export enum classType {
 export enum surveyStatus {
   
 }
+export enum Roles {
+  LECTURER = 'LECTURER',
+  STUDENT = 'STUDENT',  
+}

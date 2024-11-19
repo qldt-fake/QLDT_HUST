@@ -7,7 +7,12 @@ import DateTimePicker from 'react-native-date-picker';
 import { getClassApi, IClassItem, updateClassApi } from 'src/services/class.service';
 import { at, set } from 'lodash';
 import { ReponseCode } from 'src/common/enum/reponseCode';
-const EditClass = ({ classId }) => {
+import { RootState } from 'src/redux';
+import { useSelector } from 'react-redux';
+const EditClass = ({ route }) => {
+  const { classId } = route.params;
+  const user = useSelector((state: RootState) => state.auth.user);
+  const { token, role, id } = user;
   const [editClass, setEditClass] = useState<IClassItem>({});
   const [selectedPeriod, setSelectedPeriod] = useState<'start_date' | 'end_date'>('start_date');
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
@@ -25,10 +30,10 @@ const EditClass = ({ classId }) => {
     const fetchClassInfo = async () => {
       try {
         const res = await getClassApi({
-          token: '93fxxl',
-          role: 'LECTURER',
+          token: token,
+          role: role,
           class_id: classId,
-          account_id: '245'
+          account_id: id,
         });
         if (res && res.data) {
           const data = res.data;
@@ -69,7 +74,6 @@ const EditClass = ({ classId }) => {
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Edit class' />
       <View style={styles.body}>
         <TextInput
           value={editClass.class_id}

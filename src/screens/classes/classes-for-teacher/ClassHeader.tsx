@@ -1,36 +1,46 @@
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { useNavigation } from '@react-navigation/native';
+
 
 export interface ClassHeaderProps {
   title?: string;
   textLogo?: string;
 }
 
-const defaultProps = {
-  textLogo: "HUST"
-}
+// const defaultProps = {
+//   textLogo: "HUST"
+// }
 
 const ClassHeader = (props: ClassHeaderProps) => {
+  const navigation = useNavigation();
+  
+  // const handleBack = () => {
+  //   console.log('back');
+  //   navigation.goBack();
+  // }
   return (
     <View style={styles.header}>
       <View style={styles.row}>
-        <Icon name='long-arrow-left' size={20} color='#fff' />
-        <Text style={styles.logo}>{props?.textLogo}</Text>
+        {/* <TouchableOpacity style = {{height : "100%"}} onPress={handleBack}><Icon name='long-arrow-left' size={30} color='#fff'/></TouchableOpacity> */}
+       
+        {!!props?.textLogo && <Text style={styles.logo}>{props?.textLogo}</Text>}
       </View>
       {!!props?.title && <Text style={styles.title}>{props?.title}</Text>}
     </View>
   );
 };
 
-ClassHeader.defaultProps = defaultProps
+// ClassHeader.defaultProps = defaultProps
 
 const styles = StyleSheet.create({
   header: {
-    paddingVertical: 20,
+    paddingVertical: 10,
     alignItems: 'center',
-    width: '100%',
-    backgroundColor: '#b30000',
+    marginHorizontal: 0,
+    // width: '100%',
+    // backgroundColor: '#b30000',
     paddingHorizontal: 30,
     rowGap: 5
   },
@@ -50,7 +60,6 @@ const styles = StyleSheet.create({
     textShadowRadius: 5,
     flex: 1,
     textAlign: 'center',
-    marginLeft: -20
   },
   title: {
     fontSize: 20,

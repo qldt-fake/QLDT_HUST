@@ -17,10 +17,11 @@ import { IClassItem } from 'src/services/class.service';
 import { classType } from 'src/common/enum/commom';
 import { useSelector } from 'react-redux';
 import dayjs, { Dayjs } from 'dayjs';
+import { selectAuth } from 'src/redux/slices/authSlice';
 
 const CreateClass = () => {
-  const user = useSelector(state => state.auth.user);
-  const { role, token, id } = user;
+  const auth = useSelector(selectAuth)
+  const user = auth.user
   const [newClass, setNewClass] = useState<IClassItem>({
     class_id: '',
     class_name: '',
@@ -28,7 +29,7 @@ const CreateClass = () => {
     max_student_amount: 0,
     start_date: null,
     end_date: null,
-    token: token
+    token: user?.token
   });
 
   const [selectedPeriod, setSelectedPeriod] = useState<'start_date' | 'end_date'>('start_date');
@@ -61,7 +62,7 @@ const CreateClass = () => {
     }
     if (
       newClass.max_student_amount !== null &&
-      (newClass.max_student_amount < 1 || newClass.max_student_amount > 50)
+      (newClass.max_student_amount! < 1 || newClass.max_student_amount! > 50)
     ) {
       Alert.alert('Validation Error', 'Max student amount must be between 1 and 50');
       return false;
@@ -76,8 +77,8 @@ const CreateClass = () => {
     try {
       const requestClass = {
         ...newClass,
-        start_date: dayjs(newClass.start_date).format('YYYY-MM-DD'),
-        end_date: dayjs(newClass.end_date).format('YYYY-MM-DD')
+        start_date: dayjs(newClass.start_date as Date).format('YYYY-MM-DD'),
+        end_date: dayjs(newClass.end_date as Date).format('YYYY-MM-DD')
       };
       console.log(requestClass);
       const res = await createClassApi(requestClass);
@@ -108,7 +109,7 @@ const CreateClass = () => {
         />
         {isOpenDatePicker && (
           <DateTimePicker
-            date={newClass[selectedPeriod] ?? new Date()}
+            date={newClass[selectedPeriod] as Date ?? new Date()}
             onConfirm={date => {
               setIsOpenDatePicker(false);
               handleChange(selectedPeriod, date);
@@ -146,8 +147,10 @@ const CreateClass = () => {
           style={styles.input}
           placeholder='Số lượng sinh viên tối đa *'
           keyboardType='numeric'
-          onChangeText={text => handleChange('max_student_amount', parseInt(text))}
-        />
+          onChangeText={text => {
+            const parsedValue = parseInt(text, 10);
+            handleChange('max_student_amount', isNaN(parsedValue) ? '' : parsedValue.toString());
+          }}        />
         <TouchableOpacity style={styles.submitButton} onPress={handleCreateClass}>
           <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
         </TouchableOpacity>

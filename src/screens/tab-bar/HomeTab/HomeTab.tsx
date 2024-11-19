@@ -19,7 +19,7 @@ export default function HomeTab() {
         <Text style={styles.description}>Tra cứu thời khóa biểu, lịch thi</Text>
       </Card>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(ClassNavigationName.ClassList as keyof typeof ClassNavigationName)}>
+      <Card style={styles.card} onPress={() => navigation.navigate(ClassNavigationName.ClassList as never)}>
         <View style={styles.iconContainer}>
           <IconButton icon='account-cog' iconColor={color.red} size={50} />
         </View>

@@ -6,21 +6,24 @@ import ExcerciseCard from './ExcerciseCard';
 import { getSurveyListApi } from 'src/services/survey.service';
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { color } from 'src/common/constants/color';
 import { Roles } from 'src/common/enum/commom';
 import { ClassNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
-const Assignment = ({ classId }) => {
-  const [assignmentList, setAssignmentList] = React.useState([]);
-  const navigation = useNavigation();
+import { selectAuth } from 'src/redux/slices/authSlice';
 
-  const user = useSelector(state => state.auth.user);
-  const { token, role } = user;
+const Assignment = (args: { classId: string }) => {
+  const { classId } = args
+  const [assignmentList, setAssignmentList] = React.useState<any[]>([]);
+  const navigation: NavigationProp<SurveyType> = useNavigation();
+
+  const auth = useSelector(selectAuth);
+
   useEffect(() => {
     const fetchAllSurveys = async () => {
       const res = await getSurveyListApi({
-        token: token,
+        token: auth?.user?.token,
         class_id: classId
       });
       console.log(res);
@@ -64,10 +67,10 @@ const Assignment = ({ classId }) => {
       </View>
       <FlatList
         data={assignmentList}
-        renderItem={data => <ExcerciseCard props={{...(data.item), setAssignmentList}} />}
+        renderItem={data => <ExcerciseCard props={{ ...(data.item!), setAssignmentList }} />}
         keyExtractor={item => item.toString()}
       />
-      {role === Roles.LECTURER &&
+      {auth?.user?.role === Roles.LECTURER &&
         <TouchableOpacity
           style={styles.floatingButton}
           onPress={() => navigation.navigate(SurveyNavigationName.CreateSurvey, { classId })}

@@ -2,36 +2,38 @@ import { View, Text, StyleSheet, TouchableOpacity, Modal, Alert } from 'react-na
 import React, { useState } from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { color } from 'src/common/constants/color';
-import { useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux';
 import { Roles } from 'src/common/enum/commom';
 import { ClassNavigationName } from 'src/common/constants/nameScreen';
 import BaseModal from 'src/components/BaseModal';
 import { deleteClassApi } from 'src/services/class.service';
-
-const ClassCard = ({ props }) => {
+import { selectAuth } from 'src/redux/slices/authSlice';
+import { CODE_OK } from 'src/common/constants/responseCode';
+const ClassCard = (args: { props: any }) => {
+  const { props } = args
   const { class_name, class_id, class_type, start_date, end_date, setClassList } = props;
   console.log("ClassId: ", class_id);
-  const navigation = useNavigation();
-  const user = useSelector((state: RootState) => state.auth.user);
-  const { role, token, id  } = user;
+  const navigation: NavigationProp<ClassNavigationType> = useNavigation();
+  const auth = useSelector(selectAuth)
+  const user = auth.user
   const [modalVisible, setModalVisible] = useState(false);
 
   const callDeleteClassApi = async () => {
     const res = await deleteClassApi({
-      token: token,
-      role: role,
-      account_id: id,
+      token: user?.token!,
+      role: user?.role,
+      account_id: user?.id,
       class_id: class_id
     });
     console.log(res);
-    if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
+    if (res && res.data && res.meta.code === CODE_OK) {
       Alert.alert('Delete Class', 'Delete class successfully');
-      setClassList((prev) => prev.filter((item) => item.class_id !== class_id));
+      setClassList((prev: any) => prev.filter((item: any) => item.class_id !== class_id));
     }
   }
-  
+
 
   const handleEdit = () => {
     setModalVisible(false);
@@ -60,9 +62,9 @@ const ClassCard = ({ props }) => {
     <View style={styles.wrapper}>
       <View
         style={styles.container}
-       
+
       >
-        <TouchableOpacity style={styles.body}  onPress={() => navigation.navigate(ClassNavigationName.ClassDetail, { classId: class_id })}>
+        <TouchableOpacity style={styles.body} onPress={() => navigation.navigate(ClassNavigationName.ClassDetail, { classId: class_id })}>
           <Text style={styles.text}>{class_id + '-' + class_name}</Text>
           <View style={styles.classTimeBox}>
             <View style={styles.schedule}>
@@ -79,8 +81,8 @@ const ClassCard = ({ props }) => {
             </View>
           </View>
         </TouchableOpacity>
-        <View style={[styles.iconBox, role === Roles.LECTURER ? { marginBottom: 'auto' } : {}]}>
-          {role === Roles.STUDENT ? (
+        <View style={[styles.iconBox, user?.role === Roles.LECTURER ? { marginBottom: 'auto' } : {}]}>
+          {user?.role === Roles.STUDENT ? (
             <Icon name='chevron-right' size={14} color={color.black} />
           ) : (
             <TouchableOpacity onPress={() => setModalVisible(true)}>

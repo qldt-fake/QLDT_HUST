@@ -10,9 +10,11 @@ import { ClassNavigationName, SurveyNavigationName } from 'src/common/constants/
 import { useNavigation } from '@react-navigation/native';
 import { Roles } from 'src/common/enum/commom';
 import { RootState } from 'src/redux';
+import { ActivityIndicator } from 'react-native';
+
 const ClassListPage = () => {
-  const [classList, setClassList] = React.useState([]);
-  const user = useSelector((state : RootState) => state.auth.user);
+  const [classList, setClassList] = React.useState<any[]>([]);
+  const user = useSelector((state: RootState) => state.auth.user);
   const { token, role, id } = user || {};
   const navigation = useNavigation();
   useEffect(() => {
@@ -34,11 +36,18 @@ const ClassListPage = () => {
       {/* <ClassHeader textLogo='Thông tin lớp' /> */}
       <Text style={styles.title}>Danh sách lớp trong học kỳ :</Text>
       <View style={styles.body}>
-        <FlatList
-          contentContainerStyle={{ gap: 10 }}
-          data={classList}
-          renderItem={data => <ClassCard props={{ ...(data.item), setClassList }} />}
-        />
+        <>
+          {classList.length > 0 ? (
+            <FlatList
+              contentContainerStyle={{ gap: 10 }}
+              data={classList}
+              renderItem={data => <ClassCard props={{ ...(data.item), setClassList }} />}
+            />
+          ) : (
+            <View style={styles.loaderContainer}>
+              <ActivityIndicator size="large" color="#D3310B" />
+            </View>)}
+        </>
       </View>
       {role === Roles.LECTURER &&
         <Pressable
@@ -53,6 +62,9 @@ const ClassListPage = () => {
 };
 
 const styles = StyleSheet.create({
+  loaderContainer: {
+   marginTop: 20
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',

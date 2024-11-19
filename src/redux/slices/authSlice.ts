@@ -156,7 +156,6 @@ const authSlice = createSlice({
 
     build.addCase(login.pending, state => {
       state.isLoading = true;
-      state.isAccountLocked = true;
     });
 
     //logout

@@ -7,9 +7,11 @@ import { ReponseCode } from 'src/common/enum/reponseCode';
 import { Checkbox } from 'react-native-paper';
 import { formatDate } from 'src/utils/helper';
 import { set } from 'lodash';
-
+import { selectAuth } from 'src/redux/slices/authSlice';
+import { useSelector } from 'react-redux';
 const RegisterClass = () => {
-  
+  const auth = useSelector(selectAuth)
+  const user = auth.user
   const [tempClassList, setTempClassList] = React.useState([]);
   const [searchText, setSearchText] = React.useState('');
 
@@ -33,18 +35,19 @@ const RegisterClass = () => {
   // Fetch class information and add to tempClassList
   const handleSearchClass = async () => {
     if (!searchText.trim()) return;
-    
+
     try {
-      const response = await getBasicClassInfoApi({ class_id: searchText,
-        token: '9mJVhM',
-        role: 'STUDENT',
-        account_id: '245'
-       });
+      const response = await getBasicClassInfoApi({
+        class_id: searchText,
+        token: user?.token,
+        role: user?.role,
+        account_id: user?.id
+      });
       console.log(response);
-      
+
       if (response && response.data && response.meta.code === ReponseCode.CODE_OK) {
         const isClassAdded = tempClassList.some(item => item.class_id === response.data.class_id);
-        
+
         if (!isClassAdded) {
           const {
             class_id,
@@ -77,15 +80,15 @@ const RegisterClass = () => {
   const handleRegisterClasses = async () => {
     try {
       const response = await registerClassApi({
-        token: '9mJVhM',
+        token: user?.token,
         class_ids: tempClassList.map(item => item.class_id)
       }
       );
-      console .log(tempClassList.map(item => item.class_id));
+      console.log(tempClassList.map(item => item.class_id));
       console.log(response);
 
-  
-      
+
+
       if (response.meta.code === ReponseCode.CODE_OK) {
         Alert.alert('Thành công', 'Đăng ký lớp thành công');
         const updatedStatusClass = response.data
@@ -141,7 +144,7 @@ const RegisterClass = () => {
                   <Text style={styles.classItemText}>{item.class_name}</Text>
                   <Text style={styles.classItemText}>{formatDate(item.start_date)}</Text>
                   <Text style={styles.classItemText}>{formatDate(item.end_date)}</Text>
-                  <Text style={styles.classItemText}>{item.status?? item.status}</Text>
+                  <Text style={styles.classItemText}>{item.status ?? item.status}</Text>
                 </View>
               )}
             />

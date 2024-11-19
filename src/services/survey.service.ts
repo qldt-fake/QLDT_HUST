@@ -83,10 +83,10 @@ const editSurveyApi = async (payload: CreateSurveyPayload) => {
 }
 
 
-export const getSurveyListApi = async (data: any): Promise<IBodyResponse<any>> => {
+export const getSurveyListApi = async (data: any): Promise<IBodyResponse<any,any>> => {
   return postMethodApi(SurveyApi.GET_ALL_SURVEYS, data);
 }
 
-export const deleteSurveyApi = async (data: any): Promise<IBodyResponse<any>> => {
+export const deleteSurveyApi = async (data: any): Promise<IBodyResponse<any,any>> => {
   return postMethodApi(SurveyApi.DELETE_SURVEY, data);
 }

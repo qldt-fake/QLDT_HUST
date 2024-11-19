@@ -33,7 +33,7 @@ const FileScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
 
-  const openModal = file => {
+  const openModal = (file: any) => {
     setSelectedFile(file);
     setModalVisible(true);
   };

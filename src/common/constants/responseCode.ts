@@ -3,12 +3,12 @@ export const CODE_OK = 1000;
 export const POST_NOT_EXISTED = 9992;
 export const POST_INVALID_POLICY = 1011;
 export const POST_LIMIT_ACCESS_COUNTRY = 1012;
-
+export const PASSWORD_INCORECT = 1017;
 export const NOT_ENOUGHT_COINS = 1013;
 
+export const LOCKED = 9991;
 export const INCORRECT_CODE = 9993;
 export const NO_DATA = 9994;
-
 export const USER_NOT_FOUND = 9995;
 export const USER_IS_EXISTED = 9996;
 

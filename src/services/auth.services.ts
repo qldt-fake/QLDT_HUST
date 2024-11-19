@@ -65,7 +65,7 @@ export const checkVerifyCodeApi = async (
 
 export const changPasswordApi = async (
   data: IChangePasswordBody
-): Promise<IBodyResponse<IChangePasswordResponseData>> => {
+): Promise<any> => {
   return postMethodApi(AuthAPi.CHANGEPASSWORD, data);
 };
 

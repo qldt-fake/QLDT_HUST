@@ -1,7 +1,7 @@
 import { StyleSheet, TouchableOpacity, View, ScrollView, BackHandler } from 'react-native';
 import { Avatar, Button, Card, Divider, IconButton, List, Text, TouchableRipple } from 'react-native-paper';
 import { color } from 'src/common/constants/color';
-import { getAvatarUri } from 'src/utils/helper';
+import { convertGoogleDriveLink, getAvatarUri } from 'src/utils/helper';
 import IconFont from 'react-native-vector-icons/FontAwesome5';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import globalStyles from 'src/common/styles/globalStyles';
@@ -94,11 +94,11 @@ function SettingTab() {
       <Card style={styles.wrapperAcountCard}>
         <TouchableRipple onPress={onPressProfile}>
           <Card.Title
-            title={<Text variant='titleMedium'>{auth.user?.user_name}</Text>}
+            title={<Text variant='titleMedium'>{auth.user?.name}</Text>}
             left={props => (
               <Avatar.Image
                 {...props}
-                source={getAvatarUri(auth.user?.avatar as string)}
+                source={getAvatarUri(convertGoogleDriveLink(auth.user?.avatar) as string)}
                 size={40}
               />
             )}

@@ -19,8 +19,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   profileImage: {
-    width: 80,
-    height: 80,
+    width: 60,
+    height: 60,
     borderRadius: 40,
     marginRight: 16,
     borderColor: '#ddd',

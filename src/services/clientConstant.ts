@@ -2,7 +2,7 @@
 export enum AuthAPi {
   LOGIN = '/it4788/login',
   SIGNUP = '/it4788/signup',
-  LOGOUT = '/logout',
+  LOGOUT = '/it4788/logout',
   CHANGEPASSWORD = '/it4788/change_password',
   GETVERIFYTOKEN = '/it4788/get_verify_code',
   CHECKVERIFYTOKEN = '/it4788/check_verify_code',

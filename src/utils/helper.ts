@@ -72,6 +72,16 @@ export const getAvatarUri = (uri: string) =>
 
 export const getCoverUri = (uri: string) =>
   uri ? { uri: uri } : require('src/assets/cover-default.jpg');
+export const convertGoogleDriveLink = (uri?:string) => {
+  if(!uri) return ''
+  const fileIdMatch = uri.match(/\/d\/(.*?)\//);
+  if (fileIdMatch && fileIdMatch[1]) {
+    return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
+  } else {
+    console.error("Invalid Google Drive URL");
+    return null;
+  }
+}
 
 export function removeDiacritics(str: string) {
   const AccentsMap = [
@@ -134,18 +144,16 @@ export const formatDate = (date: string) => {
   const dayOfYear = Math.floor(
     (Date.UTC(dateObject.getUTCFullYear(), dateObject.getUTCMonth(), dateObject.getUTCDate()) -
       Date.UTC(dateObject.getUTCFullYear(), 0, 0)) /
-      86400000
+    86400000
   );
   if (dateObject.getUTCDay() < 5) {
     return `T${dateObject.getUTCDay()} LÚC ${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;
   } else if (dayOfYear === 365) {
-    return `${dateObject.getUTCDate()} THG ${
-      dateObject.getUTCMonth() + 1
-    } LÚC ${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;
+    return `${dateObject.getUTCDate()} THG ${dateObject.getUTCMonth() + 1
+      } LÚC ${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;
   } else {
-    return `${dateObject.getUTCDate()} THG ${
-      dateObject.getUTCMonth() + 1
-    }, ${dateObject.getUTCFullYear()}`;
+    return `${dateObject.getUTCDate()} THG ${dateObject.getUTCMonth() + 1
+      }, ${dateObject.getUTCFullYear()}`;
   }
 };
 

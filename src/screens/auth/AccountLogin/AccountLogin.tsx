@@ -33,9 +33,9 @@ function AccountLogin() {
   const { handleSubmit, setValue } = methods;
 
   const onSubmit = async (data: { password: string }) => {
-    const uuid = await getUniqueId();
+    const deviceId = await getUniqueId();
     Keyboard.dismiss();
-    dispatch(login({ ...data, uuid, email }));
+    dispatch(login({ ...data, deviceId, email }));
   };
 
   const onBackdropPress = () => {

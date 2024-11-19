@@ -35,7 +35,7 @@ function VerifyOTPScreen() {
       if (res.code !== CODE_OK) {
         return setTextError(res.message);
       }
-      navigation.navigate('SaveInfoAccountScreen');
+      navigation.navigate('SaveInfoAccountScreen', { email, password });
       setIsLoading(false);
     } catch (err) {
       console.log(err);
@@ -46,10 +46,10 @@ function VerifyOTPScreen() {
   const onGetVerifyCode = async () => {
     try {
       setIsLoadingGetCode(true);
-      console.log(email, password);
-
       const res = await getVerifyCodeApi({ email, password });
-      if (res.status_code !== CODE_OK) {
+      console.log(res);
+
+      if (res.code !== CODE_OK) {
         return setTextError(res.message)
       }
       setValue('otpCode', res.verify_code);

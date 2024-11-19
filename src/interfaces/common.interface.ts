@@ -9,13 +9,13 @@ export interface IErrorData {
 }
 
 export interface IGetVerifyCodeData {
-  status_code: number;
+  code: number;
   message: string;
   verify_code: string;
 }
 export interface IBodyResponse<T> extends AxiosResponse {
-  success: boolean;
-  status_code: ReponseCode;
+  success?: boolean;
+  code: ReponseCode;
   message: string;
   data: T;
   verify_code?: string;
@@ -39,11 +39,12 @@ export interface IUser {
   id: number;
   ho: string;
   ten: string;
-  user_name: string;
+  name: string;
+  email?: string;
   token: string;
   role: string;
   status: string;
-  avatar: string | null;
+  avatar: string | '';
   class_list: any[];
 }
 

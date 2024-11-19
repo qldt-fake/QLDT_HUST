@@ -44,11 +44,10 @@ function FirstScreen() {
       setIsLoading(true);
       const { ho, ten, email, password, role } = data;
       const res = await signUpApi({ ho, ten, email, password, uuid, role });
-      console.log(uuid);
       
       if (!res.success) {
-        if (res.status_code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');
-        if (res.status_code === NO_DATA) return setTextError(res.message);
+        if (res.code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');
+        if (res.code === NO_DATA) return setTextError(res.message);
       }
       else {
         setVerifyCode(res.verify_code || '')

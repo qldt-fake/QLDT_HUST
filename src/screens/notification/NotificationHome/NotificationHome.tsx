@@ -149,7 +149,7 @@ const NotificationHome: React.FC = () => {
     };
 
     useEffect(() => {
-        console.log(user.token)
+        console.log(user?.token)
         loadNotifications();
     }, []);
 

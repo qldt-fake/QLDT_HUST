@@ -25,7 +25,8 @@ export interface ICheckVerifyCodeBody {
 }
 
 export interface IChangePasswordBody {
-  password: string;
+  token: string;
+  old_password: string;
   new_password: string;
 }
 

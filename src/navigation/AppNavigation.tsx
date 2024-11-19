@@ -77,18 +77,18 @@ function AppNavigation() {
         }}
       >
         {auth.isAuthenticated ? (
-          auth.user?.active === AccountStatus.Inactive ? (
+          auth.user?.status === AccountStatus.Inactive ? (
             <Stack.Screen
               name={AppNaviagtionName.VerifyOTPAfterLogin}
               component={VerifyOTPAfterLogin}
               options={{ headerShown: false }}
             />
-          ) : auth.user?.active === AccountStatus.Pending ? (
-            <Stack.Screen
-              name={AppNaviagtionName.ChangeProfileAfterSign}
-              options={{ headerShown: false }}
-              component={ChangeInfoAfterSignUpScreen}
-            />
+            // ) : auth.user?.active === AccountStatus.Pending ? (
+            //   <Stack.Screen
+            //     name={AppNaviagtionName.ChangeProfileAfterSign}
+            //     options={{ headerShown: false }}
+            //     component={ChangeInfoAfterSignUpScreen}
+            //   />
           ) : (
             <>
               <Stack.Screen
@@ -96,14 +96,15 @@ function AppNavigation() {
                 options={{ headerShown: false, header: () => <Header /> }}
                 component={TabNavigationWrapper}
               />
+              
               <Stack.Screen
                 name={AppNaviagtionName.SettingNavigation}
                 component={SettingNavigationWrapper}
               />
-                <Stack.Screen
-                    name={AppNaviagtionName.NotificationNavigation}
-                    component={NotificationNavigationWrapper}
-                />
+              <Stack.Screen
+                name={AppNaviagtionName.NotificationNavigation}
+                component={NotificationNavigationWrapper}
+              />
               <Stack.Screen
                 name={AppNaviagtionName.SearchNavigation}
                 component={SearchNavigationWrapper}
@@ -130,7 +131,7 @@ function AppNavigation() {
       />
       <Snackbar
         visible={!isConnected as boolean}
-        onDismiss={() => {}}
+        onDismiss={() => { }}
         action={{
           label: 'Thử lại',
           onPress: () => {

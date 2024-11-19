@@ -13,9 +13,10 @@ import BaseModalError from 'src/components/BaseModalError';
 import { changPasswordApi } from 'src/services/auth.services';
 import { useAppSelector } from 'src/redux';
 import { selectAuth } from 'src/redux/slices/authSlice';
-import { saveTokenIntoKeychain } from 'src/utils/kechain';
-
-const SUCCESS_MESSAGE: string = 'Thành công';
+import { getTokenFromKeychain, saveTokenIntoKeychain } from 'src/utils/kechain';
+import { CODE_OK } from 'src/common/constants/responseCode';
+import BaseModalSuccess from 'src/components/BaseModalSuccess';
+const SUCCESS_MESSAGE: string = 'Đổi mật khẩu thành công';
 
 const changPasswordSchema = yup.object({
   currPassword: yup
@@ -38,27 +39,35 @@ interface IChangePassword {
 function SettingPassword() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertText, setAlertText] = useState<string>('');
-
+  const [successttext, setSuccesstext] = useState('')
   const navigation: NavigationProp<SettingNavigationType> = useNavigation();
   const auth = useAppSelector(selectAuth);
 
   const onPressCancelButton = () => navigation.goBack();
   const methods = useForm({ resolver: yupResolver(changPasswordSchema) });
   const { handleSubmit } = methods;
+  const onPressSuccess = () => {
+    navigation.goBack();
+  }
   const onSubmit = async (data: IChangePassword) => {
+    const token2 = auth?.user?.token
+    console.log(token2);
+
     try {
       setIsLoading(true);
       const res = await changPasswordApi({
-        password: data.currPassword,
+        token: token2!,
+        old_password: data.currPassword,
         new_password: data.newPassword
       });
-      if (!res.success) {
+      if (res.code !== CODE_OK) {
         setAlertText(res.message);
         return;
       }
-      await saveTokenIntoKeychain(auth.user?.id as string, res.data.token);
-      setAlertText(SUCCESS_MESSAGE);
+      setSuccesstext(SUCCESS_MESSAGE);
     } catch (err) {
+      console.log(err);
+      
       setAlertText('Vui lòng kiểm tra kết nối internet');
     }
   };
@@ -133,6 +142,11 @@ function SettingPassword() {
         title={alertText}
         isVisible={!!alertText}
         onBackdropPress={onBackdropPressModal}
+      />
+      <BaseModalSuccess
+        title={successttext}
+        isVisible={!!successttext}
+        onOkPress={onPressSuccess}
       />
     </>
   );

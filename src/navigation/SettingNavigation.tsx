@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TransitionPresets } from '@react-navigation/stack';
-import { SettingNavigationName } from 'src/common/constants/nameScreen';
+import { ProfileNavigationName, SettingNavigationName } from 'src/common/constants/nameScreen';
 import WraperScreen from 'src/components/WraperScreen';
 import {
   SettingScreen,
@@ -13,6 +13,7 @@ import {
   SettingSecurityLogin,
   SearchUserScreen
 } from 'src/screens/setting';
+import ProfileScreen from 'src/screens/tab-bar/SettingTab/components/Profile/profile';
 
 const Stack = createNativeStackNavigator();
 function SettingNavigation() {
@@ -71,6 +72,8 @@ function SettingNavigation() {
         component={SearchUserScreen}
         options={{ headerShown: false }}
       />
+      <Stack.Screen name={SettingNavigationName.Profile} options={{ title: 'Thông tin tài khoản' }} component={ProfileScreen}/>
+      {/* <Stack.Screen name={SettingNavigationName.SettingPassword} options={{ headerShown: true, title: 'Cài đặt' }} component={SettingPassword} /> */}
     </Stack.Navigator>
   );
 }

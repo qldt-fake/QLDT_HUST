@@ -1,5 +1,14 @@
 import { StyleSheet, TouchableOpacity, View, ScrollView, BackHandler } from 'react-native';
-import { Avatar, Button, Card, Divider, IconButton, List, Text, TouchableRipple } from 'react-native-paper';
+import {
+  Avatar,
+  Button,
+  Card,
+  Divider,
+  IconButton,
+  List,
+  Text,
+  TouchableRipple
+} from 'react-native-paper';
 import { color } from 'src/common/constants/color';
 import { convertGoogleDriveLink, getAvatarUri } from 'src/utils/helper';
 import IconFont from 'react-native-vector-icons/FontAwesome5';
@@ -67,7 +76,6 @@ function SettingTab() {
   //     iconName: 'user-cog',
   //     onPress: onPressSettingItem
   //   },
-
   //   {
   //     title: 'Thông báo',
   //     iconName: 'volume-up',
@@ -115,8 +123,7 @@ function SettingTab() {
             )}
           />
         </TouchableRipple>
-        <TouchableRipple onPress={onPressChangePass}
-        >
+        <TouchableRipple onPress={onPressChangePass}>
           <Card.Title
             title={<Text variant='titleMedium'>Đổi mật khẩu</Text>}
             left={props => <List.Icon {...props} icon='lock' color={color.primary} />}
@@ -141,7 +148,6 @@ function SettingTab() {
         /> */}
       </Card>
       <List.Section>
-
         <Divider />
 
         {/* <List.Accordion

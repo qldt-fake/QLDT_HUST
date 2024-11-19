@@ -24,6 +24,7 @@ import { useNetInfoInstance } from '@react-native-community/netinfo';
 import ClassListPage from 'src/screens/classes/classes-for-teacher/ClassListPage';
 import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
 import ClassNavigation from './ClassNavigation';
+import NotificationNavigationWrapper from "src/navigation/NotificationNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -79,28 +80,33 @@ function AppNavigation() {
         }}
       >
         {auth.isAuthenticated ? (
-          auth.user?.active === AccountStatus.Inactive ? (
+          auth.user?.status === AccountStatus.Inactive ? (
             <Stack.Screen
               name={AppNaviagtionName.VerifyOTPAfterLogin}
               component={VerifyOTPAfterLogin}
               options={{ headerShown: false }}
             />
-          ) : auth.user?.active === AccountStatus.Pending ? (
-            <Stack.Screen
-              name={AppNaviagtionName.ChangeProfileAfterSign}
-              options={{ headerShown: false }}
-              component={ChangeInfoAfterSignUpScreen}
-            />
+            // ) : auth.user?.active === AccountStatus.Pending ? (
+            //   <Stack.Screen
+            //     name={AppNaviagtionName.ChangeProfileAfterSign}
+            //     options={{ headerShown: false }}
+            //     component={ChangeInfoAfterSignUpScreen}
+            //   />
           ) : (
-            <>  
+            <>
               <Stack.Screen
                 name={AppNaviagtionName.TabNavigation}
                 options={{ headerShown: false, header: () => <Header /> }}
                 component={TabNavigationWrapper}
               />
+              
               <Stack.Screen
                 name={AppNaviagtionName.SettingNavigation}
                 component={SettingNavigationWrapper}
+              />
+              <Stack.Screen
+                name={AppNaviagtionName.NotificationNavigation}
+                component={NotificationNavigationWrapper}
               />
               <Stack.Screen
                 name={AppNaviagtionName.SearchNavigation}
@@ -131,7 +137,7 @@ function AppNavigation() {
       />
       <Snackbar
         visible={!isConnected as boolean}
-        onDismiss={() => {}}
+        onDismiss={() => { }}
         action={{
           label: 'Thử lại',
           onPress: () => {

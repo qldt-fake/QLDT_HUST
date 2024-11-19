@@ -56,13 +56,19 @@ type AppNavigationType = {
   ChangeProfileAfterSign: undefined;
   NotFoundScreen: undefined;
   AddMoneyNavigation: { screen: AddMoneyNavigationName };
+  NotificationNavigation: {
+    screen: NotificationNavigationName, params: {
+      title: string;
+      content: string;
+    }
+  };
 };
 
 type AuthNavigationType = {
   HomeAuth: undefined;
   Login: undefined;
   VerifyOTPScreen: { verifyCode: string; email: string, password: string };
-  SaveInfoAccountScreen: undefined;
+  SaveInfoAccountScreen: { email: string, password: string };
   ForgetPasswordScreen: undefined;
   AccountLogin: {
     username: string;
@@ -143,6 +149,12 @@ type AddMoneyNavigationType = {
 type ReportNavigationType = {
   ReportScreen: { id: string; username: string; userId: string };
 };
+type NotificationNavigationType = {
+  NotificationDetail: {
+    title: string;
+    content: string;
+  };
+}
 
 type HomeNavigationType = {
   Class: undefined;

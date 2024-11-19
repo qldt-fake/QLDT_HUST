@@ -4,7 +4,7 @@ export const baseUrl: string = 'http://160.30.168.228:8080/it5023e'
 export enum AuthAPi {
   LOGIN = '/it4788/login',
   SIGNUP = '/it4788/signup',
-  LOGOUT = '/logout',
+  LOGOUT = '/it4788/logout',
   CHANGEPASSWORD = '/it4788/change_password',
   GETVERIFYTOKEN = '/it4788/get_verify_code',
   CHECKVERIFYTOKEN = '/it4788/check_verify_code',
@@ -69,8 +69,10 @@ export enum CommentApi {
 }
 
 export enum NotificationApi {
-  CHECK_NEW_iTEMS = '/check_new_items',
-  GET_NOTIFICATION = '/get_notification'
+  SEND_NOTIFICATIONS = '/it5023e/send_notification',
+  GET_NOTIFICATIONS = '/it5023e/get_notifications',
+  MARK_NOTIFICATION_AS_READ = '/it5023e/mark_notification_as_read',
+  GET_UNREAD_NOTIFICATION_COUNT = '/it5023e/get_unread_notification_count'
 }
 
 export enum ClassApi {
@@ -83,6 +85,8 @@ export enum ClassApi {
   REGISTER_CLASS = '/it5023e/register_class',
   GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info',
 }
+
+
 
 export enum SurveyApi {
   CREATE_SURVEY = '/it5023e/create_survey',

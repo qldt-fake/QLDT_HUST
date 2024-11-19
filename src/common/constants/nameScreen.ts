@@ -14,7 +14,8 @@ export enum AppNaviagtionName {
   VerifyOTPAfterLogin = 'VerifyOTPAfterLogin',
   ChangeProfileAfterSign = 'ChangeProfileAfterSign',
   NotFoundScreen = 'NotFoundScreen',
-  HomeNavigationName = 'HomeNavigationName'
+  HomeNavigationName = 'HomeNavigationName',
+  NotificationNavigation = 'NotificationNavigation'
 }
 
 export enum AuthNavigationName {
@@ -42,7 +43,8 @@ export enum SettingNavigationName {
   SettingSecurityLogin = 'SettingSecurityLogin',
   SettingInfoName = 'SettingInfoName',
   BlockFriendScreen = 'BlockFriendScreen',
-  SearchUserScreen = 'SearchUserScreen'
+  SearchUserScreen = 'SearchUserScreen',
+  Profile = 'Profile'
 }
 
 export enum FriendNavigationName {
@@ -84,25 +86,4 @@ export enum ChatNavigationName {
 
 export enum AddMoneyNavigationName {
   AddMoneyScreen = 'AddMoneyScreen'
-}
-export enum HomeNavigationName {
-  Home = 'HomeTab',
-  Class = 'Class',
-}
-
-export enum ClassNavigationName {
-  Class = 'Class',
-  ClassDetail = 'ClassDetail',
-  ClassList = 'ClassList',
-  CreateClass = 'CreateClass',
-  EditClass = 'EditClass',
-  RegisterClass = 'RegisterClass',
-}
-
-export enum SurveyNavigationName {
-  Survey = 'Survey',
-  SurveyList = 'SurveyList',
-  CreateSurvey = 'CreateSurvey',
-  EditSurvey = 'EditSurvey',
-  SurveyDetail = 'SurveyDetail',
 }

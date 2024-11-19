@@ -20,7 +20,7 @@ export enum NotificationType {
 export enum AccountStatus {
   Pending = '-1',
   Inactive = '0',
-  Active = '1',
+  Active = 'Kích hoạt',
   Banned = '2'
 }
 

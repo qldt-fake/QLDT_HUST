@@ -13,13 +13,13 @@ import {
 } from 'src/services/profile.services';
 import { MyFormData } from 'src/common/type/type';
 import { date } from 'yup';
-import { USER_NOT_FOUND } from 'src/common/constants/responseCode';
+import { CODE_OK, LOCKED, USER_NOT_FOUND } from 'src/common/constants/responseCode';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 
 export interface IAccount {
   avatar: string;
-  username: string;
+  name: string;
   // email: string;
   role: string;
   class_list: string[]
@@ -49,12 +49,24 @@ export const login = createAsyncThunk(
   async (data: ILoginData, { rejectWithValue }) => {
     try {
       const res = await loginApi(data);
+      console.log(res);
+
       if (!res) {
         return rejectWithValue(res);
       }
-      if (res.status_code === USER_NOT_FOUND && res.message === "User not found or wrong password") return rejectWithValue({ message: "Không tìm thấy tài khoản hoặc mật khẩu sai" });
+      if (res.code !== CODE_OK ) {
+        if (res.code === LOCKED) {
+          return rejectWithValue(
+            {
+              message: "Tài khoản chưa verify",
+              error_code: LOCKED
+            }
+          );
+        }
+        return rejectWithValue({ message: res.message });
+      }
       const { ...remainData } = res;
-      if (remainData.data.user_name && remainData.data.token) await saveTokenIntoKeychain(remainData.data.user_name, remainData.data.token);
+      if (remainData.data.name && remainData.data.token) await saveTokenIntoKeychain(remainData.data.name, remainData.data.token);
       return { ...remainData, email: data.email };
     } catch (err) {
       console.log("login Api error = ", err);
@@ -123,6 +135,10 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.error = payload?.message;
       state.isLoading = false;
+      state.isAccountLocked = true;
+      const payload2 = action.payload as { message: string, error_code: number, }
+      state.error = payload2.message;
+      state.isAccountLocked = payload2?.error_code === LOCKED
     });
 
     build.addCase(login.fulfilled, (state, action) => {
@@ -132,7 +148,7 @@ const authSlice = createSlice({
       state.isAccountLocked = false;
       state.accounts[action.payload.id] = {
         avatar: action.payload.data.avatar,
-        username: action.payload.data.user_name,
+        name: action.payload.data.user_name,
         role: action.payload.data.role,
         class_list: action.payload.data.class_list
       };
@@ -168,11 +184,11 @@ const authSlice = createSlice({
     //set profile
     build.addCase(setProfile.fulfilled, (state, action) => {
       state.isLoading = false;
-      const { username, ...remainPayload } = action.payload as ISetUserInfoResponseData & {
-        username: string;
+      const { name, ...remainPayload } = action.payload as ISetUserInfoResponseData & {
+        name: string;
       };
-      if (username) {
-        state.user = { ...state.user, ...remainPayload, username: username } as IUser;
+      if (name) {
+        state.user = { ...state.user, ...remainPayload, name: name } as IUser;
       } else {
         state.user = { ...state.user, ...remainPayload } as IUser;
       }
@@ -204,9 +220,9 @@ const authSlice = createSlice({
     setAuthentication: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;
     },
-    setUsername: (state, action: PayloadAction<string>) => {
+    setname: (state, action: PayloadAction<string>) => {
       if (state.user) {
-        state.user.user_name = action.payload;
+        state.user.name = action.payload;
       }
     },
     deleteAccount: (state, action: PayloadAction<string>) => {
@@ -226,7 +242,7 @@ export const {
   modifyAccountAtivity,
   setAuthentication,
   deleteAccount,
-  setUsername,
+  setname,
   resetAccountLocked
 } = authSlice.actions;
 export default authSlice.reducer;

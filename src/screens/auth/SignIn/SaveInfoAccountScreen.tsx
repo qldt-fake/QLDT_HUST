@@ -3,15 +3,24 @@ import { Text } from 'react-native-paper';
 import BaseButton from 'src/components/BaseButton';
 import WraperAuthScreen from 'src/components/WraperScreen';
 import { color } from 'src/common/constants/color';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-
+import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
+import { useAppDispatch, useAppSelector } from 'src/redux';
+import { login, selectAuth } from 'src/redux/slices/authSlice';
+import { AuthNavigationName } from 'src/common/constants/nameScreen';
+import { getUniqueId } from 'react-native-device-info';
 function SaveInfoAccountScreen() {
+  const auth = useAppSelector(selectAuth);
+  const routes: RouteProp<AuthNavigationType, AuthNavigationName.SaveInfoAccountScreen> = useRoute();
+  const { email, password } = routes.params;
+  const dispatch = useAppDispatch()
   const navigation: NavigationProp<AuthNavigationType, 'Login'> = useNavigation();
-  const onPressSaveButton = () => {
-    navigation.navigate('Login');
+  const onPressSaveButton = async () => {
+    const deviceId = await getUniqueId();
+    dispatch(login({ password, deviceId, email }));
   };
-  const onPressAfterButton = () => {
-    navigation.navigate('Login');
+  const onPressAfterButton = async () => {
+    const deviceId = await getUniqueId();
+    dispatch(login({ password, deviceId, email }));
   };
   return (
     <WraperAuthScreen linnerGradient>
@@ -21,13 +30,14 @@ function SaveInfoAccountScreen() {
       <Text variant='bodyMedium' style={{ color: color.white }}>
         Chúng tôi sẽ lưu thông tin đăng nhập cho để bạn không cần nhập vào lần sau.
       </Text>
-      <BaseButton onPress={onPressSaveButton}>Lưu</BaseButton>
+      <BaseButton onPress={onPressSaveButton} loading={auth.isLoading}>Lưu</BaseButton>
       <BaseButton
         mode='outlined'
         borderColor={color.outlineColor}
         textColor={color.textColor}
         isUseTextOutlineColor
         onPress={onPressAfterButton}
+        loading={auth.isLoading}
       >
         Lúc khác
       </BaseButton>

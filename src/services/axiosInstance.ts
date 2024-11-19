@@ -69,7 +69,7 @@ axiosInstance.interceptors.response.use(
         }
       }
 
-      return error.response.data as IBodyResponse<unknown>;
+      return error.response.data as IBodyResponse<unknown,any>;
     } else if (error.request) {
       error.request.data = {
         ...(error?.request?.data || {}),

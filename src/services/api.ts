@@ -49,7 +49,7 @@ export class ApiService {
     return params;
   }
 
-  _getList<T>(queryString: ICommonListQuery): Promise<IBodyResponse<IGetListResponse<T>>> {
+  _getList<T>(queryString: ICommonListQuery): Promise<IBodyResponse<IGetListResponse<T>,any>> {
     return this.client.get(`${this.baseUrl}`, {
       params: queryString
     });
@@ -84,7 +84,7 @@ export const postMethodApi = async function <P, T>(
 export const postMethodWithFormDataApi = async function <P, T>(
   client: string,
   data?: P
-): Promise<IBodyResponse<T>> {
+): Promise<IBodyResponse<T,any>> {
   return await axiosInstance.post(client, data, {
     headers: {
       'Content-Type': 'multipart/form-data',

@@ -42,11 +42,11 @@ export const loginApi = async (data: ILoginData): Promise<any> => {
   return postMethodApi(AuthAPi.LOGIN, data);
 };
 
-export const signUpApi = async (data: ISignUpData): Promise<IBodyResponse<any>> => {
+export const signUpApi = async (data: ISignUpData): Promise<IBodyResponse<any,any>> => {
   return postMethodApi(AuthAPi.SIGNUP, data);
 };
 
-export const logoutApi = async (): Promise<IBodyResponse<any>> => {
+export const logoutApi = async (): Promise<IBodyResponse<any,any>> => {
   return postMethodApi(AuthAPi.LOGOUT);
 };
 
@@ -69,12 +69,12 @@ export const changPasswordApi = async (
   return postMethodApi(AuthAPi.CHANGEPASSWORD, data);
 };
 
-export const resetPasswordApi = async (data: IResetPasswordBody): Promise<IBodyResponse<any>> => {
+export const resetPasswordApi = async (data: IResetPasswordBody): Promise<IBodyResponse<any,any>> => {
   return postMethodApi(AuthAPi.RESETPASSWORD, data);
 };
 
 export const checkEmailApi = async (
   data: IEmailScreenForm
-): Promise<IBodyResponse<ICheckEmailDataResponse>> => {
+): Promise<IBodyResponse<ICheckEmailDataResponse,any>> => {
   return postMethodApi(AuthAPi.CHECK_EMAIL, data);
 };

@@ -12,14 +12,14 @@ import { assign } from 'lodash';
 import { deleteSurveyApi } from 'src/services/survey.service';
 import { useSelector } from 'react-redux';
 import { ReponseCode } from 'src/common/enum/reponseCode';
-
-export const ExcerciseCard = ({ props }) => {
+import { selectAuth } from 'src/redux/slices/authSlice';
+export const ExcerciseCard = ({ props }: { props: any }) => {
   console.log("Props: ", props);
   const { id, title, description, class_id, deadline, file_url, setAssignmentList: setExcerciseList } = props;
   const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
-  const user = useSelector(state => state.auth.user);
-  const { token, role } = user;
+  const auth = useSelector(selectAuth)
+  const user = auth.user
   const handlePress = useCallback(async () => {
     const supported = await Linking.openURL(file_url);
 
@@ -32,13 +32,13 @@ export const ExcerciseCard = ({ props }) => {
 
   const callDeleteSurveyApi = async () => {
     const res = await deleteSurveyApi({
-      token: token,
+      token: user?.token!,
       survey_id: id,
     });
-    console.log("Delete Survey APi",res)
+    console.log("Delete Survey APi", res)
     if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
       Alert.alert('Delete Excercise', 'Delete excercise successfully');
-      setExcerciseList((prev) => prev.filter((item) => item.id !== props.id));
+      setExcerciseList((prev: any) => prev.filter((item: any) => item.id !== props.id));
     }
   };
 
@@ -59,7 +59,7 @@ export const ExcerciseCard = ({ props }) => {
         },
         {
           text: 'OK',
-          onPress: () =>  callDeleteSurveyApi(),
+          onPress: () => callDeleteSurveyApi(),
         },
       ]
     );

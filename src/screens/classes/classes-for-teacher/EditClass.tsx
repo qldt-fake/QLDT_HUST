@@ -9,10 +9,14 @@ import { at, set } from 'lodash';
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import { RootState } from 'src/redux';
 import { useSelector } from 'react-redux';
-const EditClass = ({ route }) => {
+import { selectAuth } from 'src/redux/slices/authSlice';
+import { STATUS_COMPLETE } from 'src/common/constants';
+
+const EditClass = (args: { route: any }) => {
+  const { route } = args
   const { classId } = route.params;
-  const user = useSelector((state: RootState) => state.auth.user);
-  const { token, role, id } = user;
+  const auth = useSelector(selectAuth);
+  const user = auth.user
   const [editClass, setEditClass] = useState<IClassItem>({});
   const [selectedPeriod, setSelectedPeriod] = useState<'start_date' | 'end_date'>('start_date');
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
@@ -30,17 +34,16 @@ const EditClass = ({ route }) => {
     const fetchClassInfo = async () => {
       try {
         const res = await getClassApi({
-          token: token,
-          role: role,
+          token: user?.token,
+          role: user?.role,
           class_id: classId,
-          account_id: id,
+          account_id: user?.id,
         });
         if (res && res.data) {
           const data = res.data;
           console.log(data);
           setEditClass({
             class_id: data.class_id || '',
-            attached_code: data.attached_code || '',
             class_name: data.class_name || '',
             class_type: data.class_type || '',
             start_date: data.start_date ? new Date(data.start_date) : null,
@@ -58,13 +61,13 @@ const EditClass = ({ route }) => {
   const handleUpdateClass = async () => {
     try {
       const res = await updateClassApi({
-        token: '93fxxl',
-        role: 'LECTURER',
+        token: user?.token,
+        role: user?.role,
         class_id: classId,
-        account_id: '245',
+        status: STATUS_COMPLETE,
         ...editClass
       });
-      if(res && res.data && res.meta.code==ReponseCode.CODE_OK) {
+      if (res && res.data && res.meta.code == ReponseCode.CODE_OK) {
         Alert.alert('Success', 'Update class successfully');
       }
     } catch (error) {
@@ -81,12 +84,12 @@ const EditClass = ({ route }) => {
           style={styles.input}
           placeholder='Mã lớp *'
         />
-        <TextInput
+        {/* <TextInput
           value={editClass.attached_code}
           onChangeText={text => handleChange('attached_code', text)}
           style={styles.input}
           placeholder='Mã lớp kèm *'
-        />
+        /> */}
         <TextInput
           value={editClass.class_name}
           onChangeText={text => handleChange('class_name', text)}
@@ -102,7 +105,7 @@ const EditClass = ({ route }) => {
 
         {isOpenDatePicker && (
           <DateTimePicker
-            date={editClass[selectedPeriod] ?? new Date()}
+            date={editClass[selectedPeriod] as Date ?? new Date()}
             onConfirm={date => {
               setIsOpenDatePicker(false);
               handleChange(selectedPeriod, date);
@@ -139,12 +142,17 @@ const EditClass = ({ route }) => {
         </View>
 
         <TextInput
-          value={String(editClass.max_student_amount ?? '')}
-          onChangeText={text => handleChange('max_student_amount', parseInt(text) || null)}
+          value={editClass.max_student_amount !== undefined ? String(editClass.max_student_amount) : ''}
+          onChangeText={text => {
+            const parsedValue = parseInt(text, 10);
+            handleChange('max_student_amount', isNaN(parsedValue) ? '' : parsedValue.toString());
+          }}
           style={styles.input}
-          placeholder='Số lượng sinh viên tối đa *'
-          keyboardType='numeric'
+          placeholder="Số lượng sinh viên tối đa *"
+          keyboardType="numeric"
         />
+
+
         <View style={{ flexDirection: 'row', justifyContent: 'center', columnGap: 10 }}>
           <TouchableOpacity style={[styles.submitButton, { flex: 6 }]}>
             <Text style={[styles.text, styles.submitButtonText]}>Xóa lớp học</Text>

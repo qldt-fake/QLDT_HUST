@@ -85,8 +85,8 @@ const ClassCard = (args: { props: any }) => {
           {user?.role === Roles.STUDENT ? (
             <Icon name='chevron-right' size={14} color={color.black} />
           ) : (
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
-              <Icon name='ellipsis-v' size={18} color={color.black} />
+            <TouchableOpacity onPress={() => setModalVisible(true)} style={{ padding: 10 }} >
+              <Icon name='ellipsis-v' size={25} color={color.black} />
             </TouchableOpacity>
           )}
         </View>

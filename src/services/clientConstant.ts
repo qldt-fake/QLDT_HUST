@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+export const baseUrl: string = 'http://160.30.168.228:8080/it5023e'
+
 export enum AuthAPi {
   LOGIN = '/it4788/login',
   SIGNUP = '/it4788/signup',
@@ -71,4 +73,25 @@ export enum NotificationApi {
   GET_NOTIFICATIONS = '/it5023e/get_notifications',
   MARK_NOTIFICATION_AS_READ = '/it5023e/mark_notification_as_read',
   GET_UNREAD_NOTIFICATION_COUNT = '/it5023e/get_unread_notification_count'
+}
+
+export enum ClassApi {
+  CREATE_CLASS = '/it5023e/create_class',
+  GET_CLASS = '/it5023e/get_class_info',
+  GET_CLASS_LIST = '/it5023e/get_class_list',
+  EDIT_CLASS = '/it5023e/edit_class',
+  DELETE_CLASS = '/it5023e/delete_class',
+  GET_CLASS_DETAIL = '/it5023e/get_class_detail',
+  REGISTER_CLASS = '/it5023e/register_class',
+  GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info',
+}
+
+
+
+export enum SurveyApi {
+  CREATE_SURVEY = '/it5023e/create_survey',
+  GET_ALL_SURVEYS = '/it5023e/get_all_surveys',
+  EDIT_SURVEY = '/it5023e/edit_survey',
+  DELETE_SURVEY = '/it5023e/delete_survey',
+  GET_SURVEY = '/it5023e/get_survey_response',
 }

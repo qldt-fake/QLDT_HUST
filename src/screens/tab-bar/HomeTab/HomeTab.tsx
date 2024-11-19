@@ -3,15 +3,14 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Card, IconButton } from 'react-native-paper';
 import { color } from 'src/common/constants/color';
 import { useNavigation } from '@react-navigation/native';
-
-
+import { ClassNavigationName } from 'src/common/constants/nameScreen';
 
 export default function HomeTab() {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(`` as never)}>
+      <Card style={styles.card} onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}>
         <View style={styles.iconContainer}>
           <IconButton icon='calendar' iconColor={color.red}
             size={50} />
@@ -20,10 +19,9 @@ export default function HomeTab() {
         <Text style={styles.description}>Tra cứu thời khóa biểu, lịch thi</Text>
       </Card>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(`` as never)}>
+      <Card style={styles.card} onPress={() => navigation.navigate(ClassNavigationName.ClassList as never)}>
         <View style={styles.iconContainer}>
-          <IconButton icon='account-cog' iconColor={color.red}
-            size={50} />
+          <IconButton icon='account-cog' iconColor={color.red} size={50} />
         </View>
         <Text style={styles.title}>Quản lý lớp học</Text>
         <Text style={styles.description}>Quản lý thông tin lớp học</Text>

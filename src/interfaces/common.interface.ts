@@ -13,11 +13,20 @@ export interface IGetVerifyCodeData {
   message: string;
   verify_code: string;
 }
-export interface IBodyResponse<T> extends AxiosResponse {
+export interface IBodyResponse<T,V> extends AxiosResponse {
+  meta?:V,
   success?: boolean;
   code: ReponseCode;
   message: string;
   data: T;
+  verify_code?: string;
+  error?: IErrorData | IErrorData[] | string;
+}
+export interface IBodyResponseClasses<T> extends AxiosResponse {
+  success?: boolean;
+  code: ReponseCode;
+  message: string;
+  meta: T;
   verify_code?: string;
   error?: IErrorData | IErrorData[] | string;
 }

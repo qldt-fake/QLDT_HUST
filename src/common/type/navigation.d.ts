@@ -99,6 +99,9 @@ type FriendNavigationType = {
   SuggestionsScreen: undefined;
   AllFriendScreen: undefined;
 };
+type SurveyType = {
+  CreateSurvey: { classId: string; };
+};
 type PostNavigationType = {
   CreatePostScreen: { selectedItem: CardData } | undefined;
   EnAScreen: undefined;
@@ -159,3 +162,8 @@ type NotificationNavigationType = {
 type HomeNavigationType = {
   Class: undefined;
 };
+
+type ClassNavigationType = {
+  ClassDetail: { classId: string };
+  EditClass: { classId: string };
+}

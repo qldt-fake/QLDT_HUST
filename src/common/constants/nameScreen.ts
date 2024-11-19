@@ -1,3 +1,4 @@
+import { RegisterClass } from 'src/screens/classes/classes-for-teacher/RegisterClass';
 /* eslint-disable no-unused-vars */
 export enum AppNaviagtionName {
   AuthNavigation = 'AuthNavigation',
@@ -86,11 +87,25 @@ export enum ChatNavigationName {
 export enum AddMoneyNavigationName {
   AddMoneyScreen = 'AddMoneyScreen'
 }
-
 export enum NotificationNavigationName {
   NotificationDetail = 'NotificationDetail',
 }
 export enum HomeNavigationName {
   Home = 'HomeTab',
   Class = 'Class',
+}
+export enum ClassNavigationName {
+  Class = 'Class',
+  ClassDetail = 'ClassDetail',
+  ClassList = 'ClassList',
+  CreateClass = 'CreateClass',
+  EditClass = 'EditClass',
+  RegisterClass = 'RegisterClass',
+}
+export enum SurveyNavigationName {
+  Survey = 'Survey',
+  SurveyList = 'SurveyList',
+  CreateSurvey = 'CreateSurvey',
+  EditSurvey = 'EditSurvey',
+  SurveyDetail = 'SurveyDetail',
 }

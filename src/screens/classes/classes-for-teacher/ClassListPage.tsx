@@ -19,6 +19,8 @@ const ClassListPage = () => {
   const navigation = useNavigation();
   useEffect(() => {
     const fetchData = async () => {
+      console.log(token,role,id);
+      
       const res = await getClassListApi({
         token: token,
         role: role,
@@ -26,7 +28,7 @@ const ClassListPage = () => {
       });
       console.log(res);
       if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
-        setClassList(res.data);
+        setClassList(res.data.page_content);
       }
     };
     fetchData();

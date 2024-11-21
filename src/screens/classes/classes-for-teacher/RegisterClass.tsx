@@ -6,24 +6,35 @@ import { getBasicClassInfoApi, getClassApi, registerClassApi } from 'src/service
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import { Checkbox } from 'react-native-paper';
 import { formatDate } from 'src/utils/helper';
-import { set } from 'lodash';
 import { selectAuth } from 'src/redux/slices/authSlice';
 import { useSelector } from 'react-redux';
+import { useAppDispatch } from 'src/redux';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+interface ClassItem {
+  class_id: string;
+  class_name: string;
+  start_date: string;
+  end_date: string;
+  status?: string;
+}
+
 const RegisterClass = () => {
-  const auth = useSelector(selectAuth)
-  const user = auth.user
-  const [tempClassList, setTempClassList] = React.useState([]);
-  const [searchText, setSearchText] = React.useState('');
+  const auth = useSelector(selectAuth);
+  const user = auth.user;
+  const dispatch = useAppDispatch();
+  const [tempClassList, setTempClassList] = React.useState<ClassItem[]>([]); // Sửa kiểu cho tempClassList
+  const [searchText, setSearchText] = React.useState<string>(''); // Kiểu cho searchText
+  const [selectedClasses, setSelectedClasses] = React.useState<Record<string, boolean>>({}); // Kiểu cho selectedClasses
 
-  const [selectedClasses, setSelectedClasses] = React.useState({});
-
-  const handleSelectClass = (classId) => {
+  // Hàm xử lý chọn lớp
+  const handleSelectClass = (classId: string) => {
     setSelectedClasses(prev => ({
       ...prev,
       [classId]: !prev[classId],
     }));
   };
 
+  // Hàm xóa lớp đã chọn
   const handleDeleteSelectedClasses = () => {
     setTempClassList(prevList =>
       prevList.filter(item => !selectedClasses[item.class_id])
@@ -31,30 +42,25 @@ const RegisterClass = () => {
     setSelectedClasses({});
   };
 
-
-  // Fetch class information and add to tempClassList
+  // Hàm tìm kiếm lớp
   const handleSearchClass = async () => {
     if (!searchText.trim()) return;
 
     try {
+      dispatch(showLoading()); // Hiển thị loading
       const response = await getBasicClassInfoApi({
         class_id: searchText,
         token: user?.token,
         role: user?.role,
         account_id: user?.id
       });
-      console.log(response);
+      dispatch(hideLoading()); // Hiển thị loading
 
       if (response && response.data && response.meta.code === ReponseCode.CODE_OK) {
         const isClassAdded = tempClassList.some(item => item.class_id === response.data.class_id);
 
         if (!isClassAdded) {
-          const {
-            class_id,
-            class_name,
-            start_date,
-            end_date,
-          } = response.data;
+          const { class_id, class_name, start_date, end_date } = response.data;
           setTempClassList(prevList => [
             ...prevList,
             {
@@ -75,26 +81,20 @@ const RegisterClass = () => {
     }
   };
 
-
-  // Register classes in tempClassList
+  // Hàm đăng ký các lớp
   const handleRegisterClasses = async () => {
     try {
       const response = await registerClassApi({
         token: user?.token,
         class_ids: tempClassList.map(item => item.class_id)
-      }
-      );
-      console.log(tempClassList.map(item => item.class_id));
-      console.log(response);
-
-
+      });
 
       if (response.meta.code === ReponseCode.CODE_OK) {
         Alert.alert('Thành công', 'Đăng ký lớp thành công');
-        const updatedStatusClass = response.data
+        const updatedStatusClass = response.data;
         setTempClassList(prevList =>
           prevList.map(item => {
-            const updatedClass = updatedStatusClass.find(cls => cls.class_id === item.class_id);
+            const updatedClass = updatedStatusClass.find((cls: ClassItem) => cls.class_id === item.class_id);
             return updatedClass ? { ...item, status: updatedClass.status } : item;
           })
         );

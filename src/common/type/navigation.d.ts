@@ -101,6 +101,7 @@ type FriendNavigationType = {
 };
 type SurveyType = {
   CreateSurvey: { classId: string; };
+  EditSurvey: { surveyId: id, classId: class_id }
 };
 type PostNavigationType = {
   CreatePostScreen: { selectedItem: CardData } | undefined;

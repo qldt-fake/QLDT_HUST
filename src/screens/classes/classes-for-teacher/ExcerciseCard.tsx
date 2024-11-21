@@ -6,7 +6,7 @@ import { color } from 'src/common/constants/color';
 import { formatDate } from 'src/utils/helper';
 import BaseModal from 'src/components/BaseModal';
 import { Linking } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import your delete API function
+import { NavigationProp, useNavigation } from '@react-navigation/native'; // Import your delete API function
 import { SurveyNavigationName } from 'src/common/constants/nameScreen';
 import { assign } from 'lodash';
 import { deleteSurveyApi } from 'src/services/survey.service';
@@ -17,7 +17,7 @@ export const ExcerciseCard = ({ props }: { props: any }) => {
   console.log("Props: ", props);
   const { id, title, description, class_id, deadline, file_url, setAssignmentList: setExcerciseList } = props;
   const [modalVisible, setModalVisible] = useState(false);
-  const navigation = useNavigation();
+  const navigation: NavigationProp<SurveyType> = useNavigation();
   const auth = useSelector(selectAuth)
   const user = auth.user
   const handlePress = useCallback(async () => {

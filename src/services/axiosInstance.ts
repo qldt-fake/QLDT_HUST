@@ -13,7 +13,7 @@ const options: AxiosRequestConfig = {
   headers: {
     'Content-Type': 'application/json'
   } as unknown as AxiosRequestHeaders,
-  baseURL: API_BASE,
+  baseURL: API_BASE || "http://157.66.24.126:8080",
   responseType: 'json'
 };
 

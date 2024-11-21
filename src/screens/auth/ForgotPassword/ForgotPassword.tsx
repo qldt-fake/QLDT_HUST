@@ -16,6 +16,7 @@ import * as yup from 'yup';
 import { useState, useEffect } from 'react';
 import BaseTextTitle from 'src/components/BaseTextTitle';
 import { emailFormSchema } from 'src/validation/signUp.validate';
+import { CODE_OK } from 'src/common/constants/responseCode';
 
 export interface IFogetPassworData {
   email: string;
@@ -70,8 +71,8 @@ function ForgetPassword() {
     try {
       setIsLoadingGetCode(true);
       const res = await getVerifyCodeApi({ email: data.email });
-      if (!res.success) {
-        return setTextError("lỗi");
+      if (res.code !== CODE_OK) {
+        return setTextError(res.message)
       }
       setValue('otp', res.data);
       setIsLoadingGetCode(false);

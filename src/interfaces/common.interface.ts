@@ -9,9 +9,10 @@ export interface IErrorData {
 }
 
 export interface IGetVerifyCodeData {
-  code: number;
+  code: string;
   message: string;
   verify_code: string;
+  data: any
 }
 export interface IBodyResponse<T,V> extends AxiosResponse {
   meta?:V,

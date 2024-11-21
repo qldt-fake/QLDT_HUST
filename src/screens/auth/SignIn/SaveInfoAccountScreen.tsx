@@ -18,10 +18,6 @@ function SaveInfoAccountScreen() {
     const deviceId = await getUniqueId();
     dispatch(login({ password, deviceId, email }));
   };
-  const onPressAfterButton = async () => {
-    const deviceId = await getUniqueId();
-    dispatch(login({ password, deviceId, email }));
-  };
   return (
     <WraperAuthScreen linnerGradient>
       <Text variant='titleLarge' style={{ fontWeight: 'bold', color: color.white }}>
@@ -31,16 +27,6 @@ function SaveInfoAccountScreen() {
         Chúng tôi sẽ lưu thông tin đăng nhập cho để bạn không cần nhập vào lần sau.
       </Text>
       <BaseButton onPress={onPressSaveButton} loading={auth.isLoading}>Lưu</BaseButton>
-      <BaseButton
-        mode='outlined'
-        borderColor={color.outlineColor}
-        textColor={color.textColor}
-        isUseTextOutlineColor
-        onPress={onPressAfterButton}
-        loading={auth.isLoading}
-      >
-        Lúc khác
-      </BaseButton>
     </WraperAuthScreen>
   );
 }

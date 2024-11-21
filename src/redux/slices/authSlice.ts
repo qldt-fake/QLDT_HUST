@@ -54,7 +54,7 @@ export const login = createAsyncThunk(
       if (!res) {
         return rejectWithValue(res);
       }
-      if (res.code !== CODE_OK ) {
+      if (res.code !== CODE_OK) {
         if (res.code === LOCKED) {
           return rejectWithValue(
             {
@@ -66,8 +66,8 @@ export const login = createAsyncThunk(
         return rejectWithValue({ message: res.message });
       }
       const { ...remainData } = res;
-      if (remainData.data.name && remainData.data.token) await saveTokenIntoKeychain(remainData.data.name, remainData.data.token);
-      return { ...remainData, email: data.email };
+      if (remainData.data.email && remainData.data.token) await saveTokenIntoKeychain(remainData.data.name, remainData.data.token);
+      return { ...remainData };
     } catch (err) {
       console.log("login Api error = ", err);
       return rejectWithValue({ message: 'Máy chủ lỗi' });
@@ -131,12 +131,12 @@ const authSlice = createSlice({
   initialState,
   extraReducers: build => {
     build.addCase(login.rejected, (state, action) => {
-      const payload = action.payload as IBodyResponse<ILoginResponseData,any>;
+      const payload = action.payload as IBodyResponse<ILoginResponseData, any>;
       state.isAuthenticated = false;
       state.error = payload?.message;
       state.isLoading = false;
       state.isAccountLocked = true;
-      const payload2 = action.payload as { message: string, error_code: number, }
+      const payload2 = action.payload as { message: string, error_code: string, }
       state.error = payload2.message;
       state.isAccountLocked = payload2?.error_code === LOCKED
     });

@@ -168,4 +168,5 @@ type HomeNavigationType = {
 type ClassNavigationType = {
   ClassDetail: { classId: string };
   EditClass: { classId: string };
+  ClassListOpen: undefined
 };

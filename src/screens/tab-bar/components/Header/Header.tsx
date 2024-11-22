@@ -18,8 +18,6 @@ import database from '@react-native-firebase/database';
 import { formatNumber } from 'src/utils/helper';
 
 function Header() {
-
-
   return (
     <Appbar.Header style={{ height: 40, marginTop: 8 }}>
       <Appbar.Content
@@ -28,8 +26,7 @@ function Header() {
         titleStyle={{ fontWeight: 'bold', fontSize: 28 }}
       />
 
-      <View
-      >
+      <View>
         <IconButton
           icon={() => <IconFont name='plus' color={color.iconButtonColor} size={20} />}
           containerColor={color.iconButtonBackgroundColor}
@@ -39,8 +36,7 @@ function Header() {
           style={[{ flexDirection: 'row', alignItems: 'center', gap: 7, paddingRight: 10 }]}
           activeOpacity={0.8}
         >
-          <Text style={{ color: color.iconButtonColor, fontWeight: 'bold', fontSize: 16 }}>
-          </Text>
+          <Text style={{ color: color.iconButtonColor, fontWeight: 'bold', fontSize: 16 }}></Text>
           <IconFont name='coins' color={color.iconButtonColor} size={16} />
         </TouchableOpacity>
       </View>

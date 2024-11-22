@@ -10,7 +10,14 @@ export const StudentCard = ({ props }: { props: any }) => {
   return (
     <View style={styles.container}>
       <BaseImage
-        style={{ height: 40, width: 40, marginTop: 5, borderRadius: 20, borderWidth: 0.5, borderColor: color.red }}
+        style={{
+          height: 40,
+          width: 40,
+          marginTop: 5,
+          borderRadius: 20,
+          borderWidth: 0.5,
+          borderColor: color.red
+        }}
         source={require('../../../assets/avatar-default.jpg')}
       />
       <View style={styles.content}>
@@ -20,11 +27,9 @@ export const StudentCard = ({ props }: { props: any }) => {
       <Text style={styles.icon}>
         <Icon name='ellipsis-v' size={20} color='black' />
       </Text>
-
     </View>
   );
-}
-
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -35,18 +40,18 @@ const styles = StyleSheet.create({
     columnGap: 10,
     borderBottomWidth: 0.5,
     borderColor: color.black,
-    borderRadius: 10,
+    borderRadius: 10
   },
   content: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   text: {
     textAlign: 'left',
-    fontSize: 16,
+    fontSize: 16
   },
   icon: {
-    marginLeft: 'auto',
+    marginLeft: 'auto'
   }
 });
 export default StudentCard;

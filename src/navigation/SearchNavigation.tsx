@@ -15,8 +15,7 @@ function SearchNavigation() {
         gestureEnabled: true,
         gestureDirection: 'vertical'
       }}
-    >
-    </Stack.Navigator>
+    ></Stack.Navigator>
   );
 }
 

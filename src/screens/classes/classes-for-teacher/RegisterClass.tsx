@@ -30,15 +30,13 @@ const RegisterClass = () => {
   const handleSelectClass = (classId: string) => {
     setSelectedClasses(prev => ({
       ...prev,
-      [classId]: !prev[classId],
+      [classId]: !prev[classId]
     }));
   };
 
   // Hàm xóa lớp đã chọn
   const handleDeleteSelectedClasses = () => {
-    setTempClassList(prevList =>
-      prevList.filter(item => !selectedClasses[item.class_id])
-    );
+    setTempClassList(prevList => prevList.filter(item => !selectedClasses[item.class_id]));
     setSelectedClasses({});
   };
 
@@ -67,7 +65,7 @@ const RegisterClass = () => {
               class_id,
               class_name,
               start_date,
-              end_date,
+              end_date
             }
           ]);
         } else {
@@ -94,7 +92,9 @@ const RegisterClass = () => {
         const updatedStatusClass = response.data;
         setTempClassList(prevList =>
           prevList.map(item => {
-            const updatedClass = updatedStatusClass.find((cls: ClassItem) => cls.class_id === item.class_id);
+            const updatedClass = updatedStatusClass.find(
+              (cls: ClassItem) => cls.class_id === item.class_id
+            );
             return updatedClass ? { ...item, status: updatedClass.status } : item;
           })
         );
@@ -108,12 +108,12 @@ const RegisterClass = () => {
 
   return (
     <View style={styles.container}>
-      <ClassHeader title="Register for class" />
+      <ClassHeader title='Register for class' />
       <View style={styles.body}>
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.input}
-            placeholder="Mã lớp"
+            placeholder='Mã lớp'
             value={searchText}
             onChangeText={setSearchText}
           />

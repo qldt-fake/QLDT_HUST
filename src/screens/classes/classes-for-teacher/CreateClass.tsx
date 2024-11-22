@@ -1,173 +1,234 @@
-import {
-  Text,
-  View,
-  TextInput,
-  TouchableHighlight,
-  TouchableOpacity,
-  StyleSheet,
-  Alert
-} from 'react-native';
 import React, { useState } from 'react';
-import { color } from 'src/common/constants/color';
-import ClassHeader from './ClassHeader';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from 'react-native-date-picker';
-import { createClassApi } from 'src/services/class.service';
-import { IClassItem } from 'src/services/class.service';
-import { classType } from 'src/common/enum/commom';
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
-import dayjs, { Dayjs } from 'dayjs';
-import { selectAuth } from 'src/redux/slices/authSlice';
+import { PaperProvider, RadioButton, Menu } from 'react-native-paper';
+import DateTimePicker from 'react-native-date-picker';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import dayjs from 'dayjs';
+import { createClassApi } from 'src/services/class.service';
+import { classStatus, classType } from 'src/common/enum/commom';
+import { calculateDateAfterWeeks, formatDateTime } from 'src/utils/helper';
+import { DATE_TIME_FORMAT } from 'src/common/constants';
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
+import { color } from 'src/common/constants/color';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { useAppDispatch } from 'src/redux';
+import { useNavigation } from '@react-navigation/native';
 
 const CreateClass = () => {
-  const auth = useSelector(selectAuth)
-  const user = auth.user
-  const [newClass, setNewClass] = useState<IClassItem>({
+  const { user } = useSelector(selectAuth);
+  const [newClass, setNewClass] = useState({
     class_id: '',
     class_name: '',
-    class_type: classType.LT,
+    class_type: '',
+    status: '',
     max_student_amount: 0,
     start_date: null,
     end_date: null,
     token: user?.token
   });
 
+  const dispatch = useAppDispatch();
+
+  const navigation = useNavigation();
+
   const [selectedPeriod, setSelectedPeriod] = useState<'start_date' | 'end_date'>('start_date');
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
+  const [menuVisible, setMenuVisible] = useState(false);
 
-  const handleChange = (name: string, value: string | object | Date) => {
+  const handleChange = (name: string, value: any) => {
     setNewClass(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleShowDatePicker = (type: 'start_date' | 'end_date') => {
-    setIsOpenDatePicker(true);
-    setSelectedPeriod(type);
-  };
-
   const validateClass = () => {
-    if (!newClass.class_id) {
-      Alert.alert('Validation Error', 'Class ID cannot be null');
-      return false;
-    }
-    if (!newClass.class_name) {
-      Alert.alert('Validation Error', 'Class name cannot be null');
+    if (!newClass.class_id || !newClass.class_name) {
+      Alert.alert('Validation Error', 'Mã lớp và tên lớp không được để trống.');
       return false;
     }
     if (newClass.class_name.length > 50) {
-      Alert.alert('Validation Error', 'Class name length must be less than 50');
+      Alert.alert('Validation Error', 'Tên lớp không được dài quá 50 ký tự.');
       return false;
     }
-    if (
-      newClass.max_student_amount !== null &&
-      (newClass.max_student_amount! < 1 || newClass.max_student_amount! > 50)
-    ) {
-      Alert.alert('Validation Error', 'Max student amount must be between 1 and 50');
+    if (newClass.max_student_amount < 1 || newClass.max_student_amount > 50) {
+      Alert.alert('Validation Error', 'Số lượng sinh viên tối đa phải trong khoảng từ 1 đến 50.');
       return false;
     }
     return true;
   };
 
   const handleCreateClass = async () => {
-    if (!validateClass()) {
-      return;
-    }
+    if (!validateClass()) return;
+
     try {
       const requestClass = {
         ...newClass,
-        start_date: dayjs(newClass.start_date as Date).format('YYYY-MM-DD'),
-        end_date: dayjs(newClass.end_date as Date).format('YYYY-MM-DD')
+        start_date: dayjs(newClass.start_date).format('YYYY-MM-DD'),
+        end_date: dayjs(newClass.end_date).format('YYYY-MM-DD')
       };
-      console.log(requestClass);
       const res = await createClassApi(requestClass);
-      console.log(res);
-      Alert.alert('Success', `Class created with code: ${res.meta.message}`);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to create class');
+      if (res) {
+        switch (res.meta.code) {
+          case CODE_OK:
+            Alert.alert('Thành công', 'Tạo lớp thành công.');
+            navigation.goBack();
+            break;
+          case INVALID_TOKEN:
+            dispatch(logout());
+            break;
+          case NOT_ACCESS:
+            Alert.alert('Thất bại', 'Role của bạn không có quyền tạo lớp.');
+            break;
+          default:
+            Alert.alert('Thất bại', res.data);
+            break;
+        }
+      }
+    } catch {
+      Alert.alert('Thất bại', 'Không thể tạo lớp.');
+    }
+  };
+
+  const handleShowDatePicker = (type: 'start_date' | 'end_date') => {
+    setSelectedPeriod(type);
+    setIsOpenDatePicker(true);
+  };
+
+  const handleMenuSelect = (option: '16' | '17' | 'Custom') => {
+    setMenuVisible(false);
+
+    if (!newClass.start_date) {
+      Alert.alert('Lỗi', 'Vui lòng chọn ngày bắt đầu trước.');
+      return;
+    }
+
+    if (option === 'Custom') {
+      handleShowDatePicker('end_date');
+    } else {
+      const weeks = parseInt(option, 10);
+      handleChange('end_date', calculateDateAfterWeeks(newClass.start_date as Date, weeks));
     }
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.body}>
-        <TextInput
-          style={styles.input}
-          placeholder='Mã lớp *'
-          onChangeText={text => handleChange('class_id', text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder='Tên lớp *'
-          onChangeText={text => handleChange('class_name', text)}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder='Loại lớp *'
-          onChangeText={text => handleChange('class_type', text)}
-        />
-        {isOpenDatePicker && (
-          <DateTimePicker
-            date={newClass[selectedPeriod] as Date ?? new Date()}
-            onConfirm={date => {
-              setIsOpenDatePicker(false);
-              handleChange(selectedPeriod, date);
-            }}
-            onCancel={() => setIsOpenDatePicker(false)}
-            mode='datetime'
-            androidVariant='nativeAndroid'
-            textColor={color.submitBtnRed}
-            modal
-            open
+    <PaperProvider>
+      <View style={styles.container}>
+        <View style={styles.body}>
+          <TextInput
+            style={styles.input}
+            placeholder='Mã lớp *'
+            onChangeText={text => handleChange('class_id', text)}
           />
-        )}
-        <View style={styles.period}>
-          <TouchableOpacity
-            style={styles.selectPeriod}
-            onPress={() => handleShowDatePicker('start_date')}
-          >
-            <Text style={{ color: color.borderRed }}>
-              {newClass.start_date ? newClass.start_date.toLocaleString() : 'Bắt đầu'}
-            </Text>
-            <Icon name='caret-down' size={20} color={color.borderRed} />
-          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder='Tên lớp *'
+            onChangeText={text => handleChange('class_name', text)}
+          />
 
-          <TouchableOpacity
-            style={styles.selectPeriod}
-            onPress={() => handleShowDatePicker('end_date')}
+          <Text style={styles.label}>Loại lớp</Text>
+          <RadioButton.Group
+            onValueChange={value => handleChange('class_type', value)}
+            value={newClass.class_type}
           >
-            <Text style={{ color: color.borderRed }}>
-              {newClass.end_date ? newClass.end_date.toLocaleString() : 'Kết thúc'}
-            </Text>
-            <Icon name='caret-down' size={20} color={color.borderRed} />
+            <View style={styles.row}>
+              {Object.entries(classType).map(([key, value]) => (
+                <View key={key} style={styles.radioButton}>
+                  <RadioButton value={value} color={color.borderRed} />
+                  <Text>{value}</Text>
+                </View>
+              ))}
+            </View>
+          </RadioButton.Group>
+
+          <Text style={styles.label}>Trạng thái</Text>
+          <RadioButton.Group
+            onValueChange={value => handleChange('status', value)}
+            value={newClass.status}
+          >
+            <View style={styles.row}>
+              {Object.entries(classStatus).map(([key, value]) => (
+                <View key={key} style={styles.radioButton}>
+                  <RadioButton value={value} color={color.borderRed} />
+                  <Text>{value}</Text>
+                </View>
+              ))}
+            </View>
+          </RadioButton.Group>
+
+          {isOpenDatePicker && (
+            <DateTimePicker
+              date={newClass[selectedPeriod] ?? new Date()}
+              onConfirm={date => {
+                setIsOpenDatePicker(false);
+                handleChange(selectedPeriod, date);
+              }}
+              onCancel={() => setIsOpenDatePicker(false)}
+              mode='date'
+              androidVariant='nativeAndroid'
+              textColor={color.submitBtnRed}
+              modal
+              open
+            />
+          )}
+
+          <View style={styles.period}>
+            <TouchableOpacity
+              style={styles.selectPeriod}
+              onPress={() => handleShowDatePicker('start_date')}
+            >
+              <Text style={styles.selectText}>
+                {newClass.start_date
+                  ? formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, newClass.start_date)
+                  : 'Bắt đầu'}
+              </Text>
+              <Icon name='caret-down' size={20} color={color.borderRed} />
+            </TouchableOpacity>
+
+            <Menu
+              visible={menuVisible}
+              onDismiss={() => setMenuVisible(false)}
+              anchor={
+                <TouchableOpacity style={styles.selectPeriod} onPress={() => setMenuVisible(true)}>
+                  <Text style={styles.selectText}>
+                    {newClass.end_date
+                      ? formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, newClass.end_date)
+                      : 'Kết thúc'}
+                  </Text>
+                  <Icon name='caret-down' size={20} color={color.borderRed} />
+                </TouchableOpacity>
+              }
+            >
+              <Menu.Item onPress={() => handleMenuSelect('16')} title='16 tuần' />
+              <Menu.Item onPress={() => handleMenuSelect('17')} title='17 tuần' />
+              <Menu.Item onPress={() => handleMenuSelect('Custom')} title='Tùy chọn' />
+            </Menu>
+          </View>
+
+          <TextInput
+            style={styles.input}
+            placeholder='Số lượng sinh viên tối đa *'
+            keyboardType='numeric'
+            onChangeText={text => {
+              const value = parseInt(text, 10);
+              handleChange('max_student_amount', isNaN(value) ? 0 : value);
+            }}
+          />
+
+          <TouchableOpacity style={styles.submitButton} onPress={handleCreateClass}>
+            <Text style={styles.submitButtonText}>Tạo</Text>
           </TouchableOpacity>
         </View>
-        <TextInput
-          style={styles.input}
-          placeholder='Số lượng sinh viên tối đa *'
-          keyboardType='numeric'
-          onChangeText={text => {
-            const parsedValue = parseInt(text, 10);
-            handleChange('max_student_amount', isNaN(parsedValue) ? '' : parsedValue.toString());
-          }}        />
-        <TouchableOpacity style={styles.submitButton} onPress={handleCreateClass}>
-          <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
-        </TouchableOpacity>
+        <Text style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
       </View>
-      <Text style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
-    </View>
+    </PaperProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff'
-  },
-  body: {
-    padding: 30
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  body: { padding: 20 },
   input: {
     borderWidth: 1,
     borderColor: color.borderRed,
@@ -176,49 +237,30 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: '#f2f2f2'
   },
-  text: {
-    fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
-    fontStyle: 'italic'
-  },
-  period: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-    gap: 20
-  },
+  label: { color: color.borderRed, marginBottom: 10 },
+  row: { flexDirection: 'row', marginBottom: 15 },
+  radioButton: { flexDirection: 'row', alignItems: 'center', marginRight: 15 },
+  period: { flexDirection: 'row', justifyContent: 'center', marginBottom: 20, gap: 20 },
   selectPeriod: {
     borderColor: color.borderRed,
     borderWidth: 1,
-    backgroundColor: '#f2f2f2',
     borderRadius: 10,
-    flex: 1,
+    width: 150,
     height: 50,
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
     flexDirection: 'row'
   },
+  selectText: { fontWeight: '500', color: '#333' },
   submitButton: {
     backgroundColor: color.submitBtnRed,
-    padding: 15,
     borderRadius: 10,
-    marginHorizontal: 110,
-    height: 50,
-    justifyContent: 'center'
+    alignItems: 'center',
+    padding: 15
   },
-  submitButtonText: {
-    textAlign: 'center'
-  },
-  footerText: {
-    color: color.borderRed,
-    textDecorationLine: 'underline',
-    fontStyle: 'italic',
-    fontWeight: 'bold',
-    fontSize: 24,
-    paddingHorizontal: 25
-  }
+  submitButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
+  footerText: { textAlign: 'center', marginTop: 20, color: '#aaa' }
 });
 
 export default CreateClass;

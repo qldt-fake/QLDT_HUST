@@ -3,7 +3,6 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
-
 export interface ClassHeaderProps {
   title?: string;
   textLogo?: string;
@@ -15,7 +14,7 @@ export interface ClassHeaderProps {
 
 const ClassHeader = (props: ClassHeaderProps) => {
   const navigation = useNavigation();
-  
+
   // const handleBack = () => {
   //   console.log('back');
   //   navigation.goBack();
@@ -24,7 +23,7 @@ const ClassHeader = (props: ClassHeaderProps) => {
     <View style={styles.header}>
       <View style={styles.row}>
         {/* <TouchableOpacity style = {{height : "100%"}} onPress={handleBack}><Icon name='long-arrow-left' size={30} color='#fff'/></TouchableOpacity> */}
-       
+
         {!!props?.textLogo && <Text style={styles.logo}>{props?.textLogo}</Text>}
       </View>
       {!!props?.title && <Text style={styles.title}>{props?.title}</Text>}
@@ -59,7 +58,7 @@ const styles = StyleSheet.create({
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
     flex: 1,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   title: {
     fontSize: 20,

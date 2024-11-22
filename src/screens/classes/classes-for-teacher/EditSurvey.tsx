@@ -27,14 +27,14 @@ interface NewSurvey {
 
 const EditSurvey: React.FC<any> = (args: { route: any }) => {
   const { route } = args;
-  const { classId, survey_id } = route.params
-  const auth = useSelector(selectAuth)
-  const user = auth.user
+  const { classId, survey_id } = route.params;
+  const auth = useSelector(selectAuth);
+  const user = auth.user;
   const [newSurvey, setNewSurvey] = useState<NewSurvey>({
     title: '',
     description: '',
     file: null,
-    deadline: null,
+    deadline: null
   });
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
@@ -97,10 +97,7 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
     // Giới hạn ký tự cho phần mô tả (ví dụ: tối đa 500 ký tự)
     const MAX_DESCRIPTION_LENGTH = 500;
     if (newSurvey.description.length > MAX_DESCRIPTION_LENGTH) {
-      Alert.alert(
-        'Lỗi',
-        `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`
-      );
+      Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
 
@@ -114,9 +111,7 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
     return true;
   };
 
-
   const handleSubmit = async () => {
-
     if (!validate()) {
       return;
     }
@@ -128,15 +123,15 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
       }
 
       const payload = {
-        token: user?.token!, // Replace with actual token
+        token: user?.token, // Replace with actual token
         classId: classId, // Replace with actual classId
         title: newSurvey.title,
         description: newSurvey.description,
         deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
-        file: newSurvey.file,
+        file: newSurvey.file
       };
 
-      console.log("file", newSurvey.file);
+      console.log('file', newSurvey.file);
 
       const response = await createSurveyApi(payload);
       if (response && response.data && response.meta.code === ReponseCode.CODE_OK) {
@@ -151,20 +146,20 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
 
   return (
     <View style={styles.container}>
-      <ClassHeader title="Create Survey" />
+      <ClassHeader title='Create Survey' />
       <View style={styles.body}>
         <TextInput
           style={styles.name}
           value={newSurvey.title}
           onChangeText={text => handleChange('title', text)}
-          placeholder="Survey Title *"
+          placeholder='Survey Title *'
           placeholderTextColor={color.submitBtnRed}
         />
         <TextInput
           style={[styles.name, styles.description]}
           value={newSurvey.description}
           onChangeText={text => handleChange('description', text)}
-          placeholder="Description"
+          placeholder='Description'
           multiline
           numberOfLines={6}
           placeholderTextColor={color.submitBtnRed}
@@ -176,11 +171,11 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
             <Text
               style={[styles.text, styles.fileButtonText]}
               numberOfLines={1}
-              ellipsizeMode="tail"
+              ellipsizeMode='tail'
             >
               {newSurvey?.file ? newSurvey.file.name : 'Upload File'}
             </Text>
-            <Icon name="caret-up" size={20} color="#fff" />
+            <Icon name='caret-up' size={20} color='#fff' />
           </>
         </TouchableHighlight>
         {isOpenDatePicker && (
@@ -191,8 +186,8 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
               handleChange('deadline', date);
             }}
             onCancel={() => setIsOpenDatePicker(false)}
-            mode="datetime"
-            androidVariant="nativeAndroid"
+            mode='datetime'
+            androidVariant='nativeAndroid'
             textColor={color.red}
             modal
             open
@@ -203,7 +198,7 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
             <Text style={{ color: color.borderRed }}>
               {newSurvey.deadline ? newSurvey.deadline.toLocaleString() : 'Deadline'}
             </Text>
-            <Icon name="caret-down" size={20} color={color.borderRed} />
+            <Icon name='caret-down' size={20} color={color.borderRed} />
           </TouchableOpacity>
         </View>
 

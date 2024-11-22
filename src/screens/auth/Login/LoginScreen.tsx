@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { Avatar } from 'react-native-paper';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -33,19 +33,26 @@ function LoginScreen() {
     if (isAccountLocked) {
       const email = methods.getValues('email');
       const password = methods.getValues('password');
-      navigation.navigate('VerifyOTPScreen', { email: email, verifyCode: '', password: password});
+      navigation.navigate('VerifyOTPScreen', { email: email, verifyCode: '', password: password });
       dispatch(resetAccountLocked());
     }
   }, [isAccountLocked, navigation, dispatch]);
-  const onSubmit = async (data: ILoginData) => {
+  const onSubmit: SubmitHandler<{ email: string; password: string }> = async (data) => {
     try {
-      const deviceId = await getUniqueId();
-      dispatch(login({ ...data, deviceId }));
+      const device_id = await getUniqueId();
+      const loginData: ILoginData = {
+        ...data, 
+        fcm_token: null,
+      };
+      dispatch(login({
+        ...loginData,
+        device_id, 
+      }));
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-
   };
+  
   const onSubmitHandler = handleSubmit(onSubmit);
 
   const onBackdropPress = () => {
@@ -71,7 +78,7 @@ function LoginScreen() {
             rules={{ required: 'email is required' }}
           />
           <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
-          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler} loading = {auth.isLoading}>
+          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler} loading={auth.isLoading}>
             Đăng nhập
           </BaseButton>
           <BaseTextTitle color='white' onPress={onNavigateForgotPasswordScreen}>

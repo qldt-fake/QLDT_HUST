@@ -129,13 +129,14 @@ const CreateSurvey: React.FC<any> = ({ route }: { route: any }) => {
 
       const payload = {
         token: user?.token!, // Replace with actual token
-        classId: route.param.classId, // Replace with actual classId
+        classId: route.params.classId, // Replace with actual classId
         title: newSurvey.title,
         description: newSurvey.description,
         deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
         file: newSurvey.file,
       };
-
+      console.log(payload);
+      
       console.log("file", newSurvey.file);
 
       const response = await createSurveyApi(payload);

@@ -16,6 +16,7 @@ import * as yup from 'yup';
 import { useState, useEffect } from 'react';
 import BaseTextTitle from 'src/components/BaseTextTitle';
 import { emailFormSchema } from 'src/validation/signUp.validate';
+import { CODE_OK } from 'src/common/constants/responseCode';
 
 export interface IFogetPassworData {
   email: string;
@@ -70,8 +71,8 @@ function ForgetPassword() {
     try {
       setIsLoadingGetCode(true);
       const res = await getVerifyCodeApi({ email: data.email });
-      if (!res.success) {
-        return setTextError("lỗi");
+      if (res.code !== CODE_OK) {
+        return setTextError(res.message);
       }
       setValue('otp', res.data);
       setIsLoadingGetCode(false);
@@ -89,11 +90,17 @@ function ForgetPassword() {
 
   return (
     <WraperAuthScreen linnerGradient>
-      <Text variant='titleMedium' style={{ fontSize: 16, fontWeight: 'bold' , color:'white' }}>
+      <Text variant='titleMedium' style={{ fontSize: 16, fontWeight: 'bold', color: 'white' }}>
         Quên mật khẩu
       </Text>
       <BaseForm methods={methods}>
-        <BaseInputEmail hideLabel  mode='outlined' label='Email' name='email' disabled={isEmailExits} />
+        <BaseInputEmail
+          hideLabel
+          mode='outlined'
+          label='Email'
+          name='email'
+          disabled={isEmailExits}
+        />
         {isEmailExits ? (
           <>
             <BaseInputPassword mode='outlined' label='Mật khẩu mới' name='password' />

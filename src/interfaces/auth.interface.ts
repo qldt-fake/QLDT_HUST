@@ -3,7 +3,8 @@ import { Gender } from 'src/common/enum/commom';
 export interface ILoginData {
   email: string;
   password: string;
-  deviceId?: string;
+  device_id?: string;
+  fcm_token: string | null
 }
 
 export interface ISignUpData {

@@ -10,26 +10,26 @@ import {
 } from 'react-native';
 import ClassHeader from './ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import DateTimePicker from 'react-native-date-picker';
 import { color } from 'src/common/constants/color';
-import { createSurveyApi } from 'src/services/survey.service';
+import { createMaterialApi } from 'src/services/material.service';
 import { ReponseCode } from 'src/common/enum/reponseCode';
-import dayjs from 'dayjs';
-import { useSelector } from 'react-redux';
-import { logout, selectAuth } from 'src/redux/slices/authSlice';
+// import { useSelector } from 'react-redux';
+// import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
 import { CODE_OK } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
 
-interface NewSurvey {
+interface NewMaterial {
   title: string;
   description: string;
   file: any;
-  deadline: Date | null;
+  materialType: string;
 }
 
-interface CreateSurveyProps {
+interface CreateMaterialProps {
   route: {
     params: {
       classId: string;
@@ -37,64 +37,56 @@ interface CreateSurveyProps {
   };
 }
 
-const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
+const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
   const auth = useSelector(selectAuth);
-  const user = auth.user;
+  const user = auth?.user;
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const [newSurvey, setNewSurvey] = useState<NewSurvey>({
+  const [newMaterial, setNewMaterial] = useState<NewMaterial>({
     title: '',
     description: '',
     file: null,
-    deadline: null
+    materialType: ''
   });
 
-  const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
-
-  const handleChange = (name: keyof NewSurvey, value: string | object | Date | null | any) => {
-    setNewSurvey(prev => ({
+  const handleChange = (name: keyof NewMaterial, value: string | object | null | any) => {
+    setNewMaterial(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
-  const handleShowDatePicker = () => {
-    setIsOpenDatePicker(true);
-  };
-
   const handleSelectFile = async () => {
     const file = await selectFile();
     if (file) {
+      // Extract file extension for materialType
+      const fileExtension = file?.name?.split('.').pop()?.toUpperCase() || '';
       handleChange('file', file);
+      handleChange('materialType', fileExtension);
     }
   };
 
   const validate = () => {
-    // Kiểm tra nếu tên bài kiểm tra không được nhập
-    if (!newSurvey.title.trim()) {
-      Alert.alert('Lỗi', 'Tên bài kiểm tra là trường bắt buộc');
+    if (!newMaterial.title.trim()) {
+      Alert.alert('Lỗi', 'Tên tài liệu là trường bắt buộc');
       return false;
     }
 
-    // Kiểm tra nếu không có mô tả hoặc tài liệu được tải lên
-    if (!newSurvey.description.trim() && !newSurvey.file) {
+    if (!newMaterial.description.trim() && !newMaterial.file) {
       Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
       return false;
     }
 
-    // Giới hạn ký tự cho phần mô tả (ví dụ: tối đa 500 ký tự)
     const MAX_DESCRIPTION_LENGTH = 500;
-    if (newSurvey.description.length > MAX_DESCRIPTION_LENGTH) {
+    if (newMaterial.description.length > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
 
-    // Kiểm tra thời gian bắt đầu và thời gian kết thúc
-    const currentTime = new Date();
-    if (newSurvey.deadline && newSurvey.deadline <= currentTime) {
-      Alert.alert('Lỗi', 'Thời gian kết thúc phải lớn hơn thời gian hiện tại');
+    if (!newMaterial.file) {
+      Alert.alert('Lỗi', 'Vui lòng tải tài liệu lên');
       return false;
     }
 
@@ -107,25 +99,20 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
     }
 
     try {
-      if (!newSurvey.title || !newSurvey.deadline) {
-        Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
-
       const payload = {
-        token: user?.token, 
-        classId: route.params.classId, 
-        title: newSurvey.title,
-        description: newSurvey.description,
-        deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
-        file: newSurvey.file
+        token: user?.token,
+        classId: route.params.classId,
+        title: newMaterial.title,
+        description: newMaterial.description,
+        file: newMaterial.file,
+        materialType: newMaterial.materialType
       };
 
-      const res = await createSurveyApi(payload);
+      const res = await createMaterialApi(payload);
       if (res) {
         switch (res.meta.code) {
           case CODE_OK:
-            Alert.alert('Thành công', 'Tạo survey thành công');
+            Alert.alert('Thành công', 'Tạo tài liệu thành công');
             navigation.goBack();
             break;
           case ReponseCode.INVALID_TOKEN:
@@ -133,7 +120,7 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
             dispatch(logout());
             break;
           case ReponseCode.NOT_ACCESS:
-            Alert.alert('Error', 'You do not have permission to create survey');
+            Alert.alert('Error', 'Bạn không có quyền tạo tài liệu');
             break;
           default:
             Alert.alert('Error', res.data);
@@ -141,32 +128,31 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to create survey');
+      Alert.alert('Error', 'Không thể tạo tài liệu');
       console.error(error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Create Survey' />
+      <ClassHeader title='Create Material' />
       <View style={styles.body}>
         <TextInput
           style={styles.name}
-          value={newSurvey.title}
+          value={newMaterial.title}
           onChangeText={text => handleChange('title', text)}
-          placeholder='Survey Title *'
+          placeholder='Material Title *'
           placeholderTextColor={color.submitBtnRed}
         />
         <TextInput
           style={[styles.name, styles.description]}
-          value={newSurvey.description}
+          value={newMaterial.description}
           onChangeText={text => handleChange('description', text)}
           placeholder='Description'
           multiline
           numberOfLines={6}
           placeholderTextColor={color.submitBtnRed}
         />
-        <Text style={[styles.text, styles.orText]}>Or</Text>
 
         <TouchableHighlight style={styles.fileButton} onPress={handleSelectFile}>
           <>
@@ -175,34 +161,11 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
               numberOfLines={1}
               ellipsizeMode='tail'
             >
-              {newSurvey?.file ? newSurvey.file.name : 'Upload File'}
+              {newMaterial?.file ? newMaterial.file.name : 'Upload File'}
             </Text>
             <Icon name='caret-up' size={20} color='#fff' />
           </>
         </TouchableHighlight>
-        {isOpenDatePicker && (
-          <DateTimePicker
-            date={newSurvey.deadline ?? new Date()}
-            onConfirm={date => {
-              setIsOpenDatePicker(false);
-              handleChange('deadline', date);
-            }}
-            onCancel={() => setIsOpenDatePicker(false)}
-            mode='datetime'
-            androidVariant='nativeAndroid'
-            textColor={color.red}
-            modal
-            open
-          />
-        )}
-        <View style={styles.period}>
-          <TouchableOpacity style={styles.selectPeriod} onPress={handleShowDatePicker}>
-            <Text style={{ color: color.borderRed }}>
-              {newSurvey.deadline ? newSurvey.deadline.toLocaleString() : 'Deadline'}
-            </Text>
-            <Icon name='caret-down' size={20} color={color.borderRed} />
-          </TouchableOpacity>
-        </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
           <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
@@ -238,11 +201,6 @@ const styles = StyleSheet.create({
     height: 200,
     textAlignVertical: 'top'
   },
-  orText: {
-    textAlign: 'center',
-    marginVertical: 10,
-    color: color.borderRed
-  },
   fileButton: {
     backgroundColor: color.borderRed,
     padding: 15,
@@ -258,24 +216,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: '80%'
   },
-  period: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginBottom: 20,
-    gap: 20
-  },
-  selectPeriod: {
-    borderColor: color.borderRed,
-    borderWidth: 1,
-    backgroundColor: '#f2f2f2',
-    borderRadius: 10,
-    flex: 1,
-    height: 50,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    flexDirection: 'row'
-  },
   submitButton: {
     backgroundColor: color.red,
     padding: 15,
@@ -289,4 +229,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateSurvey;
+export default CreateMaterial;

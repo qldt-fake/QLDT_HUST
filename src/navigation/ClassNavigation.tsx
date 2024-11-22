@@ -5,12 +5,11 @@ import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
 import CreateClass from 'src/screens/classes/classes-for-teacher/CreateClass';
 import EditClass from 'src/screens/classes/classes-for-teacher/EditClass';
 import RegisterClass from 'src/screens/classes/classes-for-teacher/RegisterClass';
-import CreateSurvey from 'src/screens/classes/classes-for-teacher/CreateSurvey';
-import HomeNavigation from './HomeNavigation';
-import { ClassNavigationName} from 'src/common/constants/nameScreen';
+import { ClassNavigationName } from 'src/common/constants/nameScreen';
 import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
 import { color } from 'src/common/constants/color';
 import SurveyNavigation from './SurveyNavigation';
+import MaterialNavigation from './MaterialNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -18,60 +17,72 @@ const ClassNavigation = () => {
   return (
     <Stack.Group
       screenOptions={{
-        headerShown: false,
+        headerShown: false
       }}
     >
-      <Stack.Screen name={ClassNavigationName.ClassList} options={
-        {
+      <Stack.Screen
+        name={ClassNavigationName.ClassList}
+        options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: color.bgClassHeader,
+            backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title="Class List" />,
-          
-        }
-      } component={ClassListPage} />
-      <Stack.Screen name={ClassNavigationName.ClassDetail} options={
-        {
+          headerTitle: () => <ClassHeader title='Class List' />
+        }}
+        component={ClassListPage}
+      />
+      <Stack.Screen
+        name={ClassNavigationName.ClassDetail}
+        options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: color.bgClassHeader,
+            backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title="Class Details" />,
-        }} component={ClassDetail} />
-      <Stack.Screen name={ClassNavigationName.CreateClass} options={
-        {
+          headerTitle: () => <ClassHeader title='Class Details' />
+        }}
+        component={ClassDetail}
+      />
+      <Stack.Screen
+        name={ClassNavigationName.CreateClass}
+        options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: color.bgClassHeader,
+            backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title="Create Class"  />,
-        }}  component={CreateClass} />
-      <Stack.Screen name={ClassNavigationName.EditClass} options={
-        {
+          headerTitle: () => <ClassHeader title='Create Class' />
+        }}
+        component={CreateClass}
+      />
+      <Stack.Screen
+        name={ClassNavigationName.EditClass}
+        options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: color.bgClassHeader,
+            backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title="Edit Class"/>,
-        }} component={EditClass} />
-      <Stack.Screen name={ClassNavigationName.RegisterClass} options={
-        {
+          headerTitle: () => <ClassHeader title='Edit Class' />
+        }}
+        component={EditClass}
+      />
+      <Stack.Screen
+        name={ClassNavigationName.RegisterClass}
+        options={{
           headerShown: true,
           headerStyle: {
-            backgroundColor: color.bgClassHeader,
+            backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title="Register Class" />,
-        }} component={RegisterClass} />
+          headerTitle: () => <ClassHeader title='Register Class' />
+        }}
+        component={RegisterClass}
+      />
 
-      {
-        SurveyNavigation()
-      }
+      {SurveyNavigation()}
+      {MaterialNavigation()}
     </Stack.Group>
   );
 };

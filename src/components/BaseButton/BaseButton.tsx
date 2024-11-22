@@ -44,9 +44,7 @@ function BaseButton(props: WraperButtonProp): JSX.Element {
         buttonColor={props.mode === 'contained' ? props.buttonColor : ''}
         disabled={props.disabled}
         textColor={
-          props.mode === 'outlined' && !props.isUseTextOutlineColor
-            ? color.white
-            : props.textColor
+          props.mode === 'outlined' && !props.isUseTextOutlineColor ? color.white : props.textColor
         }
         mode={props.mode}
         onPress={props.onPress}

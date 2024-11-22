@@ -20,6 +20,7 @@ export enum HttpStatus {
 
 export enum DATE_TIME_FORMAT {
   DD_MM_YY_DASH = 'DD/MM/YYYY',
+  YYYY_MM_DD_DASH = 'YYYY/MM/DD',
   YYYY_MM_DD_HYPHEN = 'YYYY_MM_DD',
   // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   DD_MM_YYYY_DASH = 'DD/MM/YYYY',
@@ -50,3 +51,7 @@ export enum OrderDirection {
 export const COUNT_ITEM = 20;
 
 export const KEY_SAVE_LOCAL_ACCOUNT = 'local_count';
+
+export const STATUS_COMPLETE = 'COMPLETED';
+export const STATUS_ACTIVE = 'ACTIVE';
+export const STATUS_UPCOMING = 'UPCOMING';

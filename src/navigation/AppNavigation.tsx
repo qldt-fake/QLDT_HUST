@@ -24,7 +24,7 @@ import { useNetInfoInstance } from '@react-native-community/netinfo';
 import ClassListPage from 'src/screens/classes/classes-for-teacher/ClassListPage';
 import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
 import ClassNavigation from './ClassNavigation';
-import NotificationNavigationWrapper from "src/navigation/NotificationNavigation";
+import NotificationNavigationWrapper from 'src/navigation/NotificationNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -86,20 +86,20 @@ function AppNavigation() {
               component={VerifyOTPAfterLogin}
               options={{ headerShown: false }}
             />
+          ) : (
             // ) : auth.user?.active === AccountStatus.Pending ? (
             //   <Stack.Screen
             //     name={AppNaviagtionName.ChangeProfileAfterSign}
             //     options={{ headerShown: false }}
             //     component={ChangeInfoAfterSignUpScreen}
             //   />
-          ) : (
             <>
               <Stack.Screen
                 name={AppNaviagtionName.TabNavigation}
                 options={{ headerShown: false, header: () => <Header /> }}
                 component={TabNavigationWrapper}
               />
-              
+
               <Stack.Screen
                 name={AppNaviagtionName.SettingNavigation}
                 component={SettingNavigationWrapper}
@@ -117,9 +117,7 @@ function AppNavigation() {
                 component={NotFoundScreen}
                 options={{ headerTitle: 'Không tìm thấy nội dung' }}
               />
-              {
-                ClassNavigation()
-              }
+              {ClassNavigation()}
             </>
           )
         ) : (
@@ -137,7 +135,7 @@ function AppNavigation() {
       />
       <Snackbar
         visible={!isConnected as boolean}
-        onDismiss={() => { }}
+        onDismiss={() => {}}
         action={{
           label: 'Thử lại',
           onPress: () => {

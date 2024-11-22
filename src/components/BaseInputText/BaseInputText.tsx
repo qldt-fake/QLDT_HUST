@@ -19,7 +19,7 @@ const defaultProps: Omit<BaseInputProps, 'name'> = {
   required: false,
   activeOutlineColor: color.activeOutlineColor,
   outlineColor: color.outlineColor,
-  selectionColor: color.outlineColor  
+  selectionColor: color.outlineColor
 };
 
 export type BaseInputProps = InputTextProps & TextInputProps & UseControllerProps;
@@ -55,9 +55,9 @@ function BaseInputText(props: BaseInputProps): JSX.Element {
 
 BaseInputText.defaultProps = defaultProps;
 const StyledTextInput = styled(TextInput)`
-  color: #FFFFFF; 
-  height: 54px; 
-  margin-bottom: 8px; 
+  color: #ffffff;
+  height: 54px;
+  margin-bottom: 8px;
 `;
 const TextError = styled.Text`
   color: ${color.error};

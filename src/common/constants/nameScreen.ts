@@ -88,11 +88,11 @@ export enum AddMoneyNavigationName {
   AddMoneyScreen = 'AddMoneyScreen'
 }
 export enum NotificationNavigationName {
-  NotificationDetail = 'NotificationDetail',
+  NotificationDetail = 'NotificationDetail'
 }
 export enum HomeNavigationName {
   Home = 'HomeTab',
-  Class = 'Class',
+  Class = 'Class'
 }
 export enum ClassNavigationName {
   Class = 'Class',
@@ -100,12 +100,20 @@ export enum ClassNavigationName {
   ClassList = 'ClassList',
   CreateClass = 'CreateClass',
   EditClass = 'EditClass',
-  RegisterClass = 'RegisterClass',
+  RegisterClass = 'RegisterClass'
 }
 export enum SurveyNavigationName {
   Survey = 'Survey',
   SurveyList = 'SurveyList',
   CreateSurvey = 'CreateSurvey',
   EditSurvey = 'EditSurvey',
-  SurveyDetail = 'SurveyDetail',
+  SurveyDetail = 'SurveyDetail'
+}
+
+export enum MaterialNavigationName {
+  Material = 'Material',
+  UploadMaterial = 'UploadMaterial',
+  MaterialList = 'MaterialList',
+  MaterialDetail = 'MaterialDetail',
+  EditMaterial = 'EditMaterial'
 }

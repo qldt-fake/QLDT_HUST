@@ -13,7 +13,7 @@ const options: AxiosRequestConfig = {
   headers: {
     'Content-Type': 'application/json'
   } as unknown as AxiosRequestHeaders,
-  baseURL: API_BASE,
+  baseURL: API_BASE || 'http://157.66.24.126:8080',
   responseType: 'json'
 };
 
@@ -69,7 +69,7 @@ axiosInstance.interceptors.response.use(
         }
       }
 
-      return error.response.data as IBodyResponse<unknown>;
+      return error.response.data as IBodyResponse<unknown, any>;
     } else if (error.request) {
       error.request.data = {
         ...(error?.request?.data || {}),

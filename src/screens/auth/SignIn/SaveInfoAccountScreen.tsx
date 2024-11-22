@@ -10,15 +10,12 @@ import { AuthNavigationName } from 'src/common/constants/nameScreen';
 import { getUniqueId } from 'react-native-device-info';
 function SaveInfoAccountScreen() {
   const auth = useAppSelector(selectAuth);
-  const routes: RouteProp<AuthNavigationType, AuthNavigationName.SaveInfoAccountScreen> = useRoute();
+  const routes: RouteProp<AuthNavigationType, AuthNavigationName.SaveInfoAccountScreen> =
+    useRoute();
   const { email, password } = routes.params;
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const navigation: NavigationProp<AuthNavigationType, 'Login'> = useNavigation();
   const onPressSaveButton = async () => {
-    const deviceId = await getUniqueId();
-    dispatch(login({ password, deviceId, email }));
-  };
-  const onPressAfterButton = async () => {
     const deviceId = await getUniqueId();
     dispatch(login({ password, deviceId, email }));
   };
@@ -30,16 +27,8 @@ function SaveInfoAccountScreen() {
       <Text variant='bodyMedium' style={{ color: color.white }}>
         Chúng tôi sẽ lưu thông tin đăng nhập cho để bạn không cần nhập vào lần sau.
       </Text>
-      <BaseButton onPress={onPressSaveButton} loading={auth.isLoading}>Lưu</BaseButton>
-      <BaseButton
-        mode='outlined'
-        borderColor={color.outlineColor}
-        textColor={color.textColor}
-        isUseTextOutlineColor
-        onPress={onPressAfterButton}
-        loading={auth.isLoading}
-      >
-        Lúc khác
+      <BaseButton onPress={onPressSaveButton} loading={auth.isLoading}>
+        Lưu
       </BaseButton>
     </WraperAuthScreen>
   );

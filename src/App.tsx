@@ -8,7 +8,7 @@ import { color } from './common/constants/color';
 import { Provider as ProviderRedux } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './redux';
-
+import LoadingOverlay from './components/loadingComponent';
 export default function App() {
   useEffect(() => {
     SplashScreen.hide();
@@ -17,13 +17,13 @@ export default function App() {
     <ProviderRedux store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
-          <StatusBar backgroundColor={color.sureface} barStyle='dark-content' />
+          <StatusBar backgroundColor={color.sureface} barStyle="dark-content" />
           <NavigationContainer>
             <AppNavigation />
           </NavigationContainer>
+          <LoadingOverlay />
         </SafeAreaProvider>
       </PersistGate>
     </ProviderRedux>
   );
 }
-// test

@@ -15,7 +15,7 @@ export interface ISearchUserItem {
   created: string;
   same_friend: string;
 }
-export const getSaveSearchApi = async (data: IGetSavedSearch): Promise<IBodyResponse<any>> => {
+export const getSaveSearchApi = async (data: IGetSavedSearch): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(SearchApi.GET_SAVE_SEARCH, data);
 };
 

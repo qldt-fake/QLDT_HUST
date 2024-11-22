@@ -19,6 +19,7 @@ import { getClassApi } from 'src/services/class.service';
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import StudentCard from './StudentCard';
 import { useSelector } from 'react-redux';
+import { selectAuth } from 'src/redux/slices/authSlice';
 
 const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
@@ -31,7 +32,7 @@ const data = [
 
 const FileScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState<any>(null);
 
   const openModal = (file: any) => {
     setSelectedFile(file);
@@ -43,7 +44,7 @@ const FileScreen = () => {
     setSelectedFile(null);
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: any }) => (
     <TouchableOpacity style={styles.item}>
       <Image style={styles.iconImg} source={require('../../../assets/folder.png')} />
       <View style={styles.textContainer}>
@@ -108,24 +109,22 @@ const FileScreen = () => {
 
 const PostScreen = () => {
   const classId = useContext(classDeatailContext);
+  const auth = useSelector(selectAuth);
+  const user = auth.user;
 
-  const user = useSelector(state => state.auth.user);
-
-  const {role, id, token} = user;
-
-  const [classDetail, setClassDetail] = useState(null);
+  const [classDetail, setClassDetail] = useState<any>(null);
 
   useEffect(() => {
     const fetchClassDetail = async () => {
       try {
         const res = await getClassApi({
-          token: token,
-          role: role,
-          account_id: id,
+          token: user?.token,
+          role: user?.role,
+          account_id: user?.id,
           class_id: classId
         });
         console.log('res', res);
-        console.log("Student_account", res.data.student_accounts);
+        console.log('Student_account', res.data.student_accounts);
         if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
           setClassDetail(res.data);
         }
@@ -140,16 +139,14 @@ const PostScreen = () => {
   return (
     <View style={styles.center}>
       {classDetail && <ClassDetailSummary {...classDetail} />}
-      <View style= {{paddingHorizontal: 10, marginTop: 15}}>
-        <Text style= {{fontSize: 18}}>Danh sách lớp ( {classDetail?.student_count} )</Text>
+      <View style={{ paddingHorizontal: 10, marginTop: 15 }}>
+        <Text style={{ fontSize: 18 }}>Danh sách lớp ( {classDetail?.student_count} )</Text>
       </View>
       <View>
         <FlatList
-        data={classDetail?.student_accounts}
-        renderItem={({ item }) => (
-          <StudentCard props={item} />
-        )}
-        keyExtractor={(item) => item.toString()}
+          data={classDetail?.student_accounts}
+          renderItem={({ item }) => <StudentCard props={item} />}
+          keyExtractor={item => item.toString()}
         />
       </View>
     </View>
@@ -162,21 +159,21 @@ const SurveyScreen = () => (
   </View>
 );
 
-const ClassDetail = ({ route }) => {
+const ClassDetail = ({ route }: { route: any }) => {
   const { classId } = route.params;
   console.log('classId', classId);
   return (
     <classDeatailContext.Provider value={classId}>
-        <Tab.Navigator
-          screenOptions={{
-            tabBarLabelStyle: { fontSize: 12 },
-            tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
-          }}
-        >
-          <Tab.Screen name='General' component={PostScreen} />
-          <Tab.Screen name='Material' component={FileScreen} />
-          <Tab.Screen name='Assignment'>{() => <Assignment classId={classId} />}</Tab.Screen>
-        </Tab.Navigator>
+      <Tab.Navigator
+        screenOptions={{
+          tabBarLabelStyle: { fontSize: 12 },
+          tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
+        }}
+      >
+        <Tab.Screen name='General' component={PostScreen} />
+        <Tab.Screen name='Material' component={FileScreen} />
+        <Tab.Screen name='Assignment'>{() => <Assignment classId={classId} />}</Tab.Screen>
+      </Tab.Navigator>
     </classDeatailContext.Provider>
   );
 };
@@ -184,7 +181,7 @@ const ClassDetail = ({ route }) => {
 const styles = StyleSheet.create({
   center: {
     flex: 1,
-    paddingTop:15
+    paddingTop: 15
   },
   list: {
     padding: 16

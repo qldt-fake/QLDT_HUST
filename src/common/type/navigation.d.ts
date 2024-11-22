@@ -5,44 +5,44 @@ type AppNavigationType = {
   SettingNavigation: { screen: SettingNavigationName };
   FriendNavigation: { screen: FriendNavigationName };
   ProfileNavigation:
-  | { screen: ProfileNavigationName.Profile }
-  | {
-    screen: ProfileNavigationName.SettingProfile;
-    params: { user_id: number; username?: string };
-  }
-  | { screen: ProfileNavigationName.EditProfile };
+    | { screen: ProfileNavigationName.Profile }
+    | {
+        screen: ProfileNavigationName.SettingProfile;
+        params: { user_id: number; username?: string };
+      }
+    | { screen: ProfileNavigationName.EditProfile };
   PostNavigation:
-  | { screen: PostNavigationName; params?: { selectedItem?: CardData } }
-  | { screen: PostNavigationName.ListImageDetail; params: { data: PostProps } }
-  | { screen: PostNavigationName.EditPostScreen; params: { data: PostProps } }
-  | {
-    screen: PostNavigationName.ListImageEditScreen;
-    params: {
-      oldImage: { id: string; url: string }[];
-      newImage: string[];
-      newMediaFiles: MediaFileType[];
-      listImage: string[];
-      imageDel?: string[];
-      onUpdate: (
-        updateImageList: string[],
-        updateNewMediaFiles: MediaFileType[],
-        updateImageDel?: string[],
-        updateOldImage?: { id: string; url: string }[],
-        updateNewImage?: string[]
-      ) => void;
-    };
-  }
-  | {
-    screen: PostNavigationName.ListImageScreen;
-    params: {
-      imageList: string[];
-      mediaFiles: MediaFileType[];
-      onUpdate: (updateImageList: string[], updateMediaFiles: MediaFileType[]) => void;
-    };
-  }
-  | { screen: PostNavigationName.EnAScreen }
-  | { screen: PostNavigationName.ListFeelScreen; params: { postId: string } }
-  | { screen: PostNavigationName.AllPostDetail; params: { postId: string } };
+    | { screen: PostNavigationName; params?: { selectedItem?: CardData } }
+    | { screen: PostNavigationName.ListImageDetail; params: { data: PostProps } }
+    | { screen: PostNavigationName.EditPostScreen; params: { data: PostProps } }
+    | {
+        screen: PostNavigationName.ListImageEditScreen;
+        params: {
+          oldImage: { id: string; url: string }[];
+          newImage: string[];
+          newMediaFiles: MediaFileType[];
+          listImage: string[];
+          imageDel?: string[];
+          onUpdate: (
+            updateImageList: string[],
+            updateNewMediaFiles: MediaFileType[],
+            updateImageDel?: string[],
+            updateOldImage?: { id: string; url: string }[],
+            updateNewImage?: string[]
+          ) => void;
+        };
+      }
+    | {
+        screen: PostNavigationName.ListImageScreen;
+        params: {
+          imageList: string[];
+          mediaFiles: MediaFileType[];
+          onUpdate: (updateImageList: string[], updateMediaFiles: MediaFileType[]) => void;
+        };
+      }
+    | { screen: PostNavigationName.EnAScreen }
+    | { screen: PostNavigationName.ListFeelScreen; params: { postId: string } }
+    | { screen: PostNavigationName.AllPostDetail; params: { postId: string } };
 
   SearchNavigation: { screen: SearchNavigationName };
   ReportNavigation: {
@@ -50,25 +50,26 @@ type AppNavigationType = {
     params: { id: string; username: string; userId: string };
   };
   ChatNavigation:
-  | { screen: ChatNavigationName.InboxScreen; params: { contact: Contact } }
-  | { screen: ChatNavigationName.InboxListScreen };
+    | { screen: ChatNavigationName.InboxScreen; params: { contact: Contact } }
+    | { screen: ChatNavigationName.InboxListScreen };
   VerifyOTPAfterLogin: undefined;
   ChangeProfileAfterSign: undefined;
   NotFoundScreen: undefined;
   AddMoneyNavigation: { screen: AddMoneyNavigationName };
   NotificationNavigation: {
-    screen: NotificationNavigationName, params: {
+    screen: NotificationNavigationName;
+    params: {
       title: string;
       content: string;
-    }
+    };
   };
 };
 
 type AuthNavigationType = {
   HomeAuth: undefined;
   Login: undefined;
-  VerifyOTPScreen: { verifyCode: string; email: string, password: string };
-  SaveInfoAccountScreen: { email: string, password: string };
+  VerifyOTPScreen: { verifyCode: string; email: string; password: string };
+  SaveInfoAccountScreen: { email: string; password: string };
   ForgetPasswordScreen: undefined;
   AccountLogin: {
     username: string;
@@ -100,8 +101,8 @@ type FriendNavigationType = {
   AllFriendScreen: undefined;
 };
 type SurveyType = {
-  CreateSurvey: { classId: string; };
-  EditSurvey: { surveyId: id, classId: class_id }
+  CreateSurvey: { classId: string };
+  EditSurvey: { surveyId: id; classId: class_id };
 };
 type PostNavigationType = {
   CreatePostScreen: { selectedItem: CardData } | undefined;
@@ -158,7 +159,7 @@ type NotificationNavigationType = {
     title: string;
     content: string;
   };
-}
+};
 
 type HomeNavigationType = {
   Class: undefined;
@@ -167,4 +168,4 @@ type HomeNavigationType = {
 type ClassNavigationType = {
   ClassDetail: { classId: string };
   EditClass: { classId: string };
-}
+};

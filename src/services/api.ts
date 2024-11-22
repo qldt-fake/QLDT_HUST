@@ -5,7 +5,7 @@ import {
   type IGetListResponse
 } from 'src/interfaces/common.interface';
 import { trimData } from 'src/utils/helper';
-import { axiosInstance, } from 'src/navigation/AppNavigation';
+import { axiosInstance } from 'src/navigation/AppNavigation';
 interface IServiceOption {
   baseUrl: string;
 }
@@ -49,7 +49,7 @@ export class ApiService {
     return params;
   }
 
-  _getList<T>(queryString: ICommonListQuery): Promise<IBodyResponse<IGetListResponse<T>,any>> {
+  _getList<T>(queryString: ICommonListQuery): Promise<IBodyResponse<IGetListResponse<T>, any>> {
     return this.client.get(`${this.baseUrl}`, {
       params: queryString
     });
@@ -74,17 +74,15 @@ export class ApiService {
   }
 }
 
-export const postMethodApi = async function <P, T>(
-  client: string,
-  data?: P,
-): Promise<any> {
+export const postMethodApi = async function <P, T>(client: string, data?: P): Promise<any> {
+  console.log('data', data);
   return await axiosInstance.post(client, data);
 };
 
 export const postMethodWithFormDataApi = async function <P, T>(
   client: string,
   data?: P
-): Promise<IBodyResponse<T,any>> {
+): Promise<IBodyResponse<T, any>> {
   return await axiosInstance.post(client, data, {
     headers: {
       'Content-Type': 'multipart/form-data',

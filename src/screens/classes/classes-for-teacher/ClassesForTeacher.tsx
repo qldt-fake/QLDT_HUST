@@ -19,7 +19,7 @@ const ClassManagement = () => {
 
   return (
     <View style={styles.container}>
-     <ClassHeader title = "Class Management"/>
+      <ClassHeader title='Class Management' />
       <View style={styles.body}>
         <View style={styles.searchContainer}>
           <TextInput style={styles.input} placeholder='Mã lớp' />
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     maxHeight: 500,
-    marginTop: 40 
+    marginTop: 40
   },
   searchContainer: {
     flexDirection: 'row',

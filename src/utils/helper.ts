@@ -1,3 +1,5 @@
+import { DATE_TIME_FORMAT } from './../common/constants/index';
+import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import isPlainObject from 'lodash/isPlainObject';
 import mapKeys from 'lodash/mapKeys';
 import trim from 'lodash/trim';
@@ -13,6 +15,9 @@ import {
   USER_IS_EXISTED,
   USER_NOT_FOUND
 } from 'src/common/constants/responseCode';
+import { Alert } from 'react-native';
+import dayjs from 'dayjs';
+import { DatePickerProps } from 'react-native-date-picker';
 
 export function isValidJSON(str: string) {
   try {
@@ -72,16 +77,16 @@ export const getAvatarUri = (uri: string) =>
 
 export const getCoverUri = (uri: string) =>
   uri ? { uri: uri } : require('src/assets/cover-default.jpg');
-export const convertGoogleDriveLink = (uri?:string) => {
-  if(!uri) return ''
+export const convertGoogleDriveLink = (uri?: string) => {
+  if (!uri) return '';
   const fileIdMatch = uri.match(/\/d\/(.*?)\//);
   if (fileIdMatch && fileIdMatch[1]) {
     return `https://drive.google.com/uc?export=view&id=${fileIdMatch[1]}`;
   } else {
-    console.error("Invalid Google Drive URL");
+    console.error('Invalid Google Drive URL');
     return null;
   }
-}
+};
 
 export function removeDiacritics(str: string) {
   const AccentsMap = [
@@ -144,17 +149,23 @@ export const formatDate = (date: string) => {
   const dayOfYear = Math.floor(
     (Date.UTC(dateObject.getUTCFullYear(), dateObject.getUTCMonth(), dateObject.getUTCDate()) -
       Date.UTC(dateObject.getUTCFullYear(), 0, 0)) /
-    86400000
+      86400000
   );
   if (dateObject.getUTCDay() < 5) {
     return `T${dateObject.getUTCDay()} LÚC ${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;
   } else if (dayOfYear === 365) {
-    return `${dateObject.getUTCDate()} THG ${dateObject.getUTCMonth() + 1
-      } LÚC ${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;
+    return `${dateObject.getUTCDate()} THG ${
+      dateObject.getUTCMonth() + 1
+    } LÚC ${dateObject.getUTCHours()}:${dateObject.getUTCMinutes()}`;
   } else {
-    return `${dateObject.getUTCDate()} THG ${dateObject.getUTCMonth() + 1
-      }, ${dateObject.getUTCFullYear()}`;
+    return `${dateObject.getUTCDate()} THG ${
+      dateObject.getUTCMonth() + 1
+    }, ${dateObject.getUTCFullYear()}`;
   }
+};
+
+export const formatDateTime = (type: DATE_TIME_FORMAT, date: Date): string => {
+  return dayjs(date).format(type);
 };
 
 export function formatNumber(number: string): string {
@@ -162,4 +173,33 @@ export function formatNumber(number: string): string {
     return '0';
   }
   return number?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+export async function selectFile(): Promise<DocumentPickerResponse> {
+  return await DocumentPicker.pickSingle({
+    type: [
+      DocumentPicker.types.images,
+      DocumentPicker.types.pdf,
+      DocumentPicker.types.doc,
+      DocumentPicker.types.docx,
+      DocumentPicker.types.ppt,
+      DocumentPicker.types.pptx,
+      DocumentPicker.types.xls,
+      DocumentPicker.types.xlsx,
+      DocumentPicker.types.plainText,
+      DocumentPicker.types.zip,
+      DocumentPicker.types.audio,
+      DocumentPicker.types.video
+    ]
+  });
+}
+
+export function calculateDateAfterWeeks(startDate: string | Date, weeks: number): Date | null {
+  if (!startDate || typeof weeks !== 'number' || weeks <= 0) {
+    Alert.alert('Error', 'Vui lòng nhập đúng định dạng ngày và số tuần lớn hơn 0');
+    return null;
+  }
+
+  const resultDate = dayjs(startDate).add(weeks * 7, 'day');
+  return resultDate.toDate();
 }

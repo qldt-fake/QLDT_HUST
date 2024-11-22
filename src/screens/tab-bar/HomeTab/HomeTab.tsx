@@ -9,17 +9,21 @@ export default function HomeTab() {
   const navigation = useNavigation();
   return (
     <View style={styles.container}>
-
-      <Card style={styles.card} onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}>
+      <Card
+        style={styles.card}
+        onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}
+      >
         <View style={styles.iconContainer}>
-          <IconButton icon='calendar' iconColor={color.red}
-            size={50} />
+          <IconButton icon='calendar' iconColor={color.red} size={50} />
         </View>
         <Text style={styles.title}>Thời khóa biểu</Text>
         <Text style={styles.description}>Tra cứu thời khóa biểu, lịch thi</Text>
       </Card>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(ClassNavigationName.ClassList as never)}>
+      <Card
+        style={styles.card}
+        onPress={() => navigation.navigate(ClassNavigationName.ClassList as never)}
+      >
         <View style={styles.iconContainer}>
           <IconButton icon='account-cog' iconColor={color.red} size={50} />
         </View>
@@ -29,8 +33,7 @@ export default function HomeTab() {
 
       <Card style={styles.card} onPress={() => navigation.navigate(`` as never)}>
         <View style={styles.iconContainer}>
-          <IconButton icon='file-document' iconColor={color.red}
-            size={50} />
+          <IconButton icon='file-document' iconColor={color.red} size={50} />
         </View>
         <Text style={styles.title}>Biểu mẫu</Text>
         <Text style={styles.description}>Thông tin các đồ án</Text>
@@ -38,14 +41,11 @@ export default function HomeTab() {
 
       <Card style={styles.card} onPress={() => navigation.navigate(`` as never)}>
         <View style={styles.iconContainer}>
-          <IconButton icon='information' iconColor={color.red}
-            size={50} />
+          <IconButton icon='information' iconColor={color.red} size={50} />
         </View>
         <Text style={styles.title}>About us</Text>
         <Text style={styles.description}>Về chúng tôi</Text>
       </Card>
-
-
     </View>
   );
 }
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     padding: 10,
-    backgroundColor: '#f0f4f8',
+    backgroundColor: '#f0f4f8'
   },
   card: {
     width: '45%',
@@ -65,24 +65,24 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: '#fff',
     borderRadius: 10,
-    elevation: 3,
+    elevation: 3
   },
   iconContainer: {
     alignItems: 'center',
     marginBottom: 5,
     backgroundColor: '#f0f4f8',
     borderRadius: 50,
-    padding: 10,
+    padding: 10
   },
   title: {
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
-    color: '#333',
+    color: '#333'
   },
   description: {
     fontSize: 12,
     color: '#666',
-    textAlign: 'center',
-  },
+    textAlign: 'center'
+  }
 });

@@ -36,7 +36,7 @@ function VerifyOTPAfterLogin() {
       setIsLoadingGetCode(true);
       const res = await getVerifyCodeApi({ email: auth.user?.email as string });
       if (!res.success) {
-        return setTextError("Lỗi");
+        return setTextError('Lỗi');
       }
       setValue('otpCode', res.data);
       setIsLoadingGetCode(false);

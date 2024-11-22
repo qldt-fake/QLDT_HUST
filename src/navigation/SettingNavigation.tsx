@@ -72,7 +72,11 @@ function SettingNavigation() {
         component={SearchUserScreen}
         options={{ headerShown: false }}
       />
-      <Stack.Screen name={SettingNavigationName.Profile} options={{ title: 'Thông tin tài khoản' }} component={ProfileScreen}/>
+      <Stack.Screen
+        name={SettingNavigationName.Profile}
+        options={{ title: 'Thông tin tài khoản' }}
+        component={ProfileScreen}
+      />
       {/* <Stack.Screen name={SettingNavigationName.SettingPassword} options={{ headerShown: true, title: 'Cài đặt' }} component={SettingPassword} /> */}
     </Stack.Navigator>
   );

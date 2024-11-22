@@ -5,20 +5,20 @@ interface LoadingState {
 }
 
 const initialState: LoadingState = {
-  isLoading: false,
+  isLoading: false
 };
 
 const loadingSlice = createSlice({
   name: 'loading',
   initialState,
   reducers: {
-    showLoading: (state) => {
+    showLoading: state => {
       state.isLoading = true;
     },
-    hideLoading: (state) => {
+    hideLoading: state => {
       state.isLoading = false;
-    },
-  },
+    }
+  }
 });
 
 // Export các action

@@ -109,9 +109,8 @@ const FileScreen = () => {
 
 const PostScreen = () => {
   const classId = useContext(classDeatailContext);
-  const auth = useSelector(selectAuth)
-  const user = auth.user
-
+  const auth = useSelector(selectAuth);
+  const user = auth.user;
 
   const [classDetail, setClassDetail] = useState<any>(null);
 
@@ -125,7 +124,7 @@ const PostScreen = () => {
           class_id: classId
         });
         console.log('res', res);
-        console.log("Student_account", res.data.student_accounts);
+        console.log('Student_account', res.data.student_accounts);
         if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
           setClassDetail(res.data);
         }
@@ -146,10 +145,8 @@ const PostScreen = () => {
       <View>
         <FlatList
           data={classDetail?.student_accounts}
-          renderItem={({ item }) => (
-            <StudentCard props={item} />
-          )}
-          keyExtractor={(item) => item.toString()}
+          renderItem={({ item }) => <StudentCard props={item} />}
+          keyExtractor={item => item.toString()}
         />
       </View>
     </View>

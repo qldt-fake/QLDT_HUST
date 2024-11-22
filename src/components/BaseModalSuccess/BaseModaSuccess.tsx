@@ -4,12 +4,13 @@ import { View } from 'react-native';
 import { color } from 'src/common/constants/color';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 export type BaseModalErrorProps = Partial<Omit<ModalProps, 'children'>> & {
-  title: string, onOkPress?: () => void;
+  title: string;
+  onOkPress?: () => void;
 };
 function BaseModalSuccess(props: BaseModalErrorProps) {
-  const { isVisible, onBackdropPress, title,onOkPress, ...remainProps } = props;
+  const { isVisible, onBackdropPress, title, onOkPress, ...remainProps } = props;
   const naviagion: NavigationProp<AuthNavigationType, 'VerifyOTPScreen'> = useNavigation();
- 
+
   return (
     <Modal
       {...remainProps}
@@ -29,8 +30,7 @@ function BaseModalSuccess(props: BaseModalErrorProps) {
           paddingVertical: 40,
           marginHorizontal: 30,
           borderRadius: 4,
-          alignItems: 'center',
-
+          alignItems: 'center'
         }}
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
@@ -47,18 +47,23 @@ function BaseModalSuccess(props: BaseModalErrorProps) {
             {title}
           </Text>
           <IconButton
-            icon="check-circle"
+            icon='check-circle'
             size={24}
             iconColor={color.successPrimary}
             style={{ marginTop: -10 }}
           />
         </View>
-        <Button onPress={onOkPress} mode='outlined' theme={{ colors: { primary: color.successPrimary, outline: color.successPrimary } }}
+        <Button
+          onPress={onOkPress}
+          mode='outlined'
+          theme={{ colors: { primary: color.successPrimary, outline: color.successPrimary } }}
           style={{
             width: 100,
-            justifyContent: 'center',
+            justifyContent: 'center'
           }}
-        >OK</Button>
+        >
+          OK
+        </Button>
       </View>
     </Modal>
   );

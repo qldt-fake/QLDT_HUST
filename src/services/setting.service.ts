@@ -36,15 +36,17 @@ export interface IGetPushSettingResponse {
   led_on: booleanReponse;
 }
 
-export const setDevTokenApi = (data: ISetDevToken): Promise<IBodyResponse<any,any>> => {
+export const setDevTokenApi = (data: ISetDevToken): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(SettingsApi.SET_DEVTOKEN, data);
 };
 
-export const setPushSettingsApi = (data: ISetPushSettings): Promise<IBodyResponse<any,any>> => {
+export const setPushSettingsApi = (data: ISetPushSettings): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(SettingsApi.SET_PUSH_SETTINGS, data);
 };
 
-export const getPushSettingsApi = async (): Promise<IBodyResponse<IGetPushSettingResponse,any>> => {
+export const getPushSettingsApi = async (): Promise<
+  IBodyResponse<IGetPushSettingResponse, any>
+> => {
   return postMethodApi(SettingsApi.GET_PUSH_SETTINGS, {});
 };
 

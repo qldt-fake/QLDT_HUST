@@ -1,6 +1,6 @@
 export const color = {
   primary: '#f63a39',
-  second: "#8e1f1f",
+  second: '#8e1f1f',
   error: '#ddc713',
   white: '#FFFFFF',
   green: '#45BD62',
@@ -36,5 +36,5 @@ export const color = {
   cardClassBg: '#ffe6e6',
   textGray: '#999999',
   successPrimary: 'green',
-  bgClassHeader: '#b30000',
+  bgClassHeader: '#b30000'
 };

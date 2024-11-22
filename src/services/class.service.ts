@@ -1,5 +1,5 @@
-
-import { classType } from './../common/enum/commom';
+import { string } from 'yup';
+import { classStatus, classType } from './../common/enum/commom';
 import { postMethodApi } from './api';
 import { ClassApi } from './clientConstant';
 import { IBodyResponse } from 'src/interfaces/common.interface';
@@ -8,12 +8,12 @@ export interface IClassItem {
   class_id?: string;
   role?: string;
   account_id?: number;
-  class_type?: classType;
+  class_type?: classType | string;
   class_name?: string;
-  start_date?: Date | String | null;
-  end_date?: Date | String | null;
+  start_date?: Date | string | null;
+  end_date?: Date | string | null;
   max_student_amount?: number;
-  status?: string
+  status?: classStatus | string;
 }
 export const createClassApi = async (data: IClassItem): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.CREATE_CLASS, data);
@@ -21,24 +21,24 @@ export const createClassApi = async (data: IClassItem): Promise<IBodyResponse<an
 
 export const updateClassApi = async (data: IClassItem): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.EDIT_CLASS, data);
-}
+};
 
 export const deleteClassApi = async (data: IClassItem): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.DELETE_CLASS, data);
-}
+};
 
 export const getClassApi = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.GET_CLASS, data);
-}
+};
 
 export const getClassListApi = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.GET_CLASS_LIST, data);
-}
+};
 
 export const registerClassApi = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.REGISTER_CLASS, data);
-}
+};
 
 export const getBasicClassInfoApi = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.GET_BASIC_CLASS_INFO, data);
-}
+};

@@ -50,7 +50,7 @@ function VerifyOTPScreen() {
       console.log(res);
 
       if (res.code !== CODE_OK) {
-        return setTextError(res.message)
+        return setTextError(res.message);
       }
       setValue('otpCode', res.verify_code);
       setIsLoadingGetCode(false);

@@ -13,7 +13,7 @@ function RoleRadioOptinons(
   return (
     <>
       <RadioButton.Group value={field.value} onValueChange={field.onChange}>
-        <BaseTextTitle > Chọn đối tượng </BaseTextTitle>
+        <BaseTextTitle> Chọn đối tượng </BaseTextTitle>
         <BaseRadioButton label='Giảng viên' value={Roles.LECTURER} />
         <BaseRadioButton label='Sinh viên' value={Roles.STUDENT} />
       </RadioButton.Group>

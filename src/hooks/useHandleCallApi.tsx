@@ -4,10 +4,10 @@ import { useAppDispatch } from 'src/redux';
 import { setMessage } from 'src/redux/slices/appSlice';
 import { handShowErrorMessage } from 'src/utils/helper';
 
-function useHandleCallApi<T>(callApiFunction: () => Promise<IBodyResponse<T,any>>) {
+function useHandleCallApi<T>(callApiFunction: () => Promise<IBodyResponse<T, any>>) {
   const dispatch = useAppDispatch();
   const [isLoading, setIsLoaidng] = useState<boolean>(false);
-  const [res, setRes] = useState<IBodyResponse<T,any> | null>(null);
+  const [res, setRes] = useState<IBodyResponse<T, any> | null>(null);
   const callApi = useCallback(async () => {
     try {
       setIsLoaidng(true);

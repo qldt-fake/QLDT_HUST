@@ -64,7 +64,7 @@ export const getNotificationApi = (data: IGetNotification): Promise<IGetNotifica
 
 export const checkNewItemAPi = (
   data: IGetCheckNewItem
-): Promise<IBodyResponse<ICheckNewItemResponseData,any>> => {
+): Promise<IBodyResponse<ICheckNewItemResponseData, any>> => {
   return postMethodApi(NotificationApi.CHECK_NEW_iTEMS, data);
 };
 

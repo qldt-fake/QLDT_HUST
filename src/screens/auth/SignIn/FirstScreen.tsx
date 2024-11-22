@@ -5,7 +5,7 @@ import { color } from 'src/common/constants/color';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import BaseForm from 'src/components/BaseForm';
 import BaseInputEmail from 'src/components/BaseInputEmail';
-import BaseInputPassword from 'src/components/BaseInputPassword'
+import BaseInputPassword from 'src/components/BaseInputPassword';
 import BaseInputText from 'src/components/BaseInputText';
 import { signUpFormSchema } from 'src/validation/login.validate';
 import styles from './styles';
@@ -35,38 +35,40 @@ function FirstScreen() {
   const [textSuccess, setTextSuccess] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const naviagion: NavigationProp<AuthNavigationType, 'VerifyOTPScreen'> = useNavigation();
-  const [verifyCode, setVerifyCode] = useState('')
-  const [emailUser, setEmailUser] = useState('')
-  const [passwordUser, setPasswordUser] = useState('')
+  const [verifyCode, setVerifyCode] = useState('');
+  const [emailUser, setEmailUser] = useState('');
+  const [passwordUser, setPasswordUser] = useState('');
   const onSubmit = async (data: any) => {
     try {
       const uuid = await getUniqueId();
       setIsLoading(true);
       const { ho, ten, email, password, role } = data;
       const res = await signUpApi({ ho, ten, email, password, uuid, role });
-      
+
       if (!res.success) {
         if (res.code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');
         if (res.code === NO_DATA) return setTextError(res.message);
-      }
-      else {
-        setVerifyCode(res.verify_code || '')
-        setEmailUser(email)
-        setTextSuccess("Đăng ký thành công");
-        setPasswordUser(password)
+      } else {
+        setVerifyCode(res.verify_code || '');
+        setEmailUser(email);
+        setTextSuccess('Đăng ký thành công');
+        setPasswordUser(password);
       }
       setIsLoading(false);
     } catch (err) {
       console.log(err);
       setTextError('server availability');
-    }
-    finally {
-      setIsLoading(false)
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleOkPress = () => {
-    naviagion.navigate('VerifyOTPScreen', { email: emailUser, verifyCode: verifyCode, password: passwordUser });
-  }
+    naviagion.navigate('VerifyOTPScreen', {
+      email: emailUser,
+      verifyCode: verifyCode,
+      password: passwordUser
+    });
+  };
   const onBackdropPress = () => {
     setTextError('');
     setIsLoading(false);
@@ -91,11 +93,21 @@ function FirstScreen() {
                 rules={{ required: 'email is required' }}
               />
               <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
-              <BaseInputPassword hideLabel label='Nhập lại mật khẩu' mode='outlined' name='repassword' />
+              <BaseInputPassword
+                hideLabel
+                label='Nhập lại mật khẩu'
+                mode='outlined'
+                name='repassword'
+              />
               <WrapperRolesOption>
                 <RoleRadioOptinons name='role' />
               </WrapperRolesOption>
-              <BaseButton style={{ marginTop: 16 }} width={350} onPress={handleSubmit(onSubmit)} loading={isLoading}>
+              <BaseButton
+                style={{ marginTop: 16 }}
+                width={350}
+                onPress={handleSubmit(onSubmit)}
+                loading={isLoading}
+              >
                 Đăng ký
               </BaseButton>
             </View>
@@ -103,12 +115,14 @@ function FirstScreen() {
         </ScrollView>
       </KeyboardAvoidingView>
       <BaseModalError title={textError} isVisible={!!textError} onBackdropPress={onBackdropPress} />
-      <BaseModalSuccess title={textSuccess} isVisible={!!textSuccess} onOkPress={handleOkPress} // Truyền hàm vào prop này
+      <BaseModalSuccess
+        title={textSuccess}
+        isVisible={!!textSuccess}
+        onOkPress={handleOkPress} // Truyền hàm vào prop này
       />
     </WraperAuthScreen>
   );
 }
-
 
 const WrapperRolesOption = styled.View<ViewProps>`
   padding: 16px 10px;

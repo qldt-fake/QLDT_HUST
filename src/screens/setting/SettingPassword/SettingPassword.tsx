@@ -39,7 +39,7 @@ interface IChangePassword {
 function SettingPassword() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [alertText, setAlertText] = useState<string>('');
-  const [successttext, setSuccesstext] = useState('')
+  const [successttext, setSuccesstext] = useState('');
   const navigation: NavigationProp<SettingNavigationType> = useNavigation();
   const auth = useAppSelector(selectAuth);
 
@@ -48,9 +48,9 @@ function SettingPassword() {
   const { handleSubmit } = methods;
   const onPressSuccess = () => {
     navigation.goBack();
-  }
+  };
   const onSubmit = async (data: IChangePassword) => {
-    const token2 = auth?.user?.token
+    const token2 = auth?.user?.token;
     console.log(token2);
 
     try {
@@ -67,7 +67,7 @@ function SettingPassword() {
       setSuccesstext(SUCCESS_MESSAGE);
     } catch (err) {
       console.log(err);
-      
+
       setAlertText('Vui lòng kiểm tra kết nối internet');
     }
   };

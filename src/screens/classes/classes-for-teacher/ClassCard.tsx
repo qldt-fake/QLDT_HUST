@@ -12,12 +12,12 @@ import { deleteClassApi } from 'src/services/class.service';
 import { selectAuth } from 'src/redux/slices/authSlice';
 import { CODE_OK } from 'src/common/constants/responseCode';
 const ClassCard = (args: { props: any }) => {
-  const { props } = args
+  const { props } = args;
   const { class_name, class_id, class_type, start_date, end_date, setClassList } = props;
-  console.log("ClassId: ", class_id);
+  console.log('ClassId: ', class_id);
   const navigation: NavigationProp<ClassNavigationType> = useNavigation();
-  const auth = useSelector(selectAuth)
-  const user = auth.user
+  const auth = useSelector(selectAuth);
+  const user = auth.user;
   const [modalVisible, setModalVisible] = useState(false);
 
   const callDeleteClassApi = async () => {
@@ -28,43 +28,40 @@ const ClassCard = (args: { props: any }) => {
       class_id: class_id
     });
     console.log(res);
-    if (res && res.data && res.meta.code === CODE_OK) {
+    if (res && res.meta.code === CODE_OK) {
       Alert.alert('Delete Class', 'Delete class successfully');
       setClassList((prev: any) => prev.filter((item: any) => item.class_id !== class_id));
     }
-  }
-
+  };
 
   const handleEdit = () => {
     setModalVisible(false);
     navigation.navigate(ClassNavigationName.EditClass, { classId: class_id });
-  }
+  };
 
   const handleDelete = () => {
     setModalVisible(false);
-    Alert.alert(
-      'Delete Class',
-      'Are you sure you want to delete this class?',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'OK',
-          onPress: () => callDeleteClassApi(),
-        }
-      ]
-    );
-  }
+    Alert.alert('Delete Class', 'Are you sure you want to delete this class?', [
+      {
+        text: 'Cancel',
+        style: 'cancel'
+      },
+      {
+        text: 'OK',
+        onPress: () => callDeleteClassApi()
+      }
+    ]);
+  };
 
   return (
     <View style={styles.wrapper}>
-      <View
-        style={styles.container}
-
-      >
-        <TouchableOpacity style={styles.body} onPress={() => navigation.navigate(ClassNavigationName.ClassDetail, { classId: class_id })}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          style={styles.body}
+          onPress={() =>
+            navigation.navigate(ClassNavigationName.ClassDetail, { classId: class_id })
+          }
+        >
           <Text style={styles.text}>{class_id + '-' + class_name}</Text>
           <View style={styles.classTimeBox}>
             <View style={styles.schedule}>
@@ -81,11 +78,13 @@ const ClassCard = (args: { props: any }) => {
             </View>
           </View>
         </TouchableOpacity>
-        <View style={[styles.iconBox, user?.role === Roles.LECTURER ? { marginBottom: 'auto' } : {}]}>
+        <View
+          style={[styles.iconBox, user?.role === Roles.LECTURER ? { marginBottom: 'auto' } : {}]}
+        >
           {user?.role === Roles.STUDENT ? (
             <Icon name='chevron-right' size={14} color={color.black} />
           ) : (
-            <TouchableOpacity onPress={() => setModalVisible(true)} style={{ padding: 10 }} >
+            <TouchableOpacity onPress={() => setModalVisible(true)} style={{ padding: 10 }}>
               <Icon name='ellipsis-v' size={25} color={color.black} />
             </TouchableOpacity>
           )}
@@ -113,7 +112,8 @@ const ClassCard = (args: { props: any }) => {
 const styles = StyleSheet.create({
   wrapper: {
     position: 'relative',
-    zIndex: 1
+    zIndex: 1,
+    marginVertical: 5
   },
   container: {
     flex: 1,

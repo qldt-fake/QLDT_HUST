@@ -1,16 +1,14 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import CreateSurvey from 'src/screens/classes/classes-for-teacher/CreateSurvey';
-import HomeNavigation from './HomeNavigation';
-import { SurveyNavigationName } from 'src/common/constants/nameScreen';
+import { MaterialNavigationName } from 'src/common/constants/nameScreen';
 import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
 import { color } from 'src/common/constants/color';
 import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
-import EditSurvey from 'src/screens/classes/classes-for-teacher/EditSurvey';
+import CreateMaterial from 'src/screens/classes/classes-for-teacher/CreateMaterial';
 
 const Stack = createNativeStackNavigator();
 
-const SurveyNavigation = () => {
+const MaterialNavigation = () => {
   return (
     <Stack.Group
       screenOptions={{
@@ -18,33 +16,33 @@ const SurveyNavigation = () => {
       }}
     >
       <Stack.Screen
-        name={SurveyNavigationName.SurveyList}
+        name={MaterialNavigationName.MaterialList}
         options={{
           headerShown: true,
           headerStyle: {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title='Danh sách lớp học' textLogo='HUST' />
+          headerTitle: () => <ClassHeader title='Danh sách Tài liệu' textLogo='HUST' />
         }}
         component={ClassDetail}
-        initialParams={{ initialTab: 'Assignment' }} // Truyền thông tin tab cần mở
+        initialParams={{ initialTab: 'Material' }} // Truyền thông tin tab cần mở
       />
       <Stack.Screen
-        name={SurveyNavigationName.CreateSurvey}
+        name={MaterialNavigationName.UploadMaterial}
         options={{
           headerShown: true,
           headerStyle: {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title='Create Survey' textLogo='HUST' />
+          headerTitle: () => <ClassHeader title='Create Material' textLogo='HUST' />
         }}
-        component={CreateSurvey}
+        component={CreateMaterial}
       />
 
-      <Stack.Screen
-        name={SurveyNavigationName.EditSurvey}
+      {/* <Stack.Screen
+        name={MaterialNavigationName.EditMaterial}
         options={{
           headerShown: true,
           headerStyle: {
@@ -53,10 +51,10 @@ const SurveyNavigation = () => {
           headerTitleAlign: 'center',
           headerTitle: () => <ClassHeader title='Edit Survey' textLogo='HUST' />
         }}
-        component={EditSurvey}
-      />
+        component={}
+      /> */}
     </Stack.Group>
   );
 };
 
-export default SurveyNavigation;
+export default MaterialNavigation;

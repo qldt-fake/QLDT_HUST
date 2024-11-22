@@ -81,16 +81,19 @@ export enum booleanReponse {
 }
 
 export enum classType {
-  LT = "LT",
-  TH = "TH",
-  BT = "BT",
-  LT_BT = "LT_BT"
+  LT = 'LT',
+  BT = 'BT',
+  LT_BT = 'LT_BT'
 }
 
-export enum surveyStatus {
-  
+export enum classStatus {
+  ACTIVE = 'ACTIVE',
+  UPCOMING = 'UPCOMING',
+  COMPLETE = 'COMPLETE'
 }
+
+export enum surveyStatus {}
 export enum Roles {
   LECTURER = 'LECTURER',
-  STUDENT = 'STUDENT',  
+  STUDENT = 'STUDENT'
 }

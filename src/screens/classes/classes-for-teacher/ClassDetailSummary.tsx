@@ -24,7 +24,9 @@ const ClassDetailSummary: React.FC<ClassDetailSummaryProps> = ({
 }) => {
   return (
     <View style={styles.container}>
-      <View style = {styles.header}><Text>{class_id + ' - ' + class_name}</Text></View>
+      <View style={styles.header}>
+        <Text>{class_id + ' - ' + class_name}</Text>
+      </View>
       <View style={styles.body}>
         <View style={styles.line}>
           <Text style={styles.row}>Mã lớp:</Text>
@@ -63,18 +65,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 20,
     borderRadius: 12,
-    borderWidth: 0.5,
+    borderWidth: 0.5
   },
-  header : {
+  header: {
     paddingBottom: 5,
-    borderBottomWidth: .2,
+    borderBottomWidth: 0.2
   },
   body: {
     paddingTop: 10,
     rowGap: 8
   },
   line: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   row: {
     flex: 1

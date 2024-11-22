@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-export const baseUrl: string = 'http://160.30.168.228:8080/it5023e'
+export const baseUrl: string = 'http://157.66.24.126:8080';
 
 export enum AuthAPi {
   LOGIN = '/it4788/login',
@@ -83,15 +83,21 @@ export enum ClassApi {
   DELETE_CLASS = '/it5023e/delete_class',
   GET_CLASS_DETAIL = '/it5023e/get_class_detail',
   REGISTER_CLASS = '/it5023e/register_class',
-  GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info',
+  GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info'
 }
-
-
 
 export enum SurveyApi {
   CREATE_SURVEY = '/it5023e/create_survey',
   GET_ALL_SURVEYS = '/it5023e/get_all_surveys',
   EDIT_SURVEY = '/it5023e/edit_survey',
   DELETE_SURVEY = '/it5023e/delete_survey',
-  GET_SURVEY = '/it5023e/get_survey_response',
+  GET_SURVEY = '/it5023e/get_survey_response'
+}
+
+export enum MaterialApi {
+  UPLOAD_MATERIAL = '/it5023e/upload_material',
+  GET_MATERIAL_INFO = '/it5023e/get_material_info',
+  GET_MATERIAL_LIST = '/it5023e/get_material_list',
+  EDIT_MATERIAL = '/it5023e/edit_material',
+  DELETE_MATERIAL = '/it5023e/delete_material'
 }

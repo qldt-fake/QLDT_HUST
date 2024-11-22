@@ -10,7 +10,7 @@ import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
 import { color } from 'src/common/constants/color';
 import SurveyNavigation from './SurveyNavigation';
 import MaterialNavigation from './MaterialNavigation';
-
+import ClassListOpen from 'src/screens/classes/classes-for-teacher/classOpen/ClassOpen';
 const Stack = createNativeStackNavigator();
 
 const ClassNavigation = () => {
@@ -80,7 +80,18 @@ const ClassNavigation = () => {
         }}
         component={RegisterClass}
       />
-
+      <Stack.Screen
+        name={ClassNavigationName.ClassListOpen}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: color.bgClassHeader
+          },
+          headerTitleAlign: 'center',
+          headerTitle: () => <ClassHeader title='Danh sách lớp mở' />
+        }}
+        component={ClassListOpen}
+      />
       {SurveyNavigation()}
       {MaterialNavigation()}
     </Stack.Group>

@@ -24,6 +24,7 @@ import { KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { NO_DATA, USER_IS_EXISTED } from 'src/common/constants/responseCode';
 import BaseModalSuccess from 'src/components/BaseModalSuccess';
 import * as yup from 'yup';
+import { ISignUpData } from 'src/interfaces/auth.interface';
 
 function FirstScreen() {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ function FirstScreen() {
       const uuid = await getUniqueId();
       setIsLoading(true);
       const { ho, ten, email, password, role } = data;
-      const res = await signUpApi({ ho, ten, email, password, uuid, role });
+      const res = await signUpApi({ ho, ten, email, password, uuid, role, fcm_token: null });
 
       if (!res.success) {
         if (res.code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');
@@ -60,70 +61,70 @@ function FirstScreen() {
       setTextError('server availability');
     } finally {
       setIsLoading(false);
-    }
-  };
-  const handleOkPress = () => {
-    naviagion.navigate('VerifyOTPScreen', {
-      email: emailUser,
-      verifyCode: verifyCode,
-      password: passwordUser
-    });
-  };
-  const onBackdropPress = () => {
-    setTextError('');
-    setIsLoading(false);
-  };
+    };
 
-  return (
-    <WraperAuthScreen spaceBetween linnerGradient>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <BaseForm methods={methods}>
-            <View style={styles.formGroup}>
-              <BaseInputText hideLabel name='ho' label='Họ' mode='outlined' />
-              <BaseInputText hideLabel name='ten' label='Tên' mode='outlined' />
-              <BaseInputEmail
-                hideLabel
-                label='Email'
-                mode='outlined'
-                name='email'
-                rules={{ required: 'email is required' }}
-              />
-              <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
-              <BaseInputPassword
-                hideLabel
-                label='Nhập lại mật khẩu'
-                mode='outlined'
-                name='repassword'
-              />
-              <WrapperRolesOption>
-                <RoleRadioOptinons name='role' />
-              </WrapperRolesOption>
-              <BaseButton
-                style={{ marginTop: 16 }}
-                width={350}
-                onPress={handleSubmit(onSubmit)}
-                loading={isLoading}
-              >
-                Đăng ký
-              </BaseButton>
-            </View>
-          </BaseForm>
-        </ScrollView>
-      </KeyboardAvoidingView>
-      <BaseModalError title={textError} isVisible={!!textError} onBackdropPress={onBackdropPress} />
-      <BaseModalSuccess
-        title={textSuccess}
-        isVisible={!!textSuccess}
-        onOkPress={handleOkPress} // Truyền hàm vào prop này
-      />
-    </WraperAuthScreen>
-  );
+    const handleOkPress = () => {
+      naviagion.navigate('VerifyOTPScreen', {
+        email: emailUser,
+        verifyCode: verifyCode,
+        password: passwordUser
+      });
+    };
+    const onBackdropPress = () => {
+      setTextError('');
+      setIsLoading(false);
+    };
+
+    return (
+      <WraperAuthScreen spaceBetween linnerGradient>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+        >
+          <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+            <BaseForm methods={methods}>
+              <View style={styles.formGroup}>
+                <BaseInputText hideLabel name='ho' label='Họ' mode='outlined' />
+                <BaseInputText hideLabel name='ten' label='Tên' mode='outlined' />
+                <BaseInputEmail
+                  hideLabel
+                  label='Email'
+                  mode='outlined'
+                  name='email'
+                  rules={{ required: 'email is required' }}
+                />
+                <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
+                <BaseInputPassword
+                  hideLabel
+                  label='Nhập lại mật khẩu'
+                  mode='outlined'
+                  name='repassword'
+                />
+                <WrapperRolesOption>
+                  <RoleRadioOptinons name='role' />
+                </WrapperRolesOption>
+                <BaseButton
+                  style={{ marginTop: 16 }}
+                  width={350}
+                  onPress={handleSubmit(onSubmit)}
+                  loading={isLoading}
+                >
+                  Đăng ký
+                </BaseButton>
+              </View>
+            </BaseForm>
+          </ScrollView>
+        </KeyboardAvoidingView>
+        <BaseModalError title={textError} isVisible={!!textError} onBackdropPress={onBackdropPress} />
+        <BaseModalSuccess
+          title={textSuccess}
+          isVisible={!!textSuccess}
+          onOkPress={handleOkPress} // Truyền hàm vào prop này
+        />
+      </WraperAuthScreen>
+    );
+  }
 }
-
 const WrapperRolesOption = styled.View<ViewProps>`
   padding: 16px 10px;
   background-color: ${color.white};

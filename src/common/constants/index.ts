@@ -42,6 +42,13 @@ export const FORM_VALIDATION = {
   nameRegExp: /^([^!@`~#$:%^*&()<>?\\/\\+|=]+?)$/,
   specialCharacters: /[~`!@#$%^&*()+={}[\];:'"<>.,/\\?-_]/g
 };
+export const sanitizeFilters = (filters: Record<string, any>) => {
+  return Object.keys(filters).reduce((acc, key) => {
+    acc[key] = filters[key] === "" ? null : filters[key];  // Thay thế "" bằng null
+    return acc;
+  }, {} as Record<string, any>);
+};
+
 
 export enum OrderDirection {
   ASC = 'asc',

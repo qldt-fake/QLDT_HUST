@@ -83,7 +83,9 @@ export enum ClassApi {
   DELETE_CLASS = '/it5023e/delete_class',
   GET_CLASS_DETAIL = '/it5023e/get_class_detail',
   REGISTER_CLASS = '/it5023e/register_class',
-  GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info'
+  GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info',
+  GET_CLASS_OPEN = '/it5023e/get_open_classes',
+  FILTER_CLASS_OPEN='/it5023e/get_classes_by_filter'
 }
 
 export enum SurveyApi {

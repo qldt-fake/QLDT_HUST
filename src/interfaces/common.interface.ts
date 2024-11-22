@@ -46,7 +46,7 @@ export interface ICommonListQuery {
 }
 
 export interface IUser {
-  id: number;
+  id: string;
   ho: string;
   ten: string;
   name: string;

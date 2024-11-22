@@ -1,63 +1,61 @@
 import { StyleSheet } from 'react-native';
 import { color } from 'src/common/constants/color';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: color.second,
+    backgroundColor: color.second, // Màu nền chính là color.primary
   },
   profileCard: {
     marginBottom: 16,
     borderRadius: 12,
     overflow: 'hidden',
     backgroundColor: '#ffffff',
-    elevation: 3,
+    elevation: 5,
   },
   profileHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
+    paddingHorizontal: 16,
   },
   profileImage: {
-    // width: 60,
-    // height: 60,
-    // borderRadius: 40,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     marginRight: 16,
-    // borderColor: '#ddd',
-    // borderWidth: 1,
+    borderWidth: 2,
+    borderColor: '#ddd',
   },
   profileInfo: {
     flex: 1,
   },
   name: {
-    fontSize: 22,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
   },
   text: {
-    fontSize: 14,
-    color: '#777',
-    marginVertical: 2,
+    fontSize: 16,
+    color: '#666',
+    marginVertical: 4,
   },
   detailsCard: {
     padding: 16,
     borderRadius: 12,
     backgroundColor: '#ffffff',
-    elevation: 3,
+    elevation: 5,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 8,
-  },
-  column: {
-    flex: 1,
-    paddingRight: 8,
+    marginBottom: 12,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#888',
-    marginBottom: 4,
+    fontWeight: '500',
   },
   value: {
     fontSize: 16,
@@ -65,11 +63,61 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   divider: {
-    marginVertical: 10,
+    marginVertical: 12,
     backgroundColor: '#ddd',
+    height: 1,
   },
   span: {
-    color: color.black, // Custom color for "span" text, like a link color
+    color: color.primary, // Sử dụng màu chủ đạo cho các phần span
+  },
+  // Classes Card
+  classesCard: {
+    padding: 16,
+    borderRadius: 12,
+    backgroundColor: '#f7f7f7', // Màu nền sáng sủa hơn
+    elevation: 5,
+    marginTop: 16,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  rowHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#ddd', // Màu nền nổi bật hơn cho header
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  columnHeader: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  headerName: {
+    flex: 0.5,
+  },
+  headerType: {
+    flex: 1.5,
+  },
+  headerStatus: {
+    flex: 0.8,
+  },
+  class_row: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#fff', // Màu nền trắng cho các phần thông tin lớp học
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    marginBottom: 8,
   },
 });
 

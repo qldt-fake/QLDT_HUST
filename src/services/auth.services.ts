@@ -12,7 +12,7 @@ import { IBodyResponse, IUser, IGetVerifyCodeData } from 'src/interfaces/common.
 import { ExistedEmail } from 'src/common/enum/commom';
 
 export interface ILoginResponseData extends IUser {
-  id: number;
+  id: string;
   ho: string;
   ten: string;
   username: string;

@@ -23,6 +23,7 @@ const MaterialNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Danh sách Tài liệu' textLogo='HUST' />
         }}
         component={ClassDetail}
@@ -36,6 +37,7 @@ const MaterialNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Create Material' textLogo='HUST' />
         }}
         component={CreateMaterial}

@@ -87,8 +87,8 @@ export enum ClassApi {
   GET_CLASS_OPEN = '/it5023e/get_open_classes',
   FILTER_CLASS_OPEN='/it5023e/get_classes_by_filter',
   SEARCH_ACCOUNT = '/it5023e/search_account',
-  ADD_STUDENT_TO_CLASS = '/it5023e/add_student'
-
+  ADD_STUDENT_TO_CLASS = '/it5023e/add_student',
+  GET_USER_INFOR = '/it4788/get_user_info'
 }
 
 export enum SurveyApi {

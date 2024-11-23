@@ -117,32 +117,32 @@ export function removeSpaces(str: string) {
   return str.replace(/\s/g, '');
 }
 
-export const handShowErrorMessage = (code: number): string => {
-  switch (code) {
-    case HttpStatus.NETWORK_ERROR:
-      return 'Vui lòng kiểm tra kết nối internet';
-    case POST_NOT_EXISTED:
-      return 'Bài viết không tồn tại.';
-    case POST_INVALID_POLICY:
-      return 'Bài viết vi phạm chính sách của Fakebook';
-    case POST_LIMIT_ACCESS_COUNTRY:
-      return 'Bài viết không thể truy cập từ quốc gia này';
-    case USER_NOT_FOUND:
-      return 'Người dùng không tồn tại';
-    case USER_IS_EXISTED:
-      return 'Người dùng đã tồn tại';
-    case FILE_SIZE_TOO_BIG:
-      return 'Tập tin vượt quá kích thước cho phép. Vui lòng chọn lại';
-    case FILE_UPLOAD_FAILED:
-      return 'Không thể tải lên tập tin';
-    case MAX_NUMBER_OF_IMAGES:
-      return 'Vượt quá số ảnh cho phép. Vui lòng không đăng quá 4 ảnh';
-    case NOT_ENOUGHT_COINS:
-      return 'Bạn không đủ coins. Vui lòng nạp thêm coins để tiếp tục';
-    default:
-      return 'Vui lòng kiểm tra kết nối internet';
-  }
-};
+// export const handShowErrorMessage = (code: string): string => {
+//   switch (code) {
+//     case HttpStatus.NETWORK_ERROR:
+//       return 'Vui lòng kiểm tra kết nối internet';
+//     case POST_NOT_EXISTED:
+//       return 'Bài viết không tồn tại.';
+//     case POST_INVALID_POLICY:
+//       return 'Bài viết vi phạm chính sách của Fakebook';
+//     case POST_LIMIT_ACCESS_COUNTRY:
+//       return 'Bài viết không thể truy cập từ quốc gia này';
+//     case USER_NOT_FOUND:
+//       return 'Người dùng không tồn tại';
+//     case USER_IS_EXISTED:
+//       return 'Người dùng đã tồn tại';
+//     case FILE_SIZE_TOO_BIG:
+//       return 'Tập tin vượt quá kích thước cho phép. Vui lòng chọn lại';
+//     case FILE_UPLOAD_FAILED:
+//       return 'Không thể tải lên tập tin';
+//     case MAX_NUMBER_OF_IMAGES:
+//       return 'Vượt quá số ảnh cho phép. Vui lòng không đăng quá 4 ảnh';
+//     case NOT_ENOUGHT_COINS:
+//       return 'Bạn không đủ coins. Vui lòng nạp thêm coins để tiếp tục';
+//     default:
+//       return 'Vui lòng kiểm tra kết nối internet';
+//   }
+// };
 
 export const formatDate = (date: string) => {
   const dateObject = new Date(date);

@@ -21,8 +21,8 @@ function Header() {
   return (
     <Appbar.Header style={{ height: 40, marginTop: 8 }}>
       <Appbar.Content
-        title='facebook'
-        color={color.primary}
+        title='qldt'
+        color={color.bgClassHeader}
         titleStyle={{ fontWeight: 'bold', fontSize: 28 }}
       />
 

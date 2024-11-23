@@ -9,7 +9,9 @@ import { Roles } from 'src/common/enum/commom';
 import { addStudentToClass } from 'src/services/class.service';
 import { useAppDispatch } from 'src/redux';
 import { showLoading, hideLoading } from 'src/redux/slices/loadingSlice';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 export const StudentCard = ({ props, onAddStudent }: { props: any; onAddStudent?: any }) => {
+  const navigation: NavigationProp<ClassNavigationType> = useNavigation();
   const auth = useSelector(selectAuth);
   const user = auth.user;
   const { account_id, last_name, first_name, email, student_id, isSearch, class_id, token } = props;
@@ -33,23 +35,33 @@ export const StudentCard = ({ props, onAddStudent }: { props: any; onAddStudent?
 
   return (
     <View style={styles.container}>
-      <BaseImage
-        style={{
-          height: 40,
-          width: 40,
-          marginTop: 5,
-          borderRadius: 20,
-          borderWidth: 0.5,
-          borderColor: color.red,
+      <TouchableOpacity
+        style={styles.infoBox}
+        onPress={() => {
+          navigation.navigate('GetStudentInfor', { account_id })
         }}
-        source={require('../../../assets/avatar-default.jpg')}
-      />
-      <View style={styles.content}>
-        <Text style={styles.text} numberOfLines={1}>{first_name + ' ' + last_name}</Text>
-        <Text style={styles.text}>
-          ID: <Text>{account_id}</Text>
-        </Text>
-      </View>
+      >
+        <BaseImage
+          style={{
+            height: 40,
+            width: 40,
+            borderRadius: 20,
+            borderWidth: 0.5,
+            borderColor: color.red,
+          }}
+          source={require('../../../assets/avatar-default.jpg')}
+        />
+        <View style={styles.content}>
+          <Text style={styles.text} numberOfLines={1}>
+            {first_name + ' ' + last_name}
+          </Text>
+          <Text style={styles.text}>
+            ID: <Text>{account_id}</Text>
+          </Text>
+        </View>
+      </TouchableOpacity>
+
+
       <View style={[styles.iconBox, user?.role === Roles.LECTURER ? { marginBottom: 'auto' } : {}]}>
         {user?.role === Roles.STUDENT ? (
           <Icon name="chevron-right" size={14} color={color.black} />
@@ -81,11 +93,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
+    marginLeft: 10
   },
   text: {
     textAlign: 'left',
     fontSize: 16,
-    minWidth:150
+    minWidth: 150
   },
   icon: {
     marginLeft: 'auto'
@@ -93,6 +106,11 @@ const styles = StyleSheet.create({
   iconBox: {
     flex: 2,
     alignItems: 'flex-end'
+  },
+  infoBox: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });
 export default StudentCard;

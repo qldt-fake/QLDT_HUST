@@ -24,6 +24,7 @@ import { KeyboardAvoidingView, ScrollView, Platform } from 'react-native';
 import { NO_DATA, USER_IS_EXISTED } from 'src/common/constants/responseCode';
 import BaseModalSuccess from 'src/components/BaseModalSuccess';
 import * as yup from 'yup';
+import { ISignUpData } from 'src/interfaces/auth.interface';
 
 function FirstScreen() {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ function FirstScreen() {
       const uuid = await getUniqueId();
       setIsLoading(true);
       const { ho, ten, email, password, role } = data;
-      const res = await signUpApi({ ho, ten, email, password, uuid, role });
+      const res = await signUpApi({ ho, ten, email, password, uuid, role, fcm_token: null });
 
       if (!res.success) {
         if (res.code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');
@@ -60,8 +61,8 @@ function FirstScreen() {
       setTextError('server availability');
     } finally {
       setIsLoading(false);
-    }
-  };
+    };
+  }
   const handleOkPress = () => {
     naviagion.navigate('VerifyOTPScreen', {
       email: emailUser,
@@ -123,7 +124,6 @@ function FirstScreen() {
     </WraperAuthScreen>
   );
 }
-
 const WrapperRolesOption = styled.View<ViewProps>`
   padding: 16px 10px;
   background-color: ${color.white};

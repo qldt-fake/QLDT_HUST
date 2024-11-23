@@ -222,6 +222,11 @@ const authSlice = createSlice({
         state.user.name = action.payload;
       }
     },
+    setImage: (state, action: PayloadAction<string>) => {
+      if (state.user) {
+        state.user.avatar = action.payload;
+      }
+    },
     deleteAccount: (state, action: PayloadAction<string>) => {
       const accounts = state.accounts;
       delete accounts[action.payload];
@@ -240,6 +245,7 @@ export const {
   setAuthentication,
   deleteAccount,
   setname,
+  setImage,
   resetAccountLocked
 } = authSlice.actions;
 export default authSlice.reducer;

@@ -18,6 +18,7 @@ export interface ISignUpData {
   // gender: Gender;
   uuid?: string;
   role: string;
+  fcm_token: string | null
 }
 
 export interface ICheckVerifyCodeBody {

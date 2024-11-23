@@ -16,8 +16,8 @@ function SaveInfoAccountScreen() {
   const dispatch = useAppDispatch();
   const navigation: NavigationProp<AuthNavigationType, 'Login'> = useNavigation();
   const onPressSaveButton = async () => {
-    const deviceId = await getUniqueId();
-    dispatch(login({ password, deviceId, email }));
+    const device_id = await getUniqueId();
+    dispatch(login({ password, device_id, email, fcm_token: null }));
   };
   return (
     <WraperAuthScreen linnerGradient>

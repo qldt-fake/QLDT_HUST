@@ -41,18 +41,17 @@ function LoginScreen() {
     try {
       const device_id = await getUniqueId();
       const loginData: ILoginData = {
-        ...data, 
+        ...data,
         fcm_token: null,
       };
       dispatch(login({
         ...loginData,
-        device_id, 
+        device_id,
       }));
     } catch (error) {
       console.error(error);
     }
   };
-  
   const onSubmitHandler = handleSubmit(onSubmit);
 
   const onBackdropPress = () => {
@@ -78,7 +77,9 @@ function LoginScreen() {
             rules={{ required: 'email is required' }}
           />
           <BaseInputPassword hideLabel label='Mật khẩu' mode='outlined' name='password' />
-          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler} loading={auth.isLoading}>
+          <BaseButton style={{ marginTop: 16 }} width={350} onPress={onSubmitHandler}
+            loading={auth.isLoading}
+          >
             Đăng nhập
           </BaseButton>
           <BaseTextTitle color='white' onPress={onNavigateForgotPasswordScreen}>

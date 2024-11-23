@@ -7,7 +7,7 @@ export interface IClassItem {
   token?: string;
   class_id?: string;
   role?: string;
-  account_id?: number;
+  account_id?: string;
   class_type?: classType | string;
   class_name?: string;
   start_date?: Date | string | null;
@@ -42,3 +42,24 @@ export const registerClassApi = async (data: any): Promise<IBodyResponse<any, an
 export const getBasicClassInfoApi = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.GET_BASIC_CLASS_INFO, data);
 };
+
+export const getClassOpen = async (data: any): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(ClassApi.GET_CLASS_OPEN, data);
+};
+export const searchClassOpen = async (data: any): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(ClassApi.FILTER_CLASS_OPEN, data);
+};
+
+export const searchAccount = async (data: any): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(ClassApi.SEARCH_ACCOUNT, data);
+};
+export const addStudentToClass = async (data: any): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(ClassApi.ADD_STUDENT_TO_CLASS, data);
+};
+export const getUserInfor = async (data: any): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(ClassApi.GET_USER_INFOR, data);
+};
+
+
+
+

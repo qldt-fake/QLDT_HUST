@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   Alert
 } from 'react-native';
-import ClassHeader from './ClassHeader';
+import ClassHeader from '../general/ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import DateTimePicker from 'react-native-date-picker';

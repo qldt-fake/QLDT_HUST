@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   Alert
 } from 'react-native';
-import ClassHeader from './ClassHeader';
+import ClassHeader from '../general/ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from 'react-native-date-picker';
 import { color } from 'src/common/constants/color';
@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
-import { CODE_OK } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 
@@ -122,17 +122,18 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
       };
 
       const res = await createSurveyApi(payload);
+      
       if (res) {
         switch (res.meta.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Tạo survey thành công');
             navigation.goBack();
             break;
-          case ReponseCode.INVALID_TOKEN:
+          case INVALID_TOKEN:
             Alert.alert('Error', 'Token không hợp lệ');
             dispatch(logout());
             break;
-          case ReponseCode.NOT_ACCESS:
+          case NOT_ACCESS:
             Alert.alert('Error', 'You do not have permission to create survey');
             break;
           default:
@@ -148,7 +149,6 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Create Survey' />
       <View style={styles.body}>
         <TextInput
           style={styles.name}

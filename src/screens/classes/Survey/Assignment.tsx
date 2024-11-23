@@ -68,8 +68,8 @@ const Assignment = (args: { classId: string }) => {
       </View>
       <FlatList
         data={assignmentList}
-        renderItem={data => <ExcerciseCard props={{ ...data.item!, setAssignmentList }} />}
-        keyExtractor={item => item.toString()}
+        renderItem={data => <ExcerciseCard {...data.item!} setAssignmentList={setAssignmentList} />}
+        keyExtractor={item => item?.id}
       />
       {auth?.user?.role === Roles.LECTURER && (
         <TouchableOpacity
@@ -85,7 +85,6 @@ const Assignment = (args: { classId: string }) => {
 
 const styles = StyleSheet.create({
   boxFilters: {
-    backgroundColor: 'white',
     flexDirection: 'row',
     gap: 10,
     height: 50,

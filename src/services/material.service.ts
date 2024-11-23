@@ -1,22 +1,10 @@
-import axios from 'axios';
-import { baseUrl, MaterialApi } from './clientConstant';
+import axiosInstance from './axiosInstance';
+import { MaterialApi } from './clientConstant';
+import { IBodyResponse } from 'src/interfaces/common.interface';
+import { IMaterialPayload, ISubMaterialPayload } from 'src/interfaces/material.interface';
+import { postMethodApi } from './api';
 
-interface FileData {
-  uri: string;
-  name: string;
-  type: string;
-}
-
-interface CreateMaterialPayload {
-  token?: string | null;
-  classId?: string | null;
-  title?: string | null;
-  description?: string | null;
-  file?: FileData | null;
-  materialType?: string | null;
-}
-
-export const createMaterialApi = async (payload: CreateMaterialPayload) => {
+export const createMaterialApi = async (payload: IMaterialPayload): Promise<IBodyResponse<any, any> | null> => {
   const formData = new FormData();
 
   // Add basic fields
@@ -24,7 +12,6 @@ export const createMaterialApi = async (payload: CreateMaterialPayload) => {
   formData.append('classId', payload.classId as string);
   formData.append('title', payload.title as string);
   formData.append('description', payload.description as string);
-  
 
   // Add file if present
   if (payload.file) {
@@ -34,34 +21,58 @@ export const createMaterialApi = async (payload: CreateMaterialPayload) => {
 
   console.log('formData', formData);
   try {
-    const response = await axios.post(`${baseUrl}${MaterialApi.UPLOAD_MATERIAL}`, formData, {
+    const response = await axiosInstance.post(MaterialApi.UPLOAD_MATERIAL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log('response', response.data);
-    return response.data;
+    console.log("Response", response);
+    return response;
   } catch (error) {
     console.error('Error creating material:', error);
     return null;
   }
 };
 
-export const deleteMaterialApi = async (payload: { token: string; material_id: string }) => {
+export const editMaterialApi = async (payload: IMaterialPayload): Promise<IBodyResponse<any, any> | null> => {
+  const formData = new FormData();
+
+  // Add basic fields
+  formData.append('token', payload.token as string);
+  formData.append('classId', payload.classId as string);
+  formData.append('title', payload.title as string);
+  formData.append('description', payload.description as string);
+  formData.append('materialId', payload.materialId as string);
+
+  // Add file if present
+  if (payload.file) {
+    formData.append('file', payload.file as any);
+    formData.append('materialType', payload.file.type.toUpperCase() as string);
+  }
+
+  console.log('formData', formData);
   try {
-    const response = await axios.delete(`${baseUrl}${MaterialApi.DELETE_MATERIAL}`, {
+    const response = await axiosInstance.post(MaterialApi.EDIT_MATERIAL, formData, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${payload.token}`
-      },
-      data: {
-        material_id: payload.material_id
+        'Content-Type': 'multipart/form-data'
       }
     });
-    console.log('response', response.data);
-    return response.data;
+    console.log("Response", response);
+    return response;
   } catch (error) {
-    console.error('Error deleting material:', error);
+    console.error('Error updating material:', error);
     return null;
   }
-}
+};
+
+export const deleteMaterialApi = async (payload: ISubMaterialPayload): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(MaterialApi.DELETE_MATERIAL, payload);
+};
+
+export const getMaterialListApi = async (payload: ISubMaterialPayload): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(MaterialApi.GET_MATERIAL_LIST, payload);
+};
+
+export const getMaterialInfoApi = async (payload: ISubMaterialPayload): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(MaterialApi.GET_MATERIAL_INFO, payload);
+};

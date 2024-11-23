@@ -1,12 +1,13 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import CreateSurvey from 'src/screens/classes/classes-for-teacher/CreateSurvey';
+import CreateSurvey from 'src/screens/classes/Survey/CreateSurvey';
 import HomeNavigation from './HomeNavigation';
 import { SurveyNavigationName } from 'src/common/constants/nameScreen';
-import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
+import ClassHeader from 'src/screens/classes/general/ClassHeader';
 import { color } from 'src/common/constants/color';
-import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
-import EditSurvey from 'src/screens/classes/classes-for-teacher/EditSurvey';
+import ClassDetail from 'src/screens/classes/general/ClassDeatail';
+import EditSurvey from 'src/screens/classes/Survey/EditSurvey';
+import SubmitSurvey from 'src/screens/classes/Survey/SubmitSurvey';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,6 +58,19 @@ const SurveyNavigation = () => {
           headerTitle: () => <ClassHeader title='Edit Survey' textLogo='HUST' />
         }}
         component={EditSurvey}
+      />
+      <Stack.Screen
+        name={SurveyNavigationName.SubmitSurvey}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: color.bgClassHeader
+          },
+          headerTitleAlign: 'center',
+          headerTintColor: color.white,
+          headerTitle: () => <ClassHeader title='Submit Survey' textLogo='HUST' />
+        }}
+        component={SubmitSurvey}
       />
     </Stack.Group>
   );

@@ -72,3 +72,12 @@ export enum NotificationApi {
   MARK_NOTIFICATION_AS_READ = '/it5023e/mark_notification_as_read',
   GET_UNREAD_NOTIFICATION_COUNT = '/it5023e/get_unread_notification_count'
 }
+
+
+export enum AttendanceApi {
+  TAKE_ATTENDANCE = '/it5023e/take_attendance',
+  GET_ATTENDANCE_LIST = 'get_attendance_list',
+  GET_ATTENDANCE_RECORD = '/it5023e/get_attendance_record',
+  SET_ATTENDANCE_STATUS = '/it5023e/set_attendance_status'
+
+}

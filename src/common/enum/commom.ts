@@ -83,3 +83,9 @@ export enum Roles {
   LECTURER = 'LECTURER',
   STUDENT = 'STUDENT',  
 }
+
+export enum StatusAttendance {
+  PRESENT = 'PRESENT',
+  EXCUSED_ABSENCE = 'EXCUSED_ABSENCE',
+  UNEXCUSED_ABSENCE = 'UNEXCUSED_ABSENCE',
+}

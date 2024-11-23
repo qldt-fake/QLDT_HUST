@@ -122,6 +122,7 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
       };
 
       const res = await createSurveyApi(payload);
+      
       if (res) {
         switch (res.meta.code) {
           case CODE_OK:

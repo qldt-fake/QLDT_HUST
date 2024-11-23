@@ -5,7 +5,7 @@ import { postMethodApi } from './api';
 import {
   ISurveyPayload,
   ISubSurveyPayload,
-  ISubmitServeyPayload
+  ISubmitSurveyPayload
 } from 'src/interfaces/survey.interface';
 
 export const createSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<any, any> | null>  => {
@@ -24,14 +24,16 @@ export const createSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyRe
   }
 
   console.log('formData', formData, 
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    }
+   
   );
   try {
-    const response = await axiosInstance.post(SurveyApi.CREATE_SURVEY, formData);
+    const response = await axiosInstance.post(SurveyApi.CREATE_SURVEY, formData, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
     console.log("Response", response);
     return response;
   } catch (error) {
@@ -91,7 +93,7 @@ export const getSubmissionApi = async (
 };
 
 export const submitSurveyApi = async (
-  payload: ISubmitServeyPayload
+  payload: ISubmitSurveyPayload
 ): Promise<IBodyResponse<any, any> | null> => {
   const formData = new FormData();
   formData.append('token', payload.token as string);

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { View, TextInput, FlatList, Text, TouchableOpacity, StyleSheet, Button } from 'react-native';
 import { useSelector } from 'react-redux';
 import { selectAuth } from 'src/redux/slices/authSlice';
-import StudentCard from './StudentCard';  // Component hiển thị thông tin học sinh
 import { color } from 'src/common/constants/color';
 import { searchAccount } from 'src/services/class.service';
+import StudentCard from '../general/StudentCard';
 import { useAppDispatch } from 'src/redux';
 import { showLoading, hideLoading } from 'src/redux/slices/loadingSlice';
 import { NavigationProp, RouteProp, useNavigation, useRoute } from '@react-navigation/native';
@@ -84,7 +84,7 @@ const StudentSearch = () => {
     };
     const handleOkPress = () => {
         naviagion.navigate('ClassDetail', {
-            classId: class_id 
+            classId: class_id
         });
     };
 

@@ -13,7 +13,8 @@ import MaterialScreen from '../Material/MaterialScreen';
 import { ModalProvider } from '../../../hooks/useBottomModal';
 import FloatingButton from '../../../components/FloatingButton/FloatingButton';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { MaterialNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
+import { ClassNavigationName, MaterialNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
+import { RefreshControl } from 'react-native';
 
 const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
@@ -22,31 +23,31 @@ const PostScreen = () => {
   const classId = useContext(classDeatailContext);
   const auth = useSelector(selectAuth);
   const user = auth.user;
-
+  const [refreshing, setRefreshing] = useState(false);
   const [classDetail, setClassDetail] = useState<any>(null);
-
-  useEffect(() => {
-    const fetchClassDetail = async () => {
-      try {
-        const res = await getClassApi({
-          token: user?.token,
-          role: user?.role,
-          account_id: user?.id,
-          class_id: classId
-        });
-        console.log('res', res);
-        console.log('Student_account', res.data.student_accounts);
-        if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
-          setClassDetail(res.data);
-        }
-      } catch (error) {
-        console.error(error);
+  const fetchClassDetail = async () => {
+    try {
+      const res = await getClassApi({
+        token: user?.token,
+        role: user?.role,
+        account_id: user?.id,
+        class_id: classId
+      });
+      if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
+        setClassDetail(res.data);
       }
-    };
-
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
     fetchClassDetail();
   }, [classId]);
-
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchClassDetail(); // Gọi lại API để làm mới dữ liệu
+    setRefreshing(false);
+  };
   return (
     <View style={styles.center}>
       {classDetail && <ClassDetailSummary {...classDetail} />}
@@ -58,6 +59,9 @@ const PostScreen = () => {
           data={classDetail?.student_accounts}
           renderItem={({ item }) => <StudentCard props={item} />}
           keyExtractor={item => item.id}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </View>
     </View>
@@ -65,6 +69,7 @@ const PostScreen = () => {
 };
 
 const ClassDetail = ({ route }: { route: any }) => {
+
   const { classId } = route.params;
   const navigation: NavigationProp<any> = useNavigation();
 
@@ -75,29 +80,33 @@ const ClassDetail = ({ route }: { route: any }) => {
   const handleCreateAssignment = () => {
     navigation.navigate(SurveyNavigationName.CreateSurvey, { classId });
   };
+  const handleAddStudent = () => {
+    navigation.navigate(ClassNavigationName.AddStudent, { class_id: classId });
+  };
 
   const actions = [
     { icon: 'upload', text: 'Tải lên', onPress: handleCreateMaterial },
-    { icon: 'file', text: 'Tạo bài tập', onPress: handleCreateAssignment }
+    { icon: 'file', text: 'Tạo bài tập', onPress: handleCreateAssignment },
+    { icon: 'user', text: 'Thêm sinh viên', onPress: handleAddStudent }
   ];
 
   console.log('classId', classId);
   return (
     <classDeatailContext.Provider value={classId}>
-        <Tab.Navigator
-          screenOptions={{
-            tabBarLabelStyle: { fontSize: 12 },
-            tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
-          }}
-        >
-          <Tab.Screen name='General' component={PostScreen} />
-          <Tab.Screen name='Material'>{() => <MaterialScreen classId={classId} />}</Tab.Screen>
-          <Tab.Screen name='Assignment'>{() => <Assignment classId={classId} />}</Tab.Screen>
-        </Tab.Navigator>
-        <FloatingButton
-          actions={actions}
-          position={{ bottom: 100, right: 20 }} // Customize position here
-        />
+      <Tab.Navigator
+        screenOptions={{
+          tabBarLabelStyle: { fontSize: 12 },
+          tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
+        }}
+      >
+        <Tab.Screen name='General' component={PostScreen} />
+        <Tab.Screen name='Material'>{() => <MaterialScreen classId={classId} />}</Tab.Screen>
+        <Tab.Screen name='Assignment'>{() => <Assignment classId={classId} />}</Tab.Screen>
+      </Tab.Navigator>
+      <FloatingButton
+        actions={actions}
+        position={{ bottom: 100, right: 20 }} // Customize position here
+      />
     </classDeatailContext.Provider>
   );
 };

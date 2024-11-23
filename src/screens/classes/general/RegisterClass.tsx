@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, FlatList, Alert } from 'react-native';
 import ClassHeader from './ClassHeader';
 import { color } from 'src/common/constants/color';
-import { getBasicClassInfoApi, registerClassApi } from 'src/services/class.service';
+import { getBasicClassInfoApi, getClassApi, registerClassApi } from 'src/services/class.service';
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import { Checkbox } from 'react-native-paper';
 import { formatDate } from 'src/utils/helper';
@@ -10,6 +10,8 @@ import { selectAuth } from 'src/redux/slices/authSlice';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ClassNavigationName } from 'src/common/constants/nameScreen';
 interface ClassItem {
   class_id: string;
   class_name: string;
@@ -25,8 +27,7 @@ const RegisterClass = () => {
   const [tempClassList, setTempClassList] = React.useState<ClassItem[]>([]); // Sửa kiểu cho tempClassList
   const [searchText, setSearchText] = React.useState<string>(''); // Kiểu cho searchText
   const [selectedClasses, setSelectedClasses] = React.useState<Record<string, boolean>>({}); // Kiểu cho selectedClasses
-
-  // Hàm xử lý chọn lớp
+  const navigation: NavigationProp<ClassNavigationType> = useNavigation();  // Hàm xử lý chọn lớp
   const handleSelectClass = (classId: string) => {
     setSelectedClasses(prev => ({
       ...prev,
@@ -86,7 +87,8 @@ const RegisterClass = () => {
         token: user?.token,
         class_ids: tempClassList.map(item => item.class_id)
       });
-
+      console.log(response);
+      
       if (response.meta.code === ReponseCode.CODE_OK) {
         Alert.alert('Thành công', 'Đăng ký lớp thành công');
         const updatedStatusClass = response.data;
@@ -162,6 +164,7 @@ const RegisterClass = () => {
             <Text style={styles.buttonText}>Xóa lớp</Text>
           </TouchableOpacity>
         </View>
+        <Text onPress={() => navigation.navigate(ClassNavigationName.ClassListOpen as never)} style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
       </View>
     </View>
   );
@@ -262,7 +265,6 @@ const styles = StyleSheet.create({
   footerText: {
     color: '#b30000',
     textDecorationLine: 'underline',
-    marginTop: 120,
     fontStyle: 'italic',
     fontWeight: 'bold',
     fontSize: 16

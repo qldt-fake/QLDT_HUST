@@ -12,6 +12,7 @@ import SurveyNavigation from './SurveyNavigation';
 import MaterialNavigation from './MaterialNavigation';
 import ClassListOpen from 'src/screens/classes/classes-for-teacher/classOpen/ClassOpen';
 import AddStudent from 'src/screens/classes/classes-for-teacher/AddStudent';
+import StudentProfile from 'src/screens/classes/classes-for-teacher/classOpen/studentProfile';
 const Stack = createNativeStackNavigator();
 
 const ClassNavigation = () => {
@@ -29,6 +30,7 @@ const ClassNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Class List' />
         }}
         component={ClassListPage}
@@ -41,6 +43,7 @@ const ClassNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Class Details' />
         }}
         component={ClassDetail}
@@ -53,6 +56,7 @@ const ClassNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Create Class' />
         }}
         component={CreateClass}
@@ -65,6 +69,7 @@ const ClassNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Edit Class' />
         }}
         component={EditClass}
@@ -76,6 +81,7 @@ const ClassNavigation = () => {
           headerStyle: {
             backgroundColor: color.bgClassHeader
           },
+          headerTintColor: color.white,
           headerTitleAlign: 'center',
           headerTitle: () => <ClassHeader title='Register Class' />
         }}
@@ -89,6 +95,7 @@ const ClassNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Danh sách lớp mở' />
         }}
         component={ClassListOpen}
@@ -101,9 +108,23 @@ const ClassNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Thêm học sinh vào lớp' />
         }}
         component={AddStudent}
+      />
+       <Stack.Screen
+        name={ClassNavigationName.GetStudentInfor}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: color.bgClassHeader
+          },
+          headerTitleAlign: 'center',
+          headerTintColor: color.white,
+          headerTitle: () => <ClassHeader title='Thông tin sinh viên' />
+        }}
+        component={StudentProfile}
       />
       {SurveyNavigation()}
       {MaterialNavigation()}

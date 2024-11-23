@@ -1,5 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TransitionPresets } from '@react-navigation/stack';
+import { color } from 'src/common/constants/color';
 import { ProfileNavigationName, SettingNavigationName } from 'src/common/constants/nameScreen';
 import WraperScreen from 'src/components/WraperScreen';
 import {
@@ -24,7 +25,11 @@ function SettingNavigation() {
         ...TransitionPresets.SlideFromRightIOS,
         animation: 'slide_from_right',
         gestureEnabled: true,
-        gestureDirection: 'vertical'
+        gestureDirection: 'vertical',
+        headerStyle: {
+          backgroundColor: color.bgClassHeader, // Đặt màu nền của header
+        },
+        headerTintColor: color.white,
       }}
     >
       <Stack.Screen

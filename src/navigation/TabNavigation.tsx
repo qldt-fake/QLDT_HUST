@@ -63,12 +63,12 @@ function TabNavigation() {
             ) : (
               <>
                 <AntdIcon name='home' size={25} />
-                <Avatar.Text
-                  label='2'
+                {/* <Avatar.Text
+                  label=''
                   size={15}
                   style={style.newIcon}
                   labelStyle={style.labelNewIcon}
-                />
+                /> */}
               </>
             )
         }}

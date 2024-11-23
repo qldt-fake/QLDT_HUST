@@ -169,5 +169,6 @@ type HomeNavigationType = {
 type ClassNavigationType = {
   ClassDetail: { classId: string };
   EditClass: { classId: string };
-  AddStudent: { token: string, class_id: string }
+  AddStudent: { token: string, class_id: string },
+  GetStudentInfor: { account_id: string }
 };

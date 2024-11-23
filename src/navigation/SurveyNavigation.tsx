@@ -25,6 +25,7 @@ const SurveyNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Danh sách lớp học' textLogo='HUST' />
         }}
         component={ClassDetail}
@@ -38,6 +39,7 @@ const SurveyNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Create Survey' textLogo='HUST' />
         }}
         component={CreateSurvey}
@@ -51,6 +53,7 @@ const SurveyNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
+          headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Edit Survey' textLogo='HUST' />
         }}
         component={EditSurvey}

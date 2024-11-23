@@ -6,76 +6,77 @@ import {
   TouchableOpacity,
   StyleSheet,
   TouchableHighlight,
-  Alert
+  Alert,
+  Linking
 } from 'react-native';
 import ClassHeader from '../general/ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import DateTimePicker from 'react-native-date-picker';
 import { color } from 'src/common/constants/color';
-import { createMaterialApi } from 'src/services/material.service';
-import { selectFile } from 'src/utils/helper';
-import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
-import { useAppDispatch } from 'src/redux';
-import { useNavigation } from '@react-navigation/native';
+import { submitSurveyApi } from 'src/services/survey.service';
+import { ReponseCode } from 'src/common/enum/reponseCode';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
-import {CreateMaterialProps, IMaterialPayload} from 'src/interfaces/material.interface';
+import { selectFile } from 'src/utils/helper';
+import { ACTION_DONE_PREVIOUS, CODE_OK, INVALID_TOKEN, NOT_ACCESS} from 'src/common/constants/responseCode';
+import { useAppDispatch } from 'src/redux';
+import { useNavigation } from '@react-navigation/native';
+import {
+  ISubmitSurveyPayload,
+  ISurveyPayload,
+  ISubmitSurveyProps
+} from 'src/interfaces/survey.interface';
 
+const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
+  const { file_url, title, description, deadline, id } = route?.params || {};
 
-
-const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
   const auth = useSelector(selectAuth);
-  const user = auth?.user;
+  const user = auth.user;
 
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const [newMaterial, setNewMaterial] = useState<IMaterialPayload>({
-    title: '',
-    description: '',
+  const [newSubmit, setNewSubmit] = useState<ISubmitSurveyPayload>({
     file: null,
-    materialType: ''
+    token: user?.token,
+    assignmentId: id,
+    textResponse: ''
   });
 
-  const handleChange = (name: keyof IMaterialPayload, value: string | object | null | any) => {
-    setNewMaterial(prev => ({
+  const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
+
+  const handleChange = (
+    name: keyof ISubmitSurveyPayload,
+    value: string | object | Date | null | any
+  ) => {
+    setNewSubmit(prev => ({
       ...prev,
       [name]: value
     }));
   };
 
+  const handleShowDatePicker = () => {
+    setIsOpenDatePicker(true);
+  };
+
   const handleSelectFile = async () => {
     const file = await selectFile();
-    console.log(file);
     if (file) {
-      // Extract file extension for materialType
-      const fileExtension = file?.name?.split('.').pop()?.toUpperCase() || '';
       handleChange('file', file);
-      handleChange('materialType', fileExtension);
+    }
+  };
+
+  const handleViewSurvey = () => {
+    if (file_url) {
+      Linking.openURL(file_url);
     }
   };
 
   const validate = () => {
-    if (!newMaterial.title?.trim()) {
-      Alert.alert('Lỗi', 'Tên tài liệu là trường bắt buộc');
+    if (!newSubmit.file && !newSubmit.textResponse) {
+      Alert.alert('Error', 'Please fill at least one field');
       return false;
     }
-
-    if (!newMaterial.description?.trim() && !newMaterial.file) {
-      Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
-      return false;
-    }
-
-    const MAX_DESCRIPTION_LENGTH = 500;
-    if ((newMaterial.description?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
-      Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
-      return false;
-    }
-
-    if (!newMaterial.file) {
-      Alert.alert('Lỗi', 'Vui lòng tải tài liệu lên');
-      return false;
-    }
-
     return true;
   };
 
@@ -84,21 +85,18 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
       return;
     }
 
+    console.log('Submit', newSubmit);
+
     try {
       const payload = {
-        token: user?.token,
-        classId: route.params.classId,
-        title: newMaterial.title,
-        description: newMaterial.description,
-        file: newMaterial.file,
-        materialType: newMaterial.materialType
+        ...newSubmit
       };
 
-      const res = await createMaterialApi(payload);
+      const res = await submitSurveyApi(payload);
       if (res) {
-        switch (res.code) {
+        switch (res.meta.code) {
           case CODE_OK:
-            Alert.alert('Thành công', 'Tạo tài liệu thành công');
+            Alert.alert('Thành công', 'Nộp survey thành công');
             navigation.goBack();
             break;
           case INVALID_TOKEN:
@@ -106,7 +104,10 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
             dispatch(logout());
             break;
           case NOT_ACCESS:
-            Alert.alert('Error', 'Bạn không có quyền tạo tài liệu');
+            Alert.alert('Error', 'You do not have permission to submit survey');
+            break;
+          case ACTION_DONE_PREVIOUS:
+            Alert.alert('Error', 'You have already submitted this survey');
             break;
           default:
             Alert.alert('Error', res.data);
@@ -114,7 +115,7 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Không thể tạo tài liệu');
+      Alert.alert('Error', 'Failed to create survey');
       console.error(error);
     }
   };
@@ -124,18 +125,33 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
       <View style={styles.body}>
         <TextInput
           style={styles.name}
-          value={newMaterial.title as string}
-          onChangeText={text => handleChange('title', text)}
-          placeholder='Material Title *'
+          value={title}
           placeholderTextColor={color.submitBtnRed}
+          editable={false}
         />
+        {file_url && (
+          <TouchableOpacity style={styles.viewButton} onPress={handleViewSurvey}>
+            <Text style={[styles.text, styles.viewButtonText]}>Open Survey</Text>
+          </TouchableOpacity>
+        )}
+        {description && (
+          <TextInput
+            style={[styles.name, styles.description]}
+            value={description}
+            multiline
+            numberOfLines={2}
+            placeholderTextColor={color.submitBtnRed}
+            editable={false}
+          />
+        )}
+
         <TextInput
-          style={[styles.name, styles.description]}
-          value={newMaterial.description as string}
-          onChangeText={text => handleChange('description', text)}
-          placeholder='Description'
+          style={[styles.name, styles.description, { height: 150 }]}
+          value={newSubmit.textResponse || ''}
+          placeholder='Nhập mô tả'
+          onChangeText={text => handleChange('textResponse', text)}
           multiline
-          numberOfLines={6}
+          numberOfLines={3}
           placeholderTextColor={color.submitBtnRed}
         />
 
@@ -146,7 +162,7 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
               numberOfLines={1}
               ellipsizeMode='tail'
             >
-              {newMaterial?.file ? newMaterial.file.name : 'Upload File'}
+              {newSubmit?.file ? newSubmit.file.name : 'Upload File'}
             </Text>
             <Icon name='caret-up' size={20} color='#fff' />
           </>
@@ -183,8 +199,13 @@ const styles = StyleSheet.create({
     fontStyle: 'italic'
   },
   description: {
-    height: 200,
+    height: 100,
     textAlignVertical: 'top'
+  },
+  orText: {
+    textAlign: 'center',
+    marginVertical: 10,
+    color: color.borderRed
   },
   fileButton: {
     backgroundColor: color.borderRed,
@@ -201,6 +222,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     maxWidth: '80%'
   },
+
   submitButton: {
     backgroundColor: color.red,
     padding: 15,
@@ -211,7 +233,21 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     textAlign: 'center'
+  },
+  viewButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+    marginHorizontal: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  viewButtonText: {
+    textAlign: 'center',
+    color: color.red,
+    fontSize: 20
   }
 });
 
-export default CreateMaterial;
+export default SubmitSurvey;

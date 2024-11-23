@@ -40,10 +40,10 @@ export const ExcerciseCard = ({
   const { showModal } = useModal();
   const { showAlert } = useAlert();
 
-  const handlePress = useCallback(async () => {
+  const handleViewSurvey = useCallback(async () => {
     await Linking.openURL(file_url);
   }, [file_url]);
-
+ 
   const callDeleteSurveyApi = async () => {
     const res = await deleteSurveyApi({
       token: user?.token,
@@ -72,7 +72,18 @@ export const ExcerciseCard = ({
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.body}>
+        <TouchableOpacity
+          style={styles.body}
+          onPress={() =>
+            navigation.navigate(SurveyNavigationName.SubmitSurvey as never, {
+              id: id,
+              title: title,
+              description: description,
+              deadline: deadline,
+              file_url: file_url
+            } as never)
+          }
+        >
           <BaseImage
             style={{ height: 30, width: 30, marginTop: 5 }}
             source={require('../../../assets/avatar-default.jpg')}
@@ -84,7 +95,7 @@ export const ExcerciseCard = ({
             <Pressable
               onPressIn={event => {
                 event.stopPropagation(); 
-                handlePress();
+                handleViewSurvey();
               }}
             >
               <Text style={styles.actionText}>Xem tài liệu</Text>
@@ -138,7 +149,7 @@ const styles = StyleSheet.create({
     flexBasis: 10,
     alignItems: 'flex-end',
     marginBottom: 'auto',
-    flex: 2
+    flex: 1
   }
 });
 

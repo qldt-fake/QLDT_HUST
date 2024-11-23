@@ -1,24 +1,14 @@
-import axios from 'axios';
+import axiosInstance from './axiosInstance';
 import { baseUrl, SurveyApi } from './clientConstant';
 import { IBodyResponse } from 'src/interfaces/common.interface';
 import { postMethodApi } from './api';
+import {
+  ISurveyPayload,
+  ISubSurveyPayload,
+  ISubmitServeyPayload
+} from 'src/interfaces/survey.interface';
 
-interface FileData {
-  uri: string;
-  name: string;
-  type: string;
-}
-
-interface CreateSurveyPayload {
-  token?: string | null;
-  classId?: string | null;
-  title?: string | null;
-  deadline?: string | null;
-  file?: FileData | null;
-  description?: string | null;
-}
-
-export const createSurveyApi = async (payload: CreateSurveyPayload) => {
+export const createSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<any, any> | null>  => {
   const formData = new FormData();
 
   // Add basic fields
@@ -33,30 +23,32 @@ export const createSurveyApi = async (payload: CreateSurveyPayload) => {
     formData.append('file', payload.file as any);
   }
 
-  console.log('formData', formData);
-  try {
-    const response = await axios.post(`${baseUrl}${SurveyApi.CREATE_SURVEY}`, formData, {
+  console.log('formData', formData, 
+    {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
-    });
-    console.log('response', response.data);
-    return response.data;
+    }
+  );
+  try {
+    const response = await axiosInstance.post(SurveyApi.CREATE_SURVEY, formData);
+    console.log("Response", response);
+    return response;
   } catch (error) {
-    console.error('Loi tai', error);
-    return null;
+    console.error('Error:', error);
+    return error;
   }
 };
 
-const editSurveyApi = async (payload: CreateSurveyPayload) => {
+const editSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<any, any> | null> => {
   const formData = new FormData();
 
   // Add basic fields
-  formData.append('token', payload.token);
-  formData.append('classId', payload.classId);
-  formData.append('title', payload.title);
-  formData.append('deadline', payload.deadline);
-  formData.append('description', payload.description || '');
+  formData.append('token', payload.token as string);
+  formData.append('classId', payload.classId as string);
+  formData.append('title', payload.title as string);
+  formData.append('deadline', payload.deadline as string);
+  formData.append('description', payload.description as string);
 
   // Add file if present
   if (payload.file) {
@@ -65,27 +57,63 @@ const editSurveyApi = async (payload: CreateSurveyPayload) => {
 
   console.log('formData', formData);
   try {
-    const response = await axios.post(`${baseUrl}/edit_survey`, formData, {
+    const response = await axiosInstance.post('/edit_survey', formData, 
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+    console.log("Response", response);
+    return response;
+  } catch (error) {
+    console.error('Error:', error);
+    return error;
+  }
+};
+
+export const getSurveyListApi = async (
+  data: ISubSurveyPayload
+): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(SurveyApi.GET_ALL_SURVEYS, data);
+};
+
+export const deleteSurveyApi = async (
+  data: ISubSurveyPayload
+): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(SurveyApi.DELETE_SURVEY, data);
+};
+
+export const getSubmissionApi = async (
+  data: ISubSurveyPayload
+): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(SurveyApi.GET_SUBMISSION, data);
+};
+
+export const submitSurveyApi = async (
+  payload: ISubmitServeyPayload
+): Promise<IBodyResponse<any, any> | null> => {
+  const formData = new FormData();
+  formData.append('token', payload.token as string);
+  formData.append('assignmentId', payload.assignmentId as string);
+  formData.append('textResponse', payload.textResponse as string);
+
+  if (payload.file) {
+    formData.append('file', payload.file);
+  }
+
+  console.log('formData', formData);
+
+  try {
+    const response = await axiosInstance.post(SurveyApi.SUBMIT_SURVEY , formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log('response', response.data);
-    return response.data;
+    console.log("Response", response);
+    return response;
   } catch (error) {
-    console.error('Loi tai', error);
-    return null;
+    console.error('Error:', error);
+    return error;
   }
 };
-
-export const getSurveyListApi = async (data: any): Promise<IBodyResponse<any, any>> => {
-  return postMethodApi(SurveyApi.GET_ALL_SURVEYS, data);
-};
-
-export const deleteSurveyApi = async (data: any): Promise<IBodyResponse<any, any>> => {
-  return postMethodApi(SurveyApi.DELETE_SURVEY, data);
-};
-
-export const getSubmissionsApi = async (data: any): Promise<IBodyResponse<any, any>> => {
-  return postMethodApi(SurveyApi.GET_SUBMISSION, data);
-}

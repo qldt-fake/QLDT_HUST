@@ -84,9 +84,8 @@ export enum ClassApi {
   GET_CLASS_DETAIL = '/it5023e/get_class_detail',
   REGISTER_CLASS = '/it5023e/register_class',
   GET_BASIC_CLASS_INFO = '/it5023e/get_basic_class_info',
-  GET_SUBMISSION = '/it5023e/get_submission',,
   GET_CLASS_OPEN = '/it5023e/get_open_classes',
-  FILTER_CLASS_OPEN='/it5023e/get_classes_by_filter',
+  FILTER_CLASS_OPEN = '/it5023e/get_classes_by_filter',
   SEARCH_ACCOUNT = '/it5023e/search_account',
   ADD_STUDENT_TO_CLASS = '/it5023e/add_student',
   GET_USER_INFOR = '/it4788/get_user_info'
@@ -97,7 +96,9 @@ export enum SurveyApi {
   GET_ALL_SURVEYS = '/it5023e/get_all_surveys',
   EDIT_SURVEY = '/it5023e/edit_survey',
   DELETE_SURVEY = '/it5023e/delete_survey',
-  GET_SURVEY = '/it5023e/get_survey_response'
+  GET_SURVEY = '/it5023e/get_survey_response',
+  GET_SUBMISSION = '/it5023e/get_submission',
+  SUBMIT_SURVEY = '/it5023e/submit_survey',
 }
 
 export enum MaterialApi {

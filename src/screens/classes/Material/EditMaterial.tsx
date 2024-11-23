@@ -34,7 +34,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
   const auth = useSelector(selectAuth);
   const user = auth?.user;
   const navigation = useNavigation();
-  const { showAlert } = useAlert()
+  const { showAlert } = useAlert();
   const dispatch = useAppDispatch();
   const [material, setMaterial] = useState({
     title: '',
@@ -89,16 +89,6 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
   };
 
   const validate = () => {
-    if (!material.title.trim()) {
-      Alert.alert('Lỗi', 'Tên tài liệu là trường bắt buộc');
-      return false;
-    }
-
-    if (!material.description.trim() && !material.file) {
-      Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
-      return false;
-    }
-
     const MAX_DESCRIPTION_LENGTH = 500;
     if (material.description.trim().length > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
@@ -149,7 +139,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
   };
 
   const handleViewMaterial = async () => {
-    if(!material.materialLink) return;
+    if (!material.materialLink) return;
     Linking.openURL(material.materialLink);
   };
 
@@ -175,7 +165,9 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
         />
         <TouchableOpacity style={styles.viewButton} onPress={handleViewMaterial}>
           <Text style={[styles.text, styles.viewButtonText]}>
-            {material.materialLink ? material.title+ '.' + getTypeOfFile(material.materialType) : 'No file uploaded'}
+            {material.materialLink
+              ? material.title + '.' + getTypeOfFile(material.materialType)
+              : 'No file uploaded'}
           </Text>
         </TouchableOpacity>
 

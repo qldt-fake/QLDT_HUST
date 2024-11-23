@@ -163,7 +163,7 @@ const PostScreen = () => {
         <FlatList
           data={classDetail?.student_accounts}
           renderItem={({ item }) => <StudentCard props={item} />}
-          keyExtractor={item => item.toString()}
+          keyExtractor={item => item.student_id}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

@@ -172,3 +172,13 @@ type ClassNavigationType = {
   AddStudent: { token: string, class_id: string },
   GetStudentInfor: { account_id: string }
 };
+
+
+type SurveyNavigationType = {
+  EditSurvey: { surveyId: string, classId: string },
+}
+
+type MaterialNavigationType = {
+  EditMaterial: { materialId: string, classId: string },
+  UploadMaterial: { classId: string }
+}

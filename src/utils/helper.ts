@@ -203,3 +203,8 @@ export function calculateDateAfterWeeks(startDate: string | Date, weeks: number)
   const resultDate = dayjs(startDate).add(weeks * 7, 'day');
   return resultDate.toDate();
 }
+
+export function getTypeOfFile(type: string): string {
+  const res = type.split('/').pop()?.toLowerCase();
+  return res || '';
+}

@@ -21,8 +21,8 @@ import ChangeInfoAfterSignUpScreen from 'src/screens/pending-sigup/ChangeInfoAft
 import axiosInstance from 'src/services/axiosInstance';
 import { Snackbar } from 'react-native-paper';
 import { useNetInfoInstance } from '@react-native-community/netinfo';
-import ClassListPage from 'src/screens/classes/classes-for-teacher/ClassListPage';
-import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
+import ClassListPage from 'src/screens/classes/general/ClassListPage';
+import ClassDetail from 'src/screens/classes/general/ClassDeatail';
 import ClassNavigation from './ClassNavigation';
 import NotificationNavigationWrapper from 'src/navigation/NotificationNavigation';
 

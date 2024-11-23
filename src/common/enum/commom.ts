@@ -92,7 +92,11 @@ export enum classStatus {
   COMPLETE = 'COMPLETE'
 }
 
-export enum surveyStatus {}
+export enum surveyStatus {
+  UPCOMING = 'UPCOMING',
+  OVERDUE = 'OVERDUE',
+  COMPLETED = 'COMPLETED'
+}
 export enum Roles {
   LECTURER = 'LECTURER',
   STUDENT = 'STUDENT'

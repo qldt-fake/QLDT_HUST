@@ -85,3 +85,7 @@ export const getSurveyListApi = async (data: any): Promise<IBodyResponse<any, an
 export const deleteSurveyApi = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(SurveyApi.DELETE_SURVEY, data);
 };
+
+export const getSubmissionsApi = async (data: any): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(SurveyApi.GET_SUBMISSION, data);
+}

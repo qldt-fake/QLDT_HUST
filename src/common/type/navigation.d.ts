@@ -169,3 +169,13 @@ type ClassNavigationType = {
   ClassDetail: { classId: string };
   EditClass: { classId: string };
 };
+
+
+type SurveyNavigationType = {
+  EditSurvey: { surveyId: string, classId: string },
+}
+
+type MaterialNavigationType = {
+  EditMaterial: { materialId: string, classId: string },
+  UploadMaterial: { classId: string }
+}

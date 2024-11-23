@@ -1,12 +1,12 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import CreateSurvey from 'src/screens/classes/classes-for-teacher/CreateSurvey';
+import CreateSurvey from 'src/screens/classes/Survey/CreateSurvey';
 import HomeNavigation from './HomeNavigation';
 import { SurveyNavigationName } from 'src/common/constants/nameScreen';
-import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
+import ClassHeader from 'src/screens/classes/general/ClassHeader';
 import { color } from 'src/common/constants/color';
-import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
-import EditSurvey from 'src/screens/classes/classes-for-teacher/EditSurvey';
+import ClassDetail from 'src/screens/classes/general/ClassDeatail';
+import EditSurvey from 'src/screens/classes/Survey/EditSurvey';
 
 const Stack = createNativeStackNavigator();
 

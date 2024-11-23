@@ -1,11 +1,11 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { MaterialNavigationName } from 'src/common/constants/nameScreen';
-import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
+import ClassHeader from 'src/screens/classes/general/ClassHeader';
 import { color } from 'src/common/constants/color';
-import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
-import CreateMaterial from 'src/screens/classes/classes-for-teacher/CreateMaterial';
-
+import ClassDetail from 'src/screens/classes/general/ClassDeatail';
+import CreateMaterial from 'src/screens/classes/Material/CreateMaterial';
+import EditMaterial from 'src/screens/classes/Material/EditMaterial';
 const Stack = createNativeStackNavigator();
 
 const MaterialNavigation = () => {
@@ -41,7 +41,7 @@ const MaterialNavigation = () => {
         component={CreateMaterial}
       />
 
-      {/* <Stack.Screen
+      <Stack.Screen
         name={MaterialNavigationName.EditMaterial}
         options={{
           headerShown: true,
@@ -51,8 +51,8 @@ const MaterialNavigation = () => {
           headerTitleAlign: 'center',
           headerTitle: () => <ClassHeader title='Edit Survey' textLogo='HUST' />
         }}
-        component={}
-      /> */}
+        component={EditMaterial}
+      />
     </Stack.Group>
   );
 };

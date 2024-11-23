@@ -7,10 +7,11 @@ import {
   StyleSheet,
   Image,
   Modal,
-  Pressable
+  Pressable,
+  RefreshControl 
 } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, NavigationProp, useNavigation } from '@react-navigation/native';
 import ClassHeader from './ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Assignment from './Assignment';
@@ -20,6 +21,9 @@ import { ReponseCode } from 'src/common/enum/reponseCode';
 import StudentCard from './StudentCard';
 import { useSelector } from 'react-redux';
 import { selectAuth } from 'src/redux/slices/authSlice';
+import { color } from 'src/common/constants/color';
+import { ClassNavigationName } from 'src/common/constants/nameScreen';
+import { Roles } from 'src/common/enum/commom';
 
 const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
@@ -33,7 +37,6 @@ const data = [
 const FileScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedFile, setSelectedFile] = useState<any>(null);
-
   const openModal = (file: any) => {
     setSelectedFile(file);
     setModalVisible(true);
@@ -54,7 +57,7 @@ const FileScreen = () => {
         </Text>
       </View>
       <TouchableOpacity onPress={() => openModal(item)}>
-        <Icon name='ellipsis-h' size={20} color='#888' />
+        <Icon name='ellipsis-h' size={1} color='#888' />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -108,45 +111,62 @@ const FileScreen = () => {
 };
 
 const PostScreen = () => {
+  const navigation: NavigationProp<ClassNavigationType> = useNavigation();  // Hàm xử lý chọn lớp
   const classId = useContext(classDeatailContext);
   const auth = useSelector(selectAuth);
   const user = auth.user;
 
   const [classDetail, setClassDetail] = useState<any>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const fetchClassDetail = async () => {
+    try {
+      const res = await getClassApi({
+        token: user?.token,
+        role: user?.role,
+        account_id: user?.id,
+        class_id: classId
+      });
+      console.log('res', res);
+      console.log('Student_account', res.data.student_accounts);
+      if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
+        setClassDetail(res.data);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await fetchClassDetail(); // Gọi lại API để làm mới dữ liệu
+    setRefreshing(false);
+  };
 
   useEffect(() => {
-    const fetchClassDetail = async () => {
-      try {
-        const res = await getClassApi({
-          token: user?.token,
-          role: user?.role,
-          account_id: user?.id,
-          class_id: classId
-        });
-        console.log('res', res);
-        console.log('Student_account', res.data.student_accounts);
-        if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
-          setClassDetail(res.data);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
     fetchClassDetail();
   }, [classId]);
 
   return (
     <View style={styles.center}>
       {classDetail && <ClassDetailSummary {...classDetail} />}
-      <View style={{ paddingHorizontal: 10, marginTop: 15 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, marginTop: 15 }}>
         <Text style={{ fontSize: 18 }}>Danh sách lớp ( {classDetail?.student_count} )</Text>
+        {user?.role === Roles.LECTURER && (
+          <TouchableOpacity
+            style={[styles.addButton, { marginLeft: 'auto' }]}
+            onPress={() => navigation.navigate(ClassNavigationName.AddStudent, { token: user?.token!, class_id: classId! })}
+          >
+            <Icon name="plus" size={15} color="#fff" />
+          </TouchableOpacity>
+        )}
       </View>
       <View>
         <FlatList
           data={classDetail?.student_accounts}
           renderItem={({ item }) => <StudentCard props={item} />}
           keyExtractor={item => item.toString()}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         />
       </View>
     </View>
@@ -229,7 +249,16 @@ const styles = StyleSheet.create({
   },
   modalOption: {
     paddingVertical: 12
-  }
+  },
+  addButton: {
+    marginRight: 20,
+    backgroundColor: color.second, // Blue background for the button
+    width: 30,
+    height: 30,
+    borderRadius: 20, // To make it circular
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 export default ClassDetail;

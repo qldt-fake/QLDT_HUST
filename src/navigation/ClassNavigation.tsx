@@ -11,6 +11,7 @@ import { color } from 'src/common/constants/color';
 import SurveyNavigation from './SurveyNavigation';
 import MaterialNavigation from './MaterialNavigation';
 import ClassListOpen from 'src/screens/classes/classes-for-teacher/classOpen/ClassOpen';
+import AddStudent from 'src/screens/classes/classes-for-teacher/AddStudent';
 const Stack = createNativeStackNavigator();
 
 const ClassNavigation = () => {
@@ -91,6 +92,18 @@ const ClassNavigation = () => {
           headerTitle: () => <ClassHeader title='Danh sách lớp mở' />
         }}
         component={ClassListOpen}
+      />
+       <Stack.Screen
+        name={ClassNavigationName.AddStudent}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: color.bgClassHeader
+          },
+          headerTitleAlign: 'center',
+          headerTitle: () => <ClassHeader title='Thêm học sinh vào lớp' />
+        }}
+        component={AddStudent}
       />
       {SurveyNavigation()}
       {MaterialNavigation()}

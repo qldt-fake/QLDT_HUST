@@ -100,7 +100,9 @@ export enum ClassNavigationName {
   CreateClass = 'CreateClass',
   EditClass = 'EditClass',
   RegisterClass = 'RegisterClass',
-  ClassListOpen = 'ClassListOpen'
+  ClassListOpen = 'ClassListOpen',
+  AddStudent = 'AddStudent'
+
 }
 export enum SurveyNavigationName {
   Survey = 'Survey',

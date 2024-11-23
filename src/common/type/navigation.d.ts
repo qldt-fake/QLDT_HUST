@@ -5,44 +5,44 @@ type AppNavigationType = {
   SettingNavigation: { screen: SettingNavigationName };
   FriendNavigation: { screen: FriendNavigationName };
   ProfileNavigation:
-    | { screen: ProfileNavigationName.Profile }
-    | {
-        screen: ProfileNavigationName.SettingProfile;
-        params: { user_id: number; username?: string };
-      }
-    | { screen: ProfileNavigationName.EditProfile };
+  | { screen: ProfileNavigationName.Profile }
+  | {
+    screen: ProfileNavigationName.SettingProfile;
+    params: { user_id: number; username?: string };
+  }
+  | { screen: ProfileNavigationName.EditProfile };
   PostNavigation:
-    | { screen: PostNavigationName; params?: { selectedItem?: CardData } }
-    | { screen: PostNavigationName.ListImageDetail; params: { data: PostProps } }
-    | { screen: PostNavigationName.EditPostScreen; params: { data: PostProps } }
-    | {
-        screen: PostNavigationName.ListImageEditScreen;
-        params: {
-          oldImage: { id: string; url: string }[];
-          newImage: string[];
-          newMediaFiles: MediaFileType[];
-          listImage: string[];
-          imageDel?: string[];
-          onUpdate: (
-            updateImageList: string[],
-            updateNewMediaFiles: MediaFileType[],
-            updateImageDel?: string[],
-            updateOldImage?: { id: string; url: string }[],
-            updateNewImage?: string[]
-          ) => void;
-        };
-      }
-    | {
-        screen: PostNavigationName.ListImageScreen;
-        params: {
-          imageList: string[];
-          mediaFiles: MediaFileType[];
-          onUpdate: (updateImageList: string[], updateMediaFiles: MediaFileType[]) => void;
-        };
-      }
-    | { screen: PostNavigationName.EnAScreen }
-    | { screen: PostNavigationName.ListFeelScreen; params: { postId: string } }
-    | { screen: PostNavigationName.AllPostDetail; params: { postId: string } };
+  | { screen: PostNavigationName; params?: { selectedItem?: CardData } }
+  | { screen: PostNavigationName.ListImageDetail; params: { data: PostProps } }
+  | { screen: PostNavigationName.EditPostScreen; params: { data: PostProps } }
+  | {
+    screen: PostNavigationName.ListImageEditScreen;
+    params: {
+      oldImage: { id: string; url: string }[];
+      newImage: string[];
+      newMediaFiles: MediaFileType[];
+      listImage: string[];
+      imageDel?: string[];
+      onUpdate: (
+        updateImageList: string[],
+        updateNewMediaFiles: MediaFileType[],
+        updateImageDel?: string[],
+        updateOldImage?: { id: string; url: string }[],
+        updateNewImage?: string[]
+      ) => void;
+    };
+  }
+  | {
+    screen: PostNavigationName.ListImageScreen;
+    params: {
+      imageList: string[];
+      mediaFiles: MediaFileType[];
+      onUpdate: (updateImageList: string[], updateMediaFiles: MediaFileType[]) => void;
+    };
+  }
+  | { screen: PostNavigationName.EnAScreen }
+  | { screen: PostNavigationName.ListFeelScreen; params: { postId: string } }
+  | { screen: PostNavigationName.AllPostDetail; params: { postId: string } };
 
   SearchNavigation: { screen: SearchNavigationName };
   ReportNavigation: {
@@ -50,8 +50,8 @@ type AppNavigationType = {
     params: { id: string; username: string; userId: string };
   };
   ChatNavigation:
-    | { screen: ChatNavigationName.InboxScreen; params: { contact: Contact } }
-    | { screen: ChatNavigationName.InboxListScreen };
+  | { screen: ChatNavigationName.InboxScreen; params: { contact: Contact } }
+  | { screen: ChatNavigationName.InboxListScreen };
   VerifyOTPAfterLogin: undefined;
   ChangeProfileAfterSign: undefined;
   NotFoundScreen: undefined;
@@ -71,6 +71,7 @@ type AuthNavigationType = {
   VerifyOTPScreen: { verifyCode: string; email: string; password: string };
   SaveInfoAccountScreen: { email: string; password: string };
   ForgetPasswordScreen: undefined;
+  FirstScreen: undefined
   AccountLogin: {
     username: string;
     email: string;
@@ -168,5 +169,5 @@ type HomeNavigationType = {
 type ClassNavigationType = {
   ClassDetail: { classId: string };
   EditClass: { classId: string };
-  ClassListOpen: undefined
+  AddStudent: { token: string, class_id: string }
 };

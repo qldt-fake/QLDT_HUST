@@ -18,9 +18,8 @@ import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
-import {CreateMaterialProps, IMaterialPayload} from 'src/interfaces/material.interface';
-
-
+import { CreateMaterialProps, IMaterialPayload } from 'src/interfaces/material.interface';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
   const auth = useSelector(selectAuth);
@@ -45,10 +44,13 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
 
   const handleSelectFile = async () => {
     const file = await selectFile();
-    console.log(file);
+    console.log("File",file);
+    console.log("File Name",file.name);
     if (file) {
-      // Extract file extension for materialType
+      // Extract file extension for 
+   
       const fileExtension = file?.name?.split('.').pop()?.toUpperCase() || '';
+      console.log(fileExtension);
       handleChange('file', file);
       handleChange('materialType', fileExtension);
     }
@@ -93,7 +95,7 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
         file: newMaterial.file,
         materialType: newMaterial.materialType
       };
-
+      dispatch(showLoading());
       const res = await createMaterialApi(payload);
       if (res) {
         switch (res.code) {
@@ -102,20 +104,22 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
             navigation.goBack();
             break;
           case INVALID_TOKEN:
-            Alert.alert('Error', 'Token không hợp lệ');
+            Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
             break;
           case NOT_ACCESS:
-            Alert.alert('Error', 'Bạn không có quyền tạo tài liệu');
+            Alert.alert('Lỗi', 'Bạn không có quyền tạo tài liệu');
             break;
           default:
-            Alert.alert('Error', res.data);
+            Alert.alert('Lỗi', res.data);
             break;
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Không thể tạo tài liệu');
+      Alert.alert('Lỗi', 'Hiện không thể tạo tài liệu');
       console.error(error);
+    } finally {
+      dispatch(hideLoading());
     }
   };
 

@@ -27,18 +27,16 @@ export const createSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyRe
    
   );
   try {
-    const response = await axiosInstance.post(SurveyApi.CREATE_SURVEY, formData, 
+    return await axiosInstance.post(SurveyApi.CREATE_SURVEY, formData, 
       {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }
     );
-    console.log("Response", response);
-    return response;
   } catch (error) {
     console.error('Error:', error);
-    return error;
+    return null;
   }
 };
 
@@ -59,18 +57,16 @@ const editSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<an
 
   console.log('formData', formData);
   try {
-    const response = await axiosInstance.post('/edit_survey', formData, 
+    return await axiosInstance.post('/edit_survey', formData, 
       {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }
     );
-    console.log("Response", response);
-    return response;
   } catch (error) {
     console.error('Error:', error);
-    return error;
+    return null;
   }
 };
 
@@ -107,15 +103,19 @@ export const submitSurveyApi = async (
   console.log('formData', formData);
 
   try {
-    const response = await axiosInstance.post(SurveyApi.SUBMIT_SURVEY , formData, {
+    return await axiosInstance.post(SurveyApi.SUBMIT_SURVEY , formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("Response", response);
-    return response;
   } catch (error) {
     console.error('Error:', error);
-    return error;
+    return null;
   }
 };
+
+export const getSurveyStudentAssignmentsApi = async (
+  data: ISubSurveyPayload
+): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(SurveyApi.GET_STUDENT_ASSIGNMENTS, data);
+}

@@ -21,7 +21,7 @@ export interface MaterialCardProps {
   class_id?: string;
   material_link?: string;
   material_type?: string;
-  setMaterialList?: () => void;
+  setMaterialList?: (pre : any) => any;
 }
 
 export interface CreateMaterialProps {

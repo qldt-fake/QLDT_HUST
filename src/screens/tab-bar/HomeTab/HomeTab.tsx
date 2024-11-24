@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Card, IconButton } from 'react-native-paper';
 import { color } from 'src/common/constants/color';
 import { useNavigation } from '@react-navigation/native';
-import { ClassNavigationName } from 'src/common/constants/nameScreen';
+import { ClassNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
 
 export default function HomeTab() {
   const navigation = useNavigation();
@@ -39,12 +39,12 @@ export default function HomeTab() {
         <Text style={styles.description}>Thông tin các đồ án</Text>
       </Card>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(`` as never)}>
+      <Card style={styles.card} onPress={() => navigation.navigate(SurveyNavigationName.StudentAssignments as never)}>
         <View style={styles.iconContainer}>
           <IconButton icon='information' iconColor={color.red} size={50} />
         </View>
-        <Text style={styles.title}>About us</Text>
-        <Text style={styles.description}>Về chúng tôi</Text>
+        <Text style={styles.title}>Bài tập</Text>
+        <Text style={styles.description}>Danh sách bài tập</Text>
       </Card>
     </View>
   );

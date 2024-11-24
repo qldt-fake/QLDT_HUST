@@ -21,6 +21,7 @@ import { selectFile } from 'src/utils/helper';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 interface NewSurvey {
   title: string;
@@ -120,29 +121,29 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
         deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
         file: newSurvey.file
       };
-
+      dispatch(showLoading());
       const res = await createSurveyApi(payload);
-      
+      dispatch(hideLoading())
       if (res) {
-        switch (res.meta.code) {
+        switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Tạo survey thành công');
             navigation.goBack();
             break;
           case INVALID_TOKEN:
-            Alert.alert('Error', 'Token không hợp lệ');
+            Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
             break;
           case NOT_ACCESS:
-            Alert.alert('Error', 'You do not have permission to create survey');
+            Alert.alert('Lỗi', 'Bạn không có quyền tạo bài kiểm tra');
             break;
           default:
-            Alert.alert('Error', res.data);
+            Alert.alert('Lỗi', res.data);
             break;
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to create survey');
+      Alert.alert('Lỗi', 'Lỗi khi tạo bài kiếm tra');
       console.error(error);
     }
   };

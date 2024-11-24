@@ -94,7 +94,7 @@ export enum classStatus {
 
 export enum surveyStatus {
   UPCOMING = 'UPCOMING',
-  OVERDUE = 'OVERDUE',
+  PASS_DUE = 'PASS_DUE',
   COMPLETED = 'COMPLETED'
 }
 export enum Roles {

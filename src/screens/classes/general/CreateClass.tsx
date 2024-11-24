@@ -14,6 +14,7 @@ import { color } from 'src/common/constants/color';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 const CreateClass = () => {
   const { user } = useSelector(selectAuth);
@@ -68,9 +69,10 @@ const CreateClass = () => {
         start_date: dayjs(newClass.start_date).format('YYYY-MM-DD'),
         end_date: dayjs(newClass.end_date).format('YYYY-MM-DD')
       };
+      dispatch(showLoading());
       const res = await createClassApi(requestClass);
       if (res) {
-        switch (res.meta.code) {
+        switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Tạo lớp thành công.');
             navigation.goBack();
@@ -87,7 +89,9 @@ const CreateClass = () => {
         }
       }
     } catch {
-      Alert.alert('Thất bại', 'Không thể tạo lớp.');
+      Alert.alert('Thất bại', 'Hiện không thể tạo lớp.');
+    } finally {
+      dispatch(hideLoading());
     }
   };
 

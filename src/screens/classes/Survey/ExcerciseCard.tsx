@@ -1,28 +1,40 @@
 import { StyleSheet, Text, View, Alert, TouchableOpacity, Pressable } from 'react-native';
 import React, { useCallback } from 'react';
-import BaseImage from 'src/components/BaseImage';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { color } from 'src/common/constants/color';
-import { formatDate } from 'src/utils/helper';
+import { formatDateTime } from 'src/utils/helper';
 import { Linking } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { SurveyNavigationName } from 'src/common/constants/nameScreen';
 import { deleteSurveyApi } from 'src/services/survey.service';
 import { useSelector } from 'react-redux';
 import { ReponseCode } from 'src/common/enum/reponseCode';
-import { selectAuth } from 'src/redux/slices/authSlice';
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { useModal } from '../../../hooks/useBottomModal';
 import { useAlert } from '../../../hooks/useAlert';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { useAppDispatch } from 'src/redux';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { DATE_TIME_FORMAT } from 'src/common/constants';
+import { Roles } from 'src/common/enum/commom';
+import { SurveyType } from 'src/common/type/navigation';
 
 interface ExcerciseCardProps {
-  id : string;
-  title : string;
-  description : string;
-  class_id : string;
-  deadline : string;
-  file_url : string;
-  setAssignmentList : any;
+  id: string;
+  title: string;
+  description: string;
+  class_id: string;
+  deadline: string;
+  file_url: string;
+  setAssignmentList: any;
+  is_submitted?: boolean;
 }
+
+const colors = [color.primary, color.second, color.green, color.yellow, color.textLike];
+
+const getRandomColor = () => {
+  return colors[Math.floor(Math.random() * colors.length)];
+};
 
 export const ExcerciseCard = ({
   id,
@@ -31,28 +43,51 @@ export const ExcerciseCard = ({
   class_id,
   deadline,
   file_url,
+  is_submitted,
   setAssignmentList: setExcerciseList
 }: ExcerciseCardProps) => {
-
   const navigation: NavigationProp<SurveyType> = useNavigation();
   const auth = useSelector(selectAuth);
   const user = auth.user;
   const { showModal } = useModal();
   const { showAlert } = useAlert();
+  const dispatch = useAppDispatch();
 
   const handleViewSurvey = useCallback(async () => {
     await Linking.openURL(file_url);
   }, [file_url]);
- 
+
   const callDeleteSurveyApi = async () => {
-    const res = await deleteSurveyApi({
-      token: user?.token,
-      survey_id: id
-    });
-    console.log('Delete Survey APi', res);
-    if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
-      Alert.alert('Delete Excercise', 'Delete excercise successfully');
-      setExcerciseList((prev: any) => prev.filter((item: any) => item.id !== id));
+    try {
+      dispatch(showLoading());
+      const res = await deleteSurveyApi({
+        token: user?.token,
+        survey_id: id
+      });
+      dispatch(hideLoading());
+      if (res) {
+        switch (res.meta?.code) {
+          case CODE_OK:
+            Alert.alert('Xóa bài kiểm tra', 'Xóa bài kiểm tra thành công');
+            setExcerciseList((prev: any) => prev.filter((item: any) => item.id !== id));
+            break;
+          case INVALID_TOKEN:
+            Alert.alert('Lỗi', 'Token không hợp lệ');
+            dispatch(logout());
+            break;
+          case NOT_ACCESS:
+            Alert.alert('Lỗi', 'Bạn không có quyền xóa bài kiểm tra');
+            break;
+          default:
+            Alert.alert('Lỗi', res.data);
+            break;
+        }
+      }
+    } catch (error) {
+      console.log('Error', error);
+      Alert.alert('Lỗi', 'Xóa bài kiểm tra thất bại');
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -61,12 +96,12 @@ export const ExcerciseCard = ({
   };
 
   const handleDelete = () => {
-    showAlert('Delete Excercise', 'Are you sure to delete this excercise?', callDeleteSurveyApi);
+    showAlert('Xóa bài kiểm tra', 'Bạn có chắc muốn xóa bài kiểm tra?', callDeleteSurveyApi);
   };
 
   const actions = [
-    { icon: 'edit', text: 'Edit Survey', onPress: handleEdit },
-    { icon: 'trash', text: 'Delete', onPress: handleDelete }
+    { icon: 'edit', text: 'Chỉnh sửa bài kiểm tra', onPress: handleEdit },
+    { icon: 'trash', text: 'Xóa', onPress: handleDelete }
   ];
 
   return (
@@ -75,26 +110,25 @@ export const ExcerciseCard = ({
         <TouchableOpacity
           style={styles.body}
           onPress={() =>
-            navigation.navigate(SurveyNavigationName.SubmitSurvey as never, {
+            navigation.navigate(SurveyNavigationName.SubmitSurvey as any, {
               id: id,
               title: title,
               description: description,
               deadline: deadline,
               file_url: file_url
-            } as never)
+            })
           }
         >
-          <BaseImage
-            style={{ height: 30, width: 30, marginTop: 5 }}
-            source={require('../../../assets/avatar-default.jpg')}
-          />
+          <View style={[styles.colorBlock, { backgroundColor: getRandomColor() }]}>
+            <Text style={styles.initials}>{title.slice(0, 2).toUpperCase()}</Text>
+          </View>
           <View style={styles.content}>
             <Text style={styles.text}>{title}</Text>
-            <Text style={styles.text}>{formatDate(deadline)}</Text>
-            <Text style={styles.text}>{description}</Text>
+            <Text style={styles.text}>{"Hạn: " + formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(deadline))}</Text>
+            <Text style={styles.text}>{class_id}</Text>
             <Pressable
               onPressIn={event => {
-                event.stopPropagation(); 
+                event.stopPropagation();
                 handleViewSurvey();
               }}
             >
@@ -103,9 +137,17 @@ export const ExcerciseCard = ({
           </View>
         </TouchableOpacity>
         <View style={styles.iconBox}>
-          <TouchableOpacity onPress={() => showModal(`Excercise ${title}`, actions)}>
-            <Icon name='ellipsis-v' size={20} color='black' />
-          </TouchableOpacity>
+          {user?.role === Roles.LECTURER ? (
+            <TouchableOpacity onPress={() => showModal(`Excercise ${title}`, actions)}>
+              <Icon name='ellipsis-v' size={20} color='black' />
+            </TouchableOpacity>
+          ) : (
+            is_submitted && (
+              <TouchableOpacity onPress={() => showModal(`Excercise ${title}`, actions)}>
+                <Icon name='check' size={20} color={color.green} />
+              </TouchableOpacity>
+            )
+          )}
         </View>
       </View>
     </View>
@@ -132,6 +174,18 @@ const styles = StyleSheet.create({
     flex: 8,
     flexDirection: 'row',
     columnGap: 10
+  },
+  colorBlock: {
+    height: 30,
+    width: 30,
+    marginTop: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 5
+  },
+  initials: {
+    color: '#fff',
+    fontWeight: 'bold'
   },
   content: {
     flex: 1

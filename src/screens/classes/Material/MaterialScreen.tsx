@@ -1,5 +1,5 @@
 // MaterialScreen.tsx
-import { FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
 import React, { useCallback } from 'react';
 import { getMaterialListApi } from 'src/services/material.service';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -8,25 +8,50 @@ import { useSelector } from 'react-redux';
 import { color } from 'src/common/constants/color';
 import { Roles } from 'src/common/enum/commom';
 import { MaterialNavigationName } from 'src/common/constants/nameScreen';
-import { selectAuth } from 'src/redux/slices/authSlice';
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import MaterialCard from './MaterialCard';
-import { CODE_OK } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { useAppDispatch } from 'src/redux';
+import EmptyState from 'src/components/EmptyState';
 
 const MaterialScreen = (args: { classId: string }) => {
   const { classId } = args;
   const [materialList, setMaterialList] = React.useState<any[]>([]);
   const navigation: NavigationProp<MaterialNavigationType> = useNavigation();
   const auth = useSelector(selectAuth);
+  const dispatch = useAppDispatch();
 
   useFocusEffect(
     useCallback(() => {
       const fetchMaterials = async () => {
-        const res = await getMaterialListApi({
-          token: auth?.user?.token as string,
-          class_id: classId
-        });
-        if (res && res.data && res.code === CODE_OK) {
-          setMaterialList(res.data);
+        try {
+          dispatch(showLoading());
+          const res = await getMaterialListApi({
+            token: auth?.user?.token as string,
+            class_id: classId
+          });
+          if(res) {
+            switch (res.code) {
+              case CODE_OK:
+                setMaterialList(res.data);
+                break;
+              case INVALID_TOKEN:
+                Alert.alert('Lỗi', 'Token không hợp lệ');
+                dispatch(logout());
+                break;
+              case NOT_ACCESS:
+                Alert.alert('Lỗi', 'Bạn không có quyền xem tài liệu');
+                break;
+              default:
+                Alert.alert('Lỗi', res.data);
+                break;
+            }
+          }
+        } catch (error) {
+          console.error('Lỗi khi lấy tài liệu:', error);
+        } finally {
+          dispatch(hideLoading());
         }
       };
       fetchMaterials();
@@ -35,12 +60,19 @@ const MaterialScreen = (args: { classId: string }) => {
 
   return (
     <>
-      <FlatList
-        data={materialList}
-        renderItem={data => <MaterialCard {...data.item} setMaterialList={setMaterialList} />}
-        keyExtractor={item => item.id.toString()}
-        style={{ padding: 10 }}
-      />
+      {materialList.length === 0 ? (
+        <EmptyState
+          title="Không có tài liệu nào"
+        />
+      ) : (
+        <FlatList
+          data={materialList}
+          renderItem={data => <MaterialCard {...data.item} setMaterialList={setMaterialList} />}
+          keyExtractor={item => item.id.toString()}
+          style={{ padding: 10 }}
+        />
+      )}
+
       {auth?.user?.role === Roles.LECTURER && (
         <TouchableOpacity
           style={styles.floatingButton}

@@ -4,6 +4,7 @@ import ClassListPage from 'src/screens/classes/general/ClassListPage';
 import ClassDetail from 'src/screens/classes/general/ClassDeatail';
 import CreateClass from 'src/screens/classes/general/CreateClass';
 import EditClass from 'src/screens/classes/general/EditClass';
+import { EditClassProps } from 'src/screens/classes/general/EditClass';
 import RegisterClass from 'src/screens/classes/general/RegisterClass';
 import { ClassNavigationName } from 'src/common/constants/nameScreen';
 import ClassHeader from 'src/screens/classes/general/ClassHeader';
@@ -74,7 +75,7 @@ const ClassNavigation = () => {
           headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Edit Class' />
         }}
-        component={EditClass}
+        component={EditClass as any}
       />
       <Stack.Screen
         name={ClassNavigationName.RegisterClass}
@@ -102,7 +103,7 @@ const ClassNavigation = () => {
         }}
         component={ClassListOpen}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={ClassNavigationName.AddStudent}
         options={{
           headerShown: true,
@@ -115,7 +116,7 @@ const ClassNavigation = () => {
         }}
         component={AddStudent}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={ClassNavigationName.GetStudentInfor}
         options={{
           headerShown: true,

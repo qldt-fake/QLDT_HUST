@@ -7,12 +7,14 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { MaterialNavigationName } from 'src/common/constants/nameScreen';
 import { deleteMaterialApi } from 'src/services/material.service';
 import { useSelector } from 'react-redux';
-import { selectAuth } from 'src/redux/slices/authSlice';
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { useModal } from '../../../hooks/useBottomModal';
 import { useAlert } from '../../../hooks/useAlert';
 import { getTypeOfFile } from '../../../utils/helper';
-import { CODE_OK } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { MaterialCardProps } from 'src/interfaces/material.interface';
+import { useAppDispatch } from 'src/redux';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 export const MaterialCard: React.FC<MaterialCardProps> = ({
   id,
@@ -28,20 +30,43 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
   const user = auth.user;
   const { showModal } = useModal();
   const { showAlert } = useAlert();
+  const dispatch = useAppDispatch();
 
   const handlePress = async () => {
     await Linking.openURL(material_link as string);
   };
 
   const callDeleteMaterialApi = async () => {
-    const res = await deleteMaterialApi({
-      token: user?.token,
-      material_id: id
-    });
+    try {
+      dispatch(showLoading());
+      const res = await deleteMaterialApi({
+        token: user?.token,
+        material_id: id
+      });
 
-    if (res && res.code === CODE_OK) {
-      Alert.alert('Delete Material', 'Delete material successfully');
-      setMaterialList((prev: any) => prev.filter((item: any) => item.id !== id));
+      if (res) {
+        switch (res.code) {
+          case CODE_OK:
+            Alert.alert('Xóa tài liệu', 'Xóa tài liệu thành công');
+            setMaterialList?.((prev: any) => prev.filter((item: any) => item.id !== id));
+            break;
+          case INVALID_TOKEN:
+            Alert.alert('Lỗi', 'Token không hợp lệ');
+            dispatch(logout());
+            break;
+          case NOT_ACCESS:
+            Alert.alert('Lỗi', 'Bạn không có quyền xóa tài liệu');
+            break;
+          default:
+            Alert.alert('Lỗi', res.data);
+            break;
+        }
+      }
+    } catch (error) {
+      console.error('Lỗi khi xóa tài liệu:', error);
+      Alert.alert('Lỗi', 'Xóa tài liệu thất bại');
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -50,7 +75,7 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
   };
 
   const handleDelete = () => {
-    showAlert('Delete Material', 'Are you sure to delete this material?', callDeleteMaterialApi);
+    showAlert('Xóa tài liệu', 'Bạn có chắc muốn xóa tài liệu này', callDeleteMaterialApi);
   };
 
   const actions = [
@@ -60,7 +85,7 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
 
   const getImageForMaterialType = (materialType: string) => {
     const type = getTypeOfFile(materialType);
-
+  
     switch (type) {
       case 'pdf':
         return require('../../../assets/pdf.png');
@@ -76,11 +101,44 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
       case 'jpg':
       case 'jpeg':
       case 'png':
+      case 'gif':
+      case 'bmp':
+      case 'svg':
         return require('../../../assets/image.png');
-      default:
+      case 'mp4':
+      case 'avi':
+      case 'mkv':
+      case 'mov':
+      case 'wmv':
+        return require('../../../assets/video.png');
+      case 'mp3':
+      case 'wav':
+      case 'flac':
+      case 'aac':
+        return require('../../../assets/video.png');
+      case 'zip':
+      case 'rar':
+      case '7z':
+      case 'tar':
+      case 'gz':
+        return require('../../../assets/archive.png');
+      case 'txt':
+      case 'log':
+      case 'md':
+        return require('../../../assets/file.png');
+      case 'html':
+      case 'css':
+      case 'js':
+      case 'json':
+      case 'xml':
+        return require('../../../assets/code.png');
+      case 'folder': // Nếu là thư mục hoặc không xác định.
         return require('../../../assets/folder.png');
+      default:
+        return require('../../../assets/folder.png'); // Biểu tượng mặc định nếu không khớp loại.
     }
   };
+  
 
   return (
     <View style={styles.wrapper}>

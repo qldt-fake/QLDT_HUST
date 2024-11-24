@@ -1,21 +1,21 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Assignment from '../Survey/Assignment';
 import ClassDetailSummary from './ClassDetailSummary';
 import { getClassApi } from 'src/services/class.service';
-import { ReponseCode } from 'src/common/enum/reponseCode';
 import StudentCard from './StudentCard';
 import { useSelector } from 'react-redux';
-import { selectAuth } from 'src/redux/slices/authSlice';
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { color } from 'src/common/constants/color';
 import MaterialScreen from '../Material/MaterialScreen';
-import { ModalProvider } from '../../../hooks/useBottomModal';
 import FloatingButton from '../../../components/FloatingButton/FloatingButton';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ClassNavigationName, MaterialNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
 import { RefreshControl } from 'react-native';
-
+import { useAppDispatch } from 'src/redux';
+import {showLoading, hideLoading} from 'src/redux/slices/loadingSlice';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
 
@@ -25,24 +25,44 @@ const PostScreen = () => {
   const user = auth.user;
   const [refreshing, setRefreshing] = useState(false);
   const [classDetail, setClassDetail] = useState<any>(null);
+  const dispatch = useAppDispatch();
   const fetchClassDetail = async () => {
     try {
+      dispatch(showLoading());
       const res = await getClassApi({
         token: user?.token,
         role: user?.role,
         account_id: user?.id,
         class_id: classId
       });
-      if (res && res.data && res.meta.code === ReponseCode.CODE_OK) {
-        setClassDetail(res.data);
+      if (res) {
+        switch (res.meta?.code) {
+          case CODE_OK:
+            setClassDetail(res.data);
+            break;
+          case INVALID_TOKEN:
+            Alert.alert('Lỗi', 'Token không hợp lệ');
+            dispatch(logout());
+            break;
+          case NOT_ACCESS:
+            Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+            break;
+          default:
+            Alert.alert('Lỗi', res.data);
+            break;
+        }
       }
     } catch (error) {
-      console.error(error);
+      console.error('Lỗi khi lấy chi tiết lớp học:', error);
+      Alert.alert('Lỗi', 'Lấy chi tiết lớp học thất bại');
+    } finally {
+      dispatch(hideLoading());
     }
   };
   useEffect(() => {
     fetchClassDetail();
   }, [classId]);
+
   const onRefresh = async () => {
     setRefreshing(true);
     await fetchClassDetail(); // Gọi lại API để làm mới dữ liệu

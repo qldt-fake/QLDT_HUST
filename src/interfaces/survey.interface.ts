@@ -1,3 +1,5 @@
+import { surveyStatus } from "src/common/enum/commom";
+
 export interface ISurveyPayload {
     file?:  any;
     title?: string | null;
@@ -12,6 +14,7 @@ export interface ISubSurveyPayload {
     token?: string;
     class_id?: string;
     survey_id?: string;
+    type? : surveyStatus | null;
 }
 
 export interface ISubmitSurveyPayload {
@@ -28,3 +31,4 @@ export interface ISubmitSurveyProps {
     deadline?: string;
     id?: string;
 }
+

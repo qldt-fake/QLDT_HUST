@@ -1,3 +1,4 @@
+import { SubmitSurvey } from 'src/screens/classes/Survey/SubmitSurvey';
 /* eslint-disable no-unused-vars */
 type AppNavigationType = {
   AuthNavigation: { screen: AuthNavigationName };
@@ -104,6 +105,9 @@ type FriendNavigationType = {
 type SurveyType = {
   CreateSurvey: { classId: string };
   EditSurvey: { surveyId: id; classId: class_id };
+  StudentAssignment: undefined;
+  SubmitSurvey : { id: string, title: string, description: string, deadline: string, file_url: string }
+  
 };
 type PostNavigationType = {
   CreatePostScreen: { selectedItem: CardData } | undefined;

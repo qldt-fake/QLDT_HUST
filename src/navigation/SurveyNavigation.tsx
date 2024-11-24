@@ -8,6 +8,7 @@ import { color } from 'src/common/constants/color';
 import ClassDetail from 'src/screens/classes/general/ClassDeatail';
 import EditSurvey from 'src/screens/classes/Survey/EditSurvey';
 import SubmitSurvey from 'src/screens/classes/Survey/SubmitSurvey';
+import AllSurveyForStudent from 'src/screens/classes/Survey/AllSurveyForStudent';
 
 const Stack = createNativeStackNavigator();
 
@@ -71,6 +72,19 @@ const SurveyNavigation = () => {
           headerTitle: () => <ClassHeader title='Submit Survey' textLogo='HUST' />
         }}
         component={SubmitSurvey}
+      />
+      <Stack.Screen
+        name={SurveyNavigationName.StudentAssignments}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: color.bgClassHeader
+          },
+          headerTitleAlign: 'center',
+          headerTintColor: color.white,
+          headerTitle: () => <ClassHeader title='Bài tập' />
+        }}
+        component={AllSurveyForStudent}
       />
     </Stack.Group>
   );

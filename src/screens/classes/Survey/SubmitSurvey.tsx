@@ -27,7 +27,7 @@ import {
   ISubmitSurveyProps
 } from 'src/interfaces/survey.interface';
 
-const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
+const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
   const { file_url, title, description, deadline, id } = route?.params || {};
 
   const auth = useSelector(selectAuth);

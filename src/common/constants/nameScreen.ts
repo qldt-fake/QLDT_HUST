@@ -111,7 +111,8 @@ export enum SurveyNavigationName {
   CreateSurvey = 'CreateSurvey',
   EditSurvey = 'EditSurvey',
   SurveyDetail = 'SurveyDetail',
-  SubmitSurvey = 'SubmitSurvey'
+  SubmitSurvey = 'SubmitSurvey',
+  StudentAssignments = 'StudentAssignments',
 }
 
 export enum MaterialNavigationName {

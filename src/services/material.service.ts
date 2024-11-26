@@ -16,18 +16,16 @@ export const createMaterialApi = async (payload: IMaterialPayload): Promise<IBod
   // Add file if present
   if (payload.file) {
     formData.append('file', payload.file as any);
-    formData.append('materialType', payload.file.type.toUpperCase() as string);
+    formData.append('materialType', payload.materialType as string);
   }
 
   console.log('formData', formData);
   try {
-    const response = await axiosInstance.post(MaterialApi.UPLOAD_MATERIAL, formData, {
+    return await axiosInstance.post(MaterialApi.UPLOAD_MATERIAL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("Response", response);
-    return response;
   } catch (error) {
     console.error('Error creating material:', error);
     return null;
@@ -47,18 +45,16 @@ export const editMaterialApi = async (payload: IMaterialPayload): Promise<IBodyR
   // Add file if present
   if (payload.file) {
     formData.append('file', payload.file as any);
-    formData.append('materialType', payload.file.type.toUpperCase() as string);
+    formData.append('materialType', payload.materialType as string);
   }
 
   console.log('formData', formData);
   try {
-    const response = await axiosInstance.post(MaterialApi.EDIT_MATERIAL, formData, {
+    return await axiosInstance.post(MaterialApi.EDIT_MATERIAL, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("Response", response);
-    return response;
   } catch (error) {
     console.error('Error updating material:', error);
     return null;

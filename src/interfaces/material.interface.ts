@@ -6,6 +6,7 @@ export interface IMaterialPayload {
   file?: any;
   materialType?: string | null;
   materialId?: string | null;
+  materialLink?: string | null;
 }
 
 export interface ISubMaterialPayload {
@@ -21,7 +22,7 @@ export interface MaterialCardProps {
   class_id?: string;
   material_link?: string;
   material_type?: string;
-  setMaterialList?: () => void;
+  setMaterialList?: (pre : any) => any;
 }
 
 export interface CreateMaterialProps {

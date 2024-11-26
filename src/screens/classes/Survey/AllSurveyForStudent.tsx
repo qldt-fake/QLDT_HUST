@@ -17,8 +17,7 @@ import EmptyState from 'src/components/EmptyState';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { SurveyType } from 'src/common/type/navigation';
 
-const Assignment = (args: { classId: string }) => {
-  const { classId } = args;
+const AllSurveyForStudent = () => {
   const [assignmentList, setAssignmentList] = React.useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = React.useState<surveyStatus | null>(null);
   const navigation: NavigationProp<SurveyType> = useNavigation();
@@ -30,20 +29,11 @@ const Assignment = (args: { classId: string }) => {
       const fetchAllSurveys = async () => {
         try {
           dispatch(showLoading());
-          let res = null;
-          if (auth.user?.role === Roles.STUDENT) {
-            res = await getSurveyStudentAssignmentsApi({
-              token: auth?.user?.token,
-              type: selectedFilter,
-              class_id: classId
-            });
-          } else {
-            res = await getSurveyListApi({
-              token: auth?.user?.token,
-              class_id: classId
-            });
-          }
-          console.log('res', res);
+          const res = await getSurveyStudentAssignmentsApi({
+            token: auth?.user?.token,
+            type: selectedFilter
+          });
+          console.log(res);
           if (res) {
             switch (res.meta?.code) {
               case CODE_OK:
@@ -73,53 +63,44 @@ const Assignment = (args: { classId: string }) => {
   );
 
   const handleFilterChange = (status: surveyStatus) => {
-    if (selectedFilter === status) {
+    if(selectedFilter === status) {
       setSelectedFilter(null);
-      return;
+      return
     }
     setSelectedFilter(status);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {auth.user?.role === Roles.STUDENT && (
-        <View style={styles.boxFilters}>
-          <BaseButton
-            borderRadius={12}
-            buttonColor={
-              selectedFilter === surveyStatus.UPCOMING ? color.textRed : color.activeOutlineColor
-            }
-            textColor='white'
-            mode='contained'
-            onPress={() => handleFilterChange(surveyStatus.UPCOMING)}
-          >
-            Sắp tới
-          </BaseButton>
-          <BaseButton
-            borderRadius={12}
-            buttonColor={
-              selectedFilter === surveyStatus.PASS_DUE ? color.textRed : color.activeOutlineColor
-            }
-            textColor='white'
-            mode='contained'
-            onPress={() => handleFilterChange(surveyStatus.PASS_DUE)}
-          >
-            Quá hạn
-          </BaseButton>
-          <BaseButton
-            borderRadius={12}
-            buttonColor={
-              selectedFilter === surveyStatus.COMPLETED ? color.textRed : color.activeOutlineColor
-            }
-            textColor='white'
-            mode='contained'
-            onPress={() => handleFilterChange(surveyStatus.COMPLETED)}
-          >
-            Đã hoàn thành
-          </BaseButton>
-        </View>
-      )}
-
+    <SafeAreaView style ={styles.container}>
+      <View style={styles.boxFilters}>
+        <BaseButton
+          borderRadius={12}
+          buttonColor={selectedFilter === surveyStatus.UPCOMING ? color.textRed : color.activeOutlineColor}
+          textColor='white'
+          mode='contained'
+          onPress={() => handleFilterChange(surveyStatus.UPCOMING)}
+        >
+          Sắp tới
+        </BaseButton>
+        <BaseButton
+          borderRadius={12}
+          buttonColor={selectedFilter === surveyStatus.PASS_DUE ? color.textRed : color.activeOutlineColor}
+          textColor='white'
+          mode='contained'
+          onPress={() => handleFilterChange(surveyStatus.PASS_DUE)}
+        >
+          Quá hạn
+        </BaseButton>
+        <BaseButton
+          borderRadius={12}
+          buttonColor={selectedFilter === surveyStatus.COMPLETED ? color.textRed : color.activeOutlineColor}
+          textColor='white'
+          mode='contained'
+          onPress={() => handleFilterChange(surveyStatus.COMPLETED)}
+        >
+          Đã hoàn thành
+        </BaseButton>
+      </View>
       {assignmentList.length === 0 ? (
         <EmptyState title='Hiện chưa có bài tập cho lớp này' />
       ) : (
@@ -139,7 +120,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: color.white,
-    paddingBottom: 100
+    paddingBottom: 100,
   },
   boxFilters: {
     flexDirection: 'row',
@@ -147,7 +128,7 @@ const styles = StyleSheet.create({
     height: 50,
     paddingHorizontal: 10,
     marginTop: 20
-  }
+  },
 });
 
-export default Assignment;
+export default AllSurveyForStudent;

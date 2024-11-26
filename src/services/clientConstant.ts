@@ -99,6 +99,7 @@ export enum SurveyApi {
   GET_SURVEY = '/it5023e/get_survey_response',
   GET_SUBMISSION = '/it5023e/get_submission',
   SUBMIT_SURVEY = '/it5023e/submit_survey',
+  GET_STUDENT_ASSIGNMENTS = '/it5023e/get_student_assignments',
 }
 
 export enum MaterialApi {

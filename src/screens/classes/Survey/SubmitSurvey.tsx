@@ -18,7 +18,7 @@ import { ReponseCode } from 'src/common/enum/reponseCode';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
-import { ACTION_DONE_PREVIOUS, CODE_OK, INVALID_TOKEN, NOT_ACCESS} from 'src/common/constants/responseCode';
+import { ACTION_DONE_PREVIOUS, CODE_OK, ERROR_EXCEPTION, INVALID_TOKEN, NOT_ACCESS} from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -26,8 +26,9 @@ import {
   ISurveyPayload,
   ISubmitSurveyProps
 } from 'src/interfaces/survey.interface';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
-const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
+const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
   const { file_url, title, description, deadline, id } = route?.params || {};
 
   const auth = useSelector(selectAuth);
@@ -74,7 +75,7 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
 
   const validate = () => {
     if (!newSubmit.file && !newSubmit.textResponse) {
-      Alert.alert('Error', 'Please fill at least one field');
+      Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải lên file');
       return false;
     }
     return true;
@@ -91,8 +92,9 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
       const payload = {
         ...newSubmit
       };
-
+      dispatch(showLoading());
       const res = await submitSurveyApi(payload);
+      console.log('res', res);
       if (res) {
         switch (res.meta.code) {
           case CODE_OK:
@@ -100,23 +102,28 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
             navigation.goBack();
             break;
           case INVALID_TOKEN:
-            Alert.alert('Error', 'Token không hợp lệ');
+            Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
             break;
           case NOT_ACCESS:
-            Alert.alert('Error', 'You do not have permission to submit survey');
+            Alert.alert('Lỗi', 'Bạn không có quyền nộp bài kiểm tra này');
             break;
           case ACTION_DONE_PREVIOUS:
-            Alert.alert('Error', 'You have already submitted this survey');
+            Alert.alert('Lỗi', 'Bạn đã nộp bài kiểm tra này rồi');
+            break;
+          case ERROR_EXCEPTION: 
+            Alert.alert("Lỗi", "Không thể nộp vì hạn của bài kiểm tra đã trôi qua");
             break;
           default:
-            Alert.alert('Error', res.data);
+            Alert.alert('Lỗi', res.data);
             break;
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to create survey');
+      Alert.alert('Lỗi', 'Tạm thời không thể nộp bài kiểm tra này');
       console.error(error);
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -131,7 +138,7 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
         />
         {file_url && (
           <TouchableOpacity style={styles.viewButton} onPress={handleViewSurvey}>
-            <Text style={[styles.text, styles.viewButtonText]}>Open Survey</Text>
+            <Text style={[styles.text, styles.viewButtonText]}>Mở file bài kiểm tra</Text>
           </TouchableOpacity>
         )}
         {description && (
@@ -162,14 +169,14 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }) => {
               numberOfLines={1}
               ellipsizeMode='tail'
             >
-              {newSubmit?.file ? newSubmit.file.name : 'Upload File'}
+              {newSubmit?.file ? newSubmit.file.name : 'Tải lên file'}
             </Text>
             <Icon name='caret-up' size={20} color='#fff' />
           </>
         </TouchableHighlight>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
+          <Text style={[styles.text, styles.submitButtonText]}>Nộp</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -244,6 +251,7 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   viewButtonText: {
+    textDecorationLine: 'underline',
     textAlign: 'center',
     color: color.red,
     fontSize: 20

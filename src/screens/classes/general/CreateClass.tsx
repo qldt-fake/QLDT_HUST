@@ -5,8 +5,8 @@ import { PaperProvider, RadioButton, Menu } from 'react-native-paper';
 import DateTimePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import dayjs from 'dayjs';
-import { createClassApi } from 'src/services/class.service';
-import { classStatus, classType } from 'src/common/enum/commom';
+import { createClassApi, IClassItem } from 'src/services/class.service';
+import { classType } from 'src/common/enum/commom';
 import { calculateDateAfterWeeks, formatDateTime } from 'src/utils/helper';
 import { DATE_TIME_FORMAT } from 'src/common/constants';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
@@ -14,6 +14,7 @@ import { color } from 'src/common/constants/color';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 const CreateClass = () => {
   const { user } = useSelector(selectAuth);
@@ -21,7 +22,7 @@ const CreateClass = () => {
     class_id: '',
     class_name: '',
     class_type: '',
-    status: '',
+    // status: '',
     max_student_amount: 0,
     start_date: null,
     end_date: null,
@@ -56,6 +57,14 @@ const CreateClass = () => {
       Alert.alert('Validation Error', 'Số lượng sinh viên tối đa phải trong khoảng từ 1 đến 50.');
       return false;
     }
+    if (!newClass.start_date || !newClass.end_date) {
+      Alert.alert('Validation Error', 'Ngày bắt đầu và ngày kết thúc không được để trống.');
+      return false;
+    }
+    if (dayjs(newClass.end_date).isBefore(dayjs(newClass.start_date))) {
+      Alert.alert('Validation Error', 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.');
+      return false;
+    }
     return true;
   };
 
@@ -63,14 +72,16 @@ const CreateClass = () => {
     if (!validateClass()) return;
 
     try {
-      const requestClass = {
+      const requestClass: IClassItem = {
         ...newClass,
         start_date: dayjs(newClass.start_date).format('YYYY-MM-DD'),
         end_date: dayjs(newClass.end_date).format('YYYY-MM-DD')
       };
+      dispatch(showLoading());
       const res = await createClassApi(requestClass);
+      console.log('res', res);
       if (res) {
-        switch (res.meta.code) {
+        switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Tạo lớp thành công.');
             navigation.goBack();
@@ -87,7 +98,9 @@ const CreateClass = () => {
         }
       }
     } catch {
-      Alert.alert('Thất bại', 'Không thể tạo lớp.');
+      Alert.alert('Thất bại', 'Hiện không thể tạo lớp.');
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -118,11 +131,13 @@ const CreateClass = () => {
         <View style={styles.body}>
           <TextInput
             style={styles.input}
+            value={newClass.class_id}
             placeholder='Mã lớp *'
             onChangeText={text => handleChange('class_id', text)}
           />
           <TextInput
             style={styles.input}
+            value={newClass.class_name}
             placeholder='Tên lớp *'
             onChangeText={text => handleChange('class_name', text)}
           />
@@ -142,7 +157,7 @@ const CreateClass = () => {
             </View>
           </RadioButton.Group>
 
-          <Text style={styles.label}>Trạng thái</Text>
+          {/* <Text style={styles.label}>Trạng thái</Text>
           <RadioButton.Group
             onValueChange={value => handleChange('status', value)}
             value={newClass.status}
@@ -155,7 +170,7 @@ const CreateClass = () => {
                 </View>
               ))}
             </View>
-          </RadioButton.Group>
+          </RadioButton.Group> */}
 
           {isOpenDatePicker && (
             <DateTimePicker
@@ -214,6 +229,7 @@ const CreateClass = () => {
               const value = parseInt(text, 10);
               handleChange('max_student_amount', isNaN(value) ? 0 : value);
             }}
+            value={newClass.max_student_amount.toString()}
           />
 
           <TouchableOpacity style={styles.submitButton} onPress={handleCreateClass}>

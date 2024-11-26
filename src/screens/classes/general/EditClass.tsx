@@ -5,7 +5,7 @@ import { PaperProvider, RadioButton, Menu } from 'react-native-paper';
 import DateTimePicker from 'react-native-date-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import dayjs from 'dayjs';
-import { getClassApi, updateClassApi, IClassItem } from 'src/services/class.service';
+import { getClassApi, updateClassApi, IClassItem, getBasicClassInfoApi } from 'src/services/class.service';
 import { classStatus, classType } from 'src/common/enum/commom';
 import { calculateDateAfterWeeks, formatDateTime } from 'src/utils/helper';
 import { DATE_TIME_FORMAT } from 'src/common/constants';
@@ -15,13 +15,8 @@ import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/respons
 import { useNavigation } from '@react-navigation/native';
 import { useAppDispatch } from 'src/redux';
 import { useAlert } from '../../../hooks/useAlert';
-interface EditClassProps {
-  route: {
-    params: {
-      classId: string;
-    };
-  };
-}
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { EditClassProps } from 'src/interfaces/class.interface';
 
 const EditClass: React.FC<EditClassProps> = ({ route }) => {
   const { classId } = route.params;
@@ -60,26 +55,40 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
   useEffect(() => {
     const fetchClassInfo = async () => {
       try {
-        const res = await getClassApi({
+        dispatch(showLoading());
+        const res = await getBasicClassInfoApi({
           token: user?.token,
           role: user?.role,
           class_id: classId,
           account_id: user?.id
         });
-        if (res && res.data) {
-          const data = res.data;
-          console.log(data);
-          setEditClass({
-            class_id: data.class_id || '',
-            class_name: data.class_name || '',
-            class_type: data.class_type || '',
-            start_date: data.start_date ? new Date(data.start_date) : null,
-            end_date: data.end_date ? new Date(data.end_date) : null,
-            max_student_amount: data.student_count ?? 0,
-            token: user?.token,
-            status: data.status ?? null
-          });
+        dispatch(hideLoading());
+        if(res && res.data) {
+          switch (res.meta?.code) {
+            case CODE_OK:
+              setEditClass({
+                class_id: res.data.class_id,
+                class_name: res.data.class_name,
+                // class_type: res.data.class_type,
+                status: res.data.status,
+                max_student_amount: res.data.max_student_amount,
+                start_date: new Date(res.data.start_date),
+                end_date: new Date(res.data.end_date)
+              });
+              break;
+            case INVALID_TOKEN:
+              Alert.alert('Lỗi', 'Token không hợp lệ');
+              dispatch(logout());
+              break;
+            case NOT_ACCESS:
+              Alert.alert('Lỗi', 'Role của bạn không có quyền sửa lớp.');
+              break;
+            default:
+              Alert.alert('Lỗi', res.data);
+              break; 
+          }
         }
+
       } catch (error) {
         console.error('Something went wrong', error);
       }
@@ -88,16 +97,24 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
   }, [classId, user?.token, user?.role, user?.id]);
 
   const validateClass = () => {
-    if (!editClass.class_id || !editClass.class_name) {
-      Alert.alert('Validation Error', 'Mã lớp và tên lớp không được để trống.');
+    if (!editClass.class_name) {
+      Alert.alert('Lỗi', 'Tên lớp không được để trống.');
       return false;
     }
     if (editClass.class_name.length > 50) {
-      Alert.alert('Validation Error', 'Tên lớp không được dài quá 50 ký tự.');
+      Alert.alert('Lỗi', 'Tên lớp không được dài quá 50 ký tự.');
       return false;
     }
     if ((editClass.max_student_amount ?? 0) < 1 || (editClass.max_student_amount ?? 0) > 50) {
-      Alert.alert('Validation Error', 'Số lượng sinh viên tối đa phải trong khoảng từ 1 đến 50.');
+      Alert.alert('Lỗi', 'Số lượng sinh viên tối đa phải trong khoảng từ 1 đến 50.');
+      return false;
+    }
+    if (!editClass.start_date || !editClass.end_date) {
+      Alert.alert('Validation Error', 'Ngày bắt đầu và ngày kết thúc không được để trống.');
+      return false;
+    }
+    if (dayjs(editClass.end_date).isBefore(dayjs(editClass.start_date))) {
+      Alert.alert('Validation Error', 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.');
       return false;
     }
     return true;
@@ -110,16 +127,21 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
       const requestClass = {
         ...editClass,
         start_date: dayjs(editClass.start_date).format('YYYY-MM-DD'),
-        end_date: dayjs(editClass.end_date).format('YYYY-MM-DD')
+        end_date: dayjs(editClass.end_date).format('YYYY-MM-DD'),
+        token: user?.token
       };
+      console.log("Request Class",requestClass);
+      dispatch(showLoading());
       const res = await updateClassApi(requestClass);
+      console.log("Response",res);
       if (res) {
-        switch (res.meta.code) {
+        switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Chỉnh sửa lớp thành công.');
             navigation.goBack();
             break;
           case INVALID_TOKEN:
+            Alert.alert('Thất bại', 'Token không hợp lệ');
             dispatch(logout());
             break;
           case NOT_ACCESS:
@@ -131,7 +153,9 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
         }
       }
     } catch {
-      Alert.alert('Thất bại', 'Không thể chỉnh sửa lớp.');
+      Alert.alert('Thất bại', 'Hiện không thể chỉnh sửa lớp.');
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -158,8 +182,9 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
           <TextInput
             style={styles.input}
             placeholder='Mã lớp *'
-            value={editClass.class_id}
+            value={editClass.class_id as string}
             onChangeText={text => handleChange('class_id', text)}
+            editable={false}
           />
           <TextInput
             style={styles.input}
@@ -168,7 +193,7 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
             onChangeText={text => handleChange('class_name', text)}
           />
 
-          <Text style={styles.label}>Loại lớp</Text>
+          {/* <Text style={styles.label}>Loại lớp</Text>
           <RadioButton.Group
             onValueChange={value => handleChange('class_type', value)}
             value={editClass.class_type as string}
@@ -181,7 +206,7 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
                 </View>
               ))}
             </View>
-          </RadioButton.Group>
+          </RadioButton.Group> */}
 
           <Text style={styles.label}>Trạng thái</Text>
           <RadioButton.Group
@@ -201,7 +226,7 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
           {isOpenDatePicker && (
             <DateTimePicker
               date={
-                editClass[selectedPeriod] instanceof Date ? editClass[selectedPeriod] : new Date()
+                editClass[selectedPeriod] instanceof Date ? editClass[selectedPeriod] as Date : new Date()
               }
               onConfirm={date => {
                 setIsOpenDatePicker(false);
@@ -254,7 +279,7 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
             placeholder='Số lượng sinh viên tối đa *'
             keyboardType='numeric'
             value={
-              editClass.max_student_amount !== undefined ? String(editClass.max_student_amount) : ''
+              editClass.max_student_amount?.toString()
             }
             onChangeText={text => {
               const value = parseInt(text, 10);

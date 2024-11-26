@@ -89,12 +89,12 @@ export enum classType {
 export enum classStatus {
   ACTIVE = 'ACTIVE',
   UPCOMING = 'UPCOMING',
-  COMPLETE = 'COMPLETE'
+  COMPLETED = 'COMPLETED'
 }
 
 export enum surveyStatus {
   UPCOMING = 'UPCOMING',
-  OVERDUE = 'OVERDUE',
+  PASS_DUE = 'PASS_DUE',
   COMPLETED = 'COMPLETED'
 }
 export enum Roles {

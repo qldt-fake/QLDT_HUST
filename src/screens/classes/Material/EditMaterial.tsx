@@ -20,6 +20,8 @@ import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { Linking } from 'react-native';
 import { useAlert } from '../../../hooks/useAlert';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { IMaterialPayload } from 'src/interfaces/material.interface';
 interface EditMaterialProps {
   route: {
     params: {
@@ -36,7 +38,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
   const navigation = useNavigation();
   const { showAlert } = useAlert();
   const dispatch = useAppDispatch();
-  const [material, setMaterial] = useState({
+  const [material, setMaterial] = useState<IMaterialPayload>({
     title: '',
     description: '',
     file: null,
@@ -48,24 +50,40 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
   useEffect(() => {
     const fetchMaterialDetails = async () => {
       try {
+        dispatch(showLoading());
         const res = await getMaterialInfoApi({
           token: user?.token,
           material_id: materialId
         });
-
-        if (res?.data && res.code === CODE_OK) {
-          setMaterial({
-            title: res.data.material_name || '',
-            description: res.data.description || '',
-            file: null,
-            materialType: res.data.material_type || '',
-            materialLink: res.data.material_link || '',
-            materialId: materialId
-          });
+        if(res) {
+          switch (res.code) {
+            case CODE_OK:
+              setMaterial({
+                title: res.data.material_name || '',
+                description: res.data.description || '',
+                file: null,
+                materialType: res.data.material_type || '',
+                materialLink: res.data.material_link || '',
+                materialId: materialId
+              });
+              break;
+            case INVALID_TOKEN:
+              Alert.alert('Lỗi', 'Token không hợp lệ');
+              dispatch(logout());
+              break;
+            case NOT_ACCESS:
+              Alert.alert('Lỗi', 'Bạn không có quyền chỉnh sửa tài liệu');
+              break;
+            default:
+              Alert.alert('Lỗi', res.data);
+              break;
+          }
         }
       } catch (error) {
-        console.error('Error fetching material details:', error);
-        Alert.alert('Error', 'Failed to load material details');
+        console.error('Lỗi khi lấy dữ liệu của tài liệu:', error);
+        Alert.alert('Lỗi', 'Không thể lấy dữ liệu của tài liệu');
+      } finally {
+        dispatch(hideLoading());
       }
     };
 
@@ -90,7 +108,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
 
   const validate = () => {
     const MAX_DESCRIPTION_LENGTH = 500;
-    if (material.description.trim().length > MAX_DESCRIPTION_LENGTH) {
+    if ((material.description?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
@@ -111,7 +129,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
         file: material.file,
         materialType: material.materialType
       };
-
+      dispatch(showLoading());
       const res = await editMaterialApi(payload);
 
       if (res) {
@@ -121,20 +139,22 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
             navigation.goBack();
             break;
           case INVALID_TOKEN:
-            Alert.alert('Error', 'Token không hợp lệ');
+            Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
             break;
           case NOT_ACCESS:
-            Alert.alert('Error', 'Bạn không có quyền chỉnh sửa tài liệu');
+            Alert.alert('Lỗi', 'Bạn không có quyền chỉnh sửa tài liệu');
             break;
           default:
-            Alert.alert('Error', res.data);
+            Alert.alert('Lỗi', res.data);
             break;
         }
       }
     } catch (error) {
       console.error('Error updating material:', error);
-      Alert.alert('Error', 'Không thể cập nhật tài liệu');
+      Alert.alert('Lỗi', 'Không thể cập nhật tài liệu');
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -149,14 +169,14 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
       <View style={styles.body}>
         <TextInput
           style={styles.name}
-          value={material.title}
+          value={material.title as string}
           onChangeText={text => handleChange('title', text)}
           placeholder='Material Title *'
           placeholderTextColor={color.submitBtnRed}
         />
         <TextInput
           style={[styles.name, styles.description]}
-          value={material.description}
+          value={material.description as string}
           onChangeText={text => handleChange('description', text)}
           placeholder='Description'
           multiline
@@ -166,7 +186,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
         <TouchableOpacity style={styles.viewButton} onPress={handleViewMaterial}>
           <Text style={[styles.text, styles.viewButtonText]}>
             {material.materialLink
-              ? material.title + '.' + getTypeOfFile(material.materialType)
+              ? material.title + '.' + getTypeOfFile(material.materialType as string)
               : 'No file uploaded'}
           </Text>
         </TouchableOpacity>
@@ -178,7 +198,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
               numberOfLines={1}
               ellipsizeMode='tail'
             >
-              Upload new file
+              {material.file ? material.file?.name : 'Tải lên file mới'}
             </Text>
             <Icon name='caret-up' size={20} color='#fff' />
           </>
@@ -187,7 +207,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
         <TouchableOpacity
           style={styles.submitButton}
           onPress={() => {
-            showAlert('Update Material', 'Are you sure to update this material?', handleSubmit);
+            showAlert('Chỉnh sửa tài liệu', 'Bạn có muốn chỉnh sửa tài liệu này?', handleSubmit);
           }}
         >
           <Text style={[styles.text, styles.submitButtonText]}>Update</Text>

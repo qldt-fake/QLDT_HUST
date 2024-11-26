@@ -175,24 +175,41 @@ export function formatNumber(number: string): string {
   return number?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export async function selectFile(): Promise<DocumentPickerResponse> {
-  return await DocumentPicker.pickSingle({
-    type: [
-      DocumentPicker.types.images,
-      DocumentPicker.types.pdf,
-      DocumentPicker.types.doc,
-      DocumentPicker.types.docx,
-      DocumentPicker.types.ppt,
-      DocumentPicker.types.pptx,
-      DocumentPicker.types.xls,
-      DocumentPicker.types.xlsx,
-      DocumentPicker.types.plainText,
-      DocumentPicker.types.zip,
-      DocumentPicker.types.audio,
-      DocumentPicker.types.video
-    ]
-  });
+export async function selectFile(): Promise<DocumentPickerResponse | null> {
+  try {
+    const file = await DocumentPicker.pickSingle({
+      type: [
+        DocumentPicker.types.images,
+        DocumentPicker.types.pdf,
+        DocumentPicker.types.doc,
+        DocumentPicker.types.docx,
+        DocumentPicker.types.ppt,
+        DocumentPicker.types.pptx,
+        DocumentPicker.types.xls,
+        DocumentPicker.types.xlsx,
+        DocumentPicker.types.plainText,
+        DocumentPicker.types.zip,
+        DocumentPicker.types.audio,
+        DocumentPicker.types.video
+      ]
+    });
+
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    if (file.size && file.size > MAX_FILE_SIZE) {
+      Alert.alert('Lỗi', 'Kích thước file không được vượt quá 10MB');
+      return null;
+    }
+
+    return file;
+  } catch (error) {
+    if (DocumentPicker.isCancel(error)) {
+      return null;
+    } else {
+      throw error;
+    }
+  }
 }
+
 
 export function calculateDateAfterWeeks(startDate: string | Date, weeks: number): Date | null {
   if (!startDate || typeof weeks !== 'number' || weeks <= 0) {

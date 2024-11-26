@@ -1,3 +1,4 @@
+import { RegisterClass } from 'src/screens/classes/general/RegisterClass';
 import { SubmitSurvey } from 'src/screens/classes/Survey/SubmitSurvey';
 /* eslint-disable no-unused-vars */
 type AppNavigationType = {
@@ -104,7 +105,7 @@ type FriendNavigationType = {
 };
 type SurveyType = {
   CreateSurvey: { classId: string };
-  EditSurvey: { surveyId: id; classId: class_id };
+  EditSurvey: {  id: string, title: string, description: string, deadline: string, file_url: string; classId: string };
   StudentAssignment: undefined;
   SubmitSurvey : { id: string, title: string, description: string, deadline: string, file_url: string }
   
@@ -175,6 +176,7 @@ type ClassNavigationType = {
   EditClass: { classId: string };
   AddStudent: { token: string, class_id: string },
   GetStudentInfor: { account_id: string }
+  RegisterClass: undefined;
 };
 
 

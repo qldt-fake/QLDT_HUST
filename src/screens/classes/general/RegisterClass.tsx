@@ -22,12 +22,17 @@ import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ClassNavigationName } from 'src/common/constants/nameScreen';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { ClassNavigationType } from 'src/common/type/navigation';
+import { convertClassStatus, convertRegisterClassStatus, FAILED, SUCCESS } from 'src/common/constants';
 interface ClassItem {
   class_id: string;
   class_name: string;
   start_date: string;
+  class_type: string;
+  max_student_amount: number | string;
   end_date: string;
-  registration_status?: string;
+  registration_status?: keyof typeof convertRegisterClassStatus; // Khai báo kiểu rõ ràng
+  status?: keyof typeof convertClassStatus; // Khai báo kiểu rõ ràng
 }
 
 const RegisterClass = () => {
@@ -121,8 +126,29 @@ const RegisterClass = () => {
       if (response) {
         switch (response.meta?.code) {
           case CODE_OK: {
-            Alert.alert('Thành công', 'Đăng ký lớp thành công');
             const updatedStatusClass = response.data;
+  
+            // Phân loại trạng thái các lớp sau khi đăng ký
+            const successClasses = updatedStatusClass
+              .filter((cls: any) => cls.status == SUCCESS)
+              .map((cls: any) => cls.class_id);
+  
+            const failedClasses = updatedStatusClass
+              .filter((cls: any) => cls.status == FAILED)
+              .map((cls: any) => cls.class_id);
+  
+            // Hiển thị thông báo kết quả
+            const successMessage = successClasses.length
+              ? `Các lớp đăng ký thành công: ${successClasses.join(', ')}`
+              : '';
+            const failedMessage = failedClasses.length
+              ? `Các lớp đăng ký thất bại: ${failedClasses.join(', ')}`
+              : '';
+            const resultMessage = `${successMessage}\n${failedMessage}`.trim();
+  
+            Alert.alert('Kết quả đăng ký', resultMessage || 'Không có thông tin đăng ký lớp.');
+  
+            // Cập nhật danh sách trạng thái lớp
             setTempClassList(prevList =>
               prevList.map(item => {
                 const updatedClass = updatedStatusClass.find(
@@ -135,13 +161,13 @@ const RegisterClass = () => {
           }
           case INVALID_TOKEN:
             Alert.alert('Lỗi', 'Token không hợp lệ');
+            dispatch(logout());
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Không có quyền truy cập');
-            dispatch(logout())
             break;
           default:
-            Alert.alert('Lỗi', 'Đăng ký lớp thất bại');
+            Alert.alert('Lỗi', response.data ?? "Đã xảy ra lỗi đối với server");
             break;
         }
       }
@@ -216,8 +242,8 @@ const RegisterClass = () => {
               </TableCell>
             </View>
 
-            <View style={styles.classList}>
-              {tempClassList.map((item: any, index) => (
+            <ScrollView style={styles.classList}>
+              {tempClassList.map((item: ClassItem, index) => (
                 <View key={item.class_id} style={styles.classItem}>
                   <TableCell width={30}>
                     <Checkbox
@@ -247,14 +273,16 @@ const RegisterClass = () => {
                     <Text style={styles.classItemText}>{formatDate(item.end_date)}</Text>
                   </TableCell>
                   <TableCell>
-                    <Text style={styles.classItemText}>{item.status}</Text>
+                    <Text style={styles.classItemText}>
+                    {convertClassStatus[item.status as keyof typeof convertClassStatus] ?? ''}
+                    </Text>
                   </TableCell>
                   <TableCell>
-                    <Text style={styles.classItemText}>{item.registration_status}</Text>
+                    <Text style={styles.classItemText}>{convertRegisterClassStatus[item.registration_status as keyof typeof convertRegisterClassStatus] ?? ''}</Text>
                   </TableCell>
                 </View>
               ))}
-            </View>
+            </ScrollView>
           </View>
         </ScrollView>
         <View style={styles.actionButtons}>
@@ -342,7 +370,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 250,
     marginBottom: 20,
-    paddingVertical: 5
+    paddingVertical: 5,
+    overflow: 'hidden'
   },
   classItem: {
     flexDirection: 'row',

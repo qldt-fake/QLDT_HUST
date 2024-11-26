@@ -40,15 +40,15 @@ export const createSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyRe
   }
 };
 
-const editSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<any, any> | null> => {
+export const editSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<any, any> | null> => {
   const formData = new FormData();
 
   // Add basic fields
   formData.append('token', payload.token as string);
-  formData.append('classId', payload.classId as string);
-  formData.append('title', payload.title as string);
+  // formData.append('title', payload.title as string);
   formData.append('deadline', payload.deadline as string);
   formData.append('description', payload.description as string);
+  formData.append('assignmentId', payload.id as string);
 
   // Add file if present
   if (payload.file) {
@@ -57,7 +57,7 @@ const editSurveyApi = async (payload: ISurveyPayload) : Promise<IBodyResponse<an
 
   console.log('formData', formData);
   try {
-    return await axiosInstance.post('/edit_survey', formData, 
+    return await axiosInstance.post(SurveyApi.EDIT_SURVEY, formData, 
       {
         headers: {
           'Content-Type': 'multipart/form-data'

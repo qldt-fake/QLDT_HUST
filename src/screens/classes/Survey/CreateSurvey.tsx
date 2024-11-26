@@ -206,7 +206,7 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
+          <Text style={[styles.text, styles.submitButtonText]}>Tạo</Text>
         </TouchableOpacity>
       </View>
     </View>

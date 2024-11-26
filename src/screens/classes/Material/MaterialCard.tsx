@@ -15,6 +15,7 @@ import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/respons
 import { MaterialCardProps } from 'src/interfaces/material.interface';
 import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { MaterialNavigationType } from 'src/common/type/navigation';
 
 export const MaterialCard: React.FC<MaterialCardProps> = ({
   id,

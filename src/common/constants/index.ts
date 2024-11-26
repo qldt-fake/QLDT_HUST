@@ -62,3 +62,18 @@ export const KEY_SAVE_LOCAL_ACCOUNT = 'local_count';
 export const STATUS_COMPLETE = 'COMPLETED';
 export const STATUS_ACTIVE = 'ACTIVE';
 export const STATUS_UPCOMING = 'UPCOMING';
+
+export const convertClassStatus = {
+  COMPLETED: 'Hoàn thành đăng ký',
+  ACTIVE: 'Đăng ký lớp',
+  UPCOMING: 'Sắp mở',
+  INACTIVE: 'Hủy lớp',
+}
+
+export const convertRegisterClassStatus = {
+  SUCCESS: "Thành công",
+  FAILED: "Thất bại",
+}
+
+export const SUCCESS = 'SUCCESS';
+export const  FAILED = 'FAILED';

@@ -8,6 +8,8 @@ export interface ISurveyPayload {
     classId?: string | null;
     token?: string;
     assignmentId?: string;
+    file_url?: string;
+    id?: string;
 }
 
 export interface ISubSurveyPayload {
@@ -25,6 +27,14 @@ export interface ISubmitSurveyPayload {
 }
 
 export interface ISubmitSurveyProps {
+    file_url?: string;
+    title?: string;
+    description?: string;
+    deadline?: string;
+    id?: string;
+}
+
+export interface IEditSurveyProps {
     file_url?: string;
     title?: string;
     description?: string;

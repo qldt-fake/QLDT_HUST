@@ -6,40 +6,44 @@ import {
   TouchableOpacity,
   StyleSheet,
   TouchableHighlight,
-  Alert
+  Alert,
+  Linking
 } from 'react-native';
 import ClassHeader from '../general/ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DocumentPicker, { DocumentPickerResponse } from 'react-native-document-picker';
 import DateTimePicker from 'react-native-date-picker';
 import { color } from 'src/common/constants/color';
-import { createSurveyApi } from 'src/services/survey.service';
+import { createSurveyApi, editSurveyApi } from 'src/services/survey.service';
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
-import { selectAuth } from 'src/redux/slices/authSlice';
-interface NewSurvey {
-  title: string;
-  description: string;
-  file: any;
-  deadline: Date | null;
-}
+import { logout, selectAuth } from 'src/redux/slices/authSlice';
+import { IEditSurveyProps, ISurveyPayload } from 'src/interfaces/survey.interface';
+import { useAppDispatch } from 'src/redux';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { useNavigation } from '@react-navigation/native';
+import { selectFile } from 'src/utils/helper';
 
-const EditSurvey: React.FC<any> = (args: { route: any }) => {
-  const { route } = args;
-  const { classId, survey_id } = route.params;
+const EditSurvey: React.FC<IEditSurveyProps> = ({ route }: any) => {
+  const { file_url, title, description, deadline, id, classId } = route?.params || {};
   const auth = useSelector(selectAuth);
   const user = auth.user;
-  const [newSurvey, setNewSurvey] = useState<NewSurvey>({
-    title: '',
-    description: '',
+  const [editSurvey, setNewSurvey] = useState<ISurveyPayload>({
+    title: title,
+    description: description,
+    file_url: file_url,
     file: null,
-    deadline: null
+    deadline: deadline,
+    id: id
   });
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
 
-  const handleChange = (name: keyof NewSurvey, value: string | object | Date | null | any) => {
+  const handleChange = (name: keyof ISurveyPayload, value: string | object | Date | null | any) => {
     setNewSurvey(prev => ({
       ...prev,
       [name]: value
@@ -50,60 +54,42 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
     setIsOpenDatePicker(true);
   };
 
+  const handleViewSurvey = () => {
+    if (file_url) {
+      Linking.openURL(file_url);
+    }
+  };
+
   const handleSelectFile = async () => {
-    try {
-      const res: DocumentPickerResponse[] = await DocumentPicker.pick({
-        type: [
-          DocumentPicker.types.images,
-          DocumentPicker.types.pdf,
-          DocumentPicker.types.doc,
-          DocumentPicker.types.docx,
-          DocumentPicker.types.ppt,
-          DocumentPicker.types.pptx,
-          DocumentPicker.types.xls,
-          DocumentPicker.types.xlsx,
-          DocumentPicker.types.plainText,
-          DocumentPicker.types.zip,
-          DocumentPicker.types.audio,
-          DocumentPicker.types.video
-        ]
-      });
-
-      const file = res[0];
+    const file = await selectFile();
+    if (file) {
       handleChange('file', file);
-      console.log('file', file);
-
-      console.log(file);
-    } catch (err) {
-      if (!DocumentPicker.isCancel(err)) {
-        console.log(err);
-      }
     }
   };
 
   const validate = () => {
     // Kiểm tra nếu tên bài kiểm tra không được nhập
-    if (!newSurvey.title.trim()) {
-      Alert.alert('Lỗi', 'Tên bài kiểm tra là trường bắt buộc');
-      return false;
-    }
+    // if (!editSurvey.title?.trim()) {
+    //   Alert.alert('Lỗi', 'Tên bài kiểm tra là trường bắt buộc');
+    //   return false;
+    // }
 
     // Kiểm tra nếu không có mô tả hoặc tài liệu được tải lên
-    if (!newSurvey.description.trim() && !newSurvey.file) {
+    if (!editSurvey.description?.trim() && !editSurvey.file) {
       Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
       return false;
     }
 
     // Giới hạn ký tự cho phần mô tả (ví dụ: tối đa 500 ký tự)
     const MAX_DESCRIPTION_LENGTH = 500;
-    if (newSurvey.description.length > MAX_DESCRIPTION_LENGTH) {
+    if ((editSurvey.description?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
 
     // Kiểm tra thời gian bắt đầu và thời gian kết thúc
     const currentTime = new Date();
-    if (newSurvey.deadline && newSurvey.deadline <= currentTime) {
+    if (editSurvey.deadline && editSurvey.deadline <= currentTime) {
       Alert.alert('Lỗi', 'Thời gian kết thúc phải lớn hơn thời gian hiện tại');
       return false;
     }
@@ -117,30 +103,41 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
     }
 
     try {
-      if (!newSurvey.title || !newSurvey.deadline) {
-        Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
-
       const payload = {
         token: user?.token, // Replace with actual token
-        classId: classId, // Replace with actual classId
-        title: newSurvey.title,
-        description: newSurvey.description,
-        deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
-        file: newSurvey.file
+        // classId: classId, 
+        // title: editSurvey.title,
+        description: editSurvey.description,
+        deadline: dayjs(editSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
+        file: editSurvey.file,
+        id: editSurvey.id
       };
-
-      console.log('file', newSurvey.file);
-
-      const response = await createSurveyApi(payload);
-      if (response && response.data && response.meta.code === ReponseCode.CODE_OK) {
-        Alert.alert('Success', 'Survey created successfully');
-        // Reset form or navigate away
+      dispatch(showLoading());
+      const response = await editSurveyApi(payload);
+      console.log('response', response);
+      if(response) {
+        switch (response.meta?.code) {
+          case CODE_OK:
+            Alert.alert('Thành công', 'Sủa bài kiểm tra thành công');
+            navigation.goBack();
+            break;
+          case INVALID_TOKEN:
+            Alert.alert('Lỗi', 'Token không hợp lệ');
+            dispatch(logout());
+            break;
+          case NOT_ACCESS:
+            Alert.alert('Lỗi', 'Bạn không có quyền tạo bài kiểm tra');
+            break;
+          default:
+            Alert.alert('Lỗi', response.data);
+            break;
+        }
       }
     } catch (error) {
       Alert.alert('Error', 'Failed to create survey');
       console.error(error);
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
@@ -150,21 +147,26 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
       <View style={styles.body}>
         <TextInput
           style={styles.name}
-          value={newSurvey.title}
+          value={editSurvey.title as string}
           onChangeText={text => handleChange('title', text)}
           placeholder='Survey Title *'
           placeholderTextColor={color.submitBtnRed}
+          editable={false}
         />
+        {file_url && (
+          <TouchableOpacity style={styles.viewButton} onPress={handleViewSurvey}>
+            <Text style={[styles.text, styles.viewButtonText]}>Mở file bài kiểm tra</Text>
+          </TouchableOpacity>
+        )}
         <TextInput
           style={[styles.name, styles.description]}
-          value={newSurvey.description}
+          value={editSurvey.description as string}
           onChangeText={text => handleChange('description', text)}
           placeholder='Description'
           multiline
           numberOfLines={6}
           placeholderTextColor={color.submitBtnRed}
         />
-        <Text style={[styles.text, styles.orText]}>Or</Text>
 
         <TouchableHighlight style={styles.fileButton} onPress={handleSelectFile}>
           <>
@@ -173,14 +175,14 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
               numberOfLines={1}
               ellipsizeMode='tail'
             >
-              {newSurvey?.file ? newSurvey.file.name : 'Upload File'}
+              {editSurvey?.file ? editSurvey.file.name : 'Upload File'}
             </Text>
             <Icon name='caret-up' size={20} color='#fff' />
           </>
         </TouchableHighlight>
         {isOpenDatePicker && (
           <DateTimePicker
-            date={newSurvey.deadline ?? new Date()}
+            date={new Date(editSurvey.deadline as string) ?? new Date()}
             onConfirm={date => {
               setIsOpenDatePicker(false);
               handleChange('deadline', date);
@@ -196,14 +198,14 @@ const EditSurvey: React.FC<any> = (args: { route: any }) => {
         <View style={styles.period}>
           <TouchableOpacity style={styles.selectPeriod} onPress={handleShowDatePicker}>
             <Text style={{ color: color.borderRed }}>
-              {newSurvey.deadline ? newSurvey.deadline.toLocaleString() : 'Deadline'}
+              {editSurvey.deadline ? editSurvey.deadline.toLocaleString() : 'Deadline'}
             </Text>
             <Icon name='caret-down' size={20} color={color.borderRed} />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
+          <Text style={[styles.text, styles.submitButtonText]}>Sửa</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -284,6 +286,21 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     textAlign: 'center'
+  },
+  viewButton: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 20,
+    marginHorizontal: 60,
+    height: 60,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  viewButtonText: {
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+    color: color.red,
+    fontSize: 20
   }
 });
 

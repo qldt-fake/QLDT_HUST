@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert, SafeAreaView } from 'react-native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Assignment from '../Survey/Assignment';
 import ClassDetailSummary from './ClassDetailSummary';
@@ -10,7 +10,7 @@ import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { color } from 'src/common/constants/color';
 import MaterialScreen from '../Material/MaterialScreen';
 import FloatingButton from '../../../components/FloatingButton/FloatingButton';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { ClassNavigationName, MaterialNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
 import { RefreshControl } from 'react-native';
 import { useAppDispatch } from 'src/redux';
@@ -59,9 +59,12 @@ const PostScreen = () => {
       dispatch(hideLoading());
     }
   };
-  useEffect(() => {
-    fetchClassDetail();
-  }, [classId]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchClassDetail();
+    }, [classId])
+  );
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -74,7 +77,7 @@ const PostScreen = () => {
       <View style={{ paddingHorizontal: 10, marginTop: 15 }}>
         <Text style={{ fontSize: 18 }}>Danh sách lớp ( {classDetail?.student_count} )</Text>
       </View>
-      <View>
+      <SafeAreaView style ={{flex: 1, paddingBottom: 100}}>
         <FlatList
           data={classDetail?.student_accounts}
           renderItem={({ item }) => <StudentCard props={item} />}
@@ -83,7 +86,7 @@ const PostScreen = () => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />
-      </View>
+      </SafeAreaView>
     </View>
   );
 };

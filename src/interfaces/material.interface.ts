@@ -6,6 +6,7 @@ export interface IMaterialPayload {
   file?: any;
   materialType?: string | null;
   materialId?: string | null;
+  materialLink?: string | null;
 }
 
 export interface ISubMaterialPayload {

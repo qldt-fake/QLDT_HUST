@@ -92,7 +92,7 @@ export const ExcerciseCard = ({
   };
 
   const handleEdit = () => {
-    navigation.navigate(SurveyNavigationName.EditSurvey, { surveyId: id, classId: class_id });
+    navigation.navigate(SurveyNavigationName.EditSurvey, { id, classId: class_id, title, description, deadline, file_url });
   };
 
   const handleDelete = () => {
@@ -124,8 +124,7 @@ export const ExcerciseCard = ({
           </View>
           <View style={styles.content}>
             <Text style={styles.text}>{title}</Text>
-            <Text style={styles.text}>{"Hạn: " + formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(deadline))}</Text>
-            <Text style={styles.text}>{class_id}</Text>
+            <Text style={[styles.text, {color: color.red}]}>{"Hạn: " + formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(deadline))}</Text>
             <Pressable
               onPressIn={event => {
                 event.stopPropagation();
@@ -157,7 +156,8 @@ export const ExcerciseCard = ({
 const styles = StyleSheet.create({
   wrapper: {
     position: 'relative',
-    zIndex: 1
+    zIndex: 1,
+    height: 100,
   },
   container: {
     flex: 1,

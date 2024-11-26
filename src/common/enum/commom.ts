@@ -89,7 +89,7 @@ export enum classType {
 export enum classStatus {
   ACTIVE = 'ACTIVE',
   UPCOMING = 'UPCOMING',
-  COMPLETE = 'COMPLETE'
+  COMPLETED = 'COMPLETED'
 }
 
 export enum surveyStatus {

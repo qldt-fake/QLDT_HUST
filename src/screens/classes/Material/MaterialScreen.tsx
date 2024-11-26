@@ -1,5 +1,5 @@
 // MaterialScreen.tsx
-import { FlatList, StyleSheet, TouchableOpacity, Text, Alert } from 'react-native';
+import { FlatList, StyleSheet, TouchableOpacity, Text, Alert, SafeAreaView } from 'react-native';
 import React, { useCallback } from 'react';
 import { getMaterialListApi } from 'src/services/material.service';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -14,6 +14,7 @@ import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/respons
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { useAppDispatch } from 'src/redux';
 import EmptyState from 'src/components/EmptyState';
+import { MaterialNavigationType } from 'src/common/type/navigation';
 
 const MaterialScreen = (args: { classId: string }) => {
   const { classId } = args;
@@ -58,46 +59,29 @@ const MaterialScreen = (args: { classId: string }) => {
     }, [classId, auth?.user?.token])
   );
 
-  return (
-    <>
+ return (
+    <SafeAreaView style={styles.container}>
       {materialList.length === 0 ? (
-        <EmptyState
-          title="Không có tài liệu nào"
-        />
+        <EmptyState title="Không có tài liệu nào" />
       ) : (
         <FlatList
           data={materialList}
           renderItem={data => <MaterialCard {...data.item} setMaterialList={setMaterialList} />}
           keyExtractor={item => item.id.toString()}
-          style={{ padding: 10 }}
+          contentContainerStyle={{ padding: 10 }}
         />
       )}
-
-      {auth?.user?.role === Roles.LECTURER && (
-        <TouchableOpacity
-          style={styles.floatingButton}
-          onPress={() => navigation.navigate(MaterialNavigationName.UploadMaterial, { classId })}
-        >
-          <Icon name='plus' size={20} color={color.white} />
-        </TouchableOpacity>
-      )}
-    </>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  floatingButton: {
-    position: 'absolute',
-    bottom: 100,
-    right: 20,
-    backgroundColor: color.red,
-    borderRadius: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: 50,
-    height: 50,
-    zIndex: 10
-  }
+  container: {
+    flex: 1,
+    backgroundColor: color.white,
+    paddingBottom: 100,
+  },
 });
+
 
 export default MaterialScreen;

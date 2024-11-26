@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View, TouchableOpacity, Alert } from 'react-native';
+import { FlatList, StyleSheet, View, TouchableOpacity, Alert, SafeAreaView } from 'react-native';
 import React, { useCallback } from 'react';
 import BaseButton from 'src/components/BaseButton';
 import ExcerciseCard from './ExcerciseCard';
@@ -71,7 +71,7 @@ const AllSurveyForStudent = () => {
   };
 
   return (
-    <>
+    <SafeAreaView style ={styles.container}>
       <View style={styles.boxFilters}>
         <BaseButton
           borderRadius={12}
@@ -112,11 +112,16 @@ const AllSurveyForStudent = () => {
           keyExtractor={item => item?.id}
         />
       )}
-    </>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: color.white,
+    paddingBottom: 100,
+  },
   boxFilters: {
     flexDirection: 'row',
     gap: 10,

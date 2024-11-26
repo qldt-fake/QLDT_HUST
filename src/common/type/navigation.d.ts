@@ -63,6 +63,12 @@ type AppNavigationType = {
       content: string;
     };
   };
+  MessageNavigation: {
+    screen: MessageNavigationName;
+    params: {
+      user: any;
+    }
+  }
 };
 
 type AuthNavigationType = {
@@ -161,7 +167,11 @@ type NotificationNavigationType = {
     content: string;
   };
 };
-
+type MessageNavigationType = {
+  MessageBox:{
+    user: any;
+  }
+}
 type HomeNavigationType = {
   Class: undefined;
 };

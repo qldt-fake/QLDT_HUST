@@ -9,8 +9,20 @@ import { Provider as ProviderRedux } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './redux';
 import LoadingOverlay from './components/loadingComponent';
+import messaging from "@react-native-firebase/messaging";
 export default function App() {
+  async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+    if (enabled) {
+      console.log('Authorization status:', authStatus);
+    }
+  }
   useEffect(() => {
+    requestUserPermission();
     SplashScreen.hide();
   }, []);
   return (

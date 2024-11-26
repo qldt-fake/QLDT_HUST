@@ -20,6 +20,7 @@ import { deleteErrorMessage, login, resetAccountLocked, selectAuth } from 'src/r
 import { useAppSelector, useAppDispatch } from 'src/redux';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
+import messaging from '@react-native-firebase/messaging';
 
 
 function LoginScreen() {
@@ -37,12 +38,13 @@ function LoginScreen() {
       dispatch(resetAccountLocked());
     }
   }, [isAccountLocked, navigation, dispatch]);
-  const onSubmit: SubmitHandler<{ email: string; password: string }> = async (data) => {
+ const onSubmit: SubmitHandler<{ email: string; password: string }> = async (data) => {
+   const fcmToken = await messaging().getToken();
     try {
       const device_id = await getUniqueId();
       const loginData: ILoginData = {
         ...data,
-        fcm_token: null,
+        fcm_token: fcmToken,
       };
       dispatch(login({
         ...loginData,

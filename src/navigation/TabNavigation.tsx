@@ -12,6 +12,7 @@ import { StyleSheet } from 'react-native';
 import HomeNavigation from './HomeNavigation';
 import NotificationHome from 'src/screens/notification/NotificationHome';
 import SettingTabNavigation from './SettingTabNavigation';
+import MessageHome from "src/screens/message/MessageHome/MessageHome";
 // import { useCallback, useEffect, useState } from 'react';
 // import {
 //   checkNewFriendItem,
@@ -43,86 +44,106 @@ function TabNavigation() {
   //   getNewPostItem();
   // }, []);
   return (
-    <tab.Navigator
-      screenOptions={{
-        tabBarShowIcon: true,
-        tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarStyle: { backgroundColor: colors.sureface },
-        tabBarPressColor: colors.borderColor,
-        tabBarIndicatorStyle: { backgroundColor: colors.primary }
-      }}
-    >
-      <tab.Screen
-        name='Home'
-        component={HomeNavigation}
-        options={{
-          tabBarIcon: ({ focused, color }) =>
-            focused ? (
-              <FontAwesomeIcon name='home' size={25} color={color} />
-            ) : (
-              <>
-                <AntdIcon name='home' size={25} />
-                {/* <Avatar.Text
+      <tab.Navigator
+          screenOptions={{
+              tabBarShowIcon: true,
+              tabBarShowLabel: false,
+              tabBarActiveTintColor: colors.primary,
+              tabBarStyle: {backgroundColor: colors.sureface},
+              tabBarPressColor: colors.borderColor,
+              tabBarIndicatorStyle: {backgroundColor: colors.primary}
+          }}
+      >
+          <tab.Screen
+              name='Home'
+              component={HomeNavigation}
+              options={{
+                  tabBarIcon: ({focused, color}) =>
+                      focused ? (
+                          <FontAwesomeIcon name='home' size={25} color={color}/>
+                      ) : (
+                          <>
+                              <AntdIcon name='home' size={25}/>
+                              {/* <Avatar.Text
                   label=''
                   size={15}
                   style={style.newIcon}
                   labelStyle={style.labelNewIcon}
                 /> */}
-              </>
-            )
-        }}
-      />
-      <tab.Screen
-        name='Notification'
-        component={NotificationHome}
-        options={{
-          tabBarIcon: ({ focused, color }) =>
-            focused ? (
-              <MaterialIcons name='notifications' size={25} color={color} />
-            ) : (
-              <>
-                <MaterialIcons name='notifications-none' size={25} />
-                <Avatar.Text
-                  label='1'
-                  size={14}
-                  style={style.newIcon}
-                  labelStyle={style.labelNewIcon}
-                />
-              </>
-            )
-        }}
-      />
-      <tab.Screen
-        name='SettingTabNavigation'
-        component={SettingTabNavigation}
-        options={{
-          tabBarIcon: ({ focused, color }) =>
-            focused ? (
-              <MaterialIcons name='menu' size={25} color={color} />
-            ) : (
-              <MaterialIcons name='menu' size={25} />
-            )
-        }}
-      />
-    </tab.Navigator>
+                          </>
+                      )
+              }}
+          />
+          <tab.Screen
+              name='Notification'
+              component={NotificationHome}
+              options={{
+                  tabBarIcon: ({focused, color}) =>
+                      focused ? (
+                          <MaterialIcons name='notifications' size={25} color={color}/>
+                      ) : (
+                          <>
+                              <MaterialIcons name='notifications-none' size={25}/>
+                              <Avatar.Text
+                                  label='1'
+                                  size={14}
+                                  style={style.newIcon}
+                                  labelStyle={style.labelNewIcon}
+                              />
+                          </>
+                      )
+              }}
+          />
+          <tab.Screen
+              name='Message'
+              component={MessageHome}
+              options={{
+                  tabBarIcon: ({focused, color}) =>
+                      focused ? (
+                          <MaterialIcons name='chat' size={25} color={color}/>
+                      ) : (
+                          <>
+                              <MaterialIcons name='chat' size={25}/>
+                              <Avatar.Text
+                                  label='1'
+                                  size={14}
+                                  style={style.newIcon}
+                                  labelStyle={style.labelNewIcon}
+                              />
+                          </>
+                      )
+              }}
+          />
+          <tab.Screen
+              name='SettingTabNavigation'
+              component={SettingTabNavigation}
+              options={{
+                  tabBarIcon: ({focused, color}) =>
+                      focused ? (
+                          <MaterialIcons name='menu' size={25} color={color}/>
+                      ) : (
+                          <MaterialIcons name='menu' size={25}/>
+                      )
+              }}
+          />
+      </tab.Navigator>
   );
 }
 
 const TabNavigationWrapper = () => (
-  <WraperScreen paddingBottom={0} paddingHorizontal={0}>
-    <TabNavigation />
-  </WraperScreen>
+    <WraperScreen paddingBottom={0} paddingHorizontal={0}>
+        <TabNavigation/>
+    </WraperScreen>
 );
 
 export default TabNavigationWrapper;
 
 const style = StyleSheet.create({
-  newIcon: {
-    position: 'absolute',
-    right: -4,
-    backgroundColor: colors.red,
-    top: -2
-  },
-  labelNewIcon: { fontSize: 10 }
+    newIcon: {
+        position: 'absolute',
+        right: -4,
+        backgroundColor: colors.red,
+        top: -2
+    },
+    labelNewIcon: {fontSize: 10}
 });

@@ -15,6 +15,8 @@ import FloatingButton from '../../../components/FloatingButton/FloatingButton';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ClassNavigationName, MaterialNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
 import { RefreshControl } from 'react-native';
+import AttendanceScreen from 'src/screens/attendance/Take_Atendance';
+import AttendancePage from 'src/screens/attendance/AttendanceScreen'
 
 const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
@@ -95,13 +97,17 @@ const ClassDetail = ({ route }: { route: any }) => {
     <classDeatailContext.Provider value={classId}>
       <Tab.Navigator
         screenOptions={{
-          tabBarLabelStyle: { fontSize: 12 },
+          tabBarLabelStyle: { fontSize: 8 },
           tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
         }}
       >
         <Tab.Screen name='General' component={PostScreen} />
         <Tab.Screen name='Material'>{() => <MaterialScreen classId={classId} />}</Tab.Screen>
         <Tab.Screen name='Assignment'>{() => <Assignment classId={classId} />}</Tab.Screen>
+        <Tab.Screen name='Attendance'>{() => <AttendanceScreen classId={classId} />}</Tab.Screen>
+        <Tab.Screen name='AttendanceRecord'>{() => <AttendancePage  />}</Tab.Screen>
+        
+        
       </Tab.Navigator>
       <FloatingButton
         actions={actions}

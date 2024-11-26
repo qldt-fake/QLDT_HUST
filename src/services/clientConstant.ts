@@ -108,3 +108,10 @@ export enum MaterialApi {
   EDIT_MATERIAL = '/it5023e/edit_material',
   DELETE_MATERIAL = '/it5023e/delete_material'
 }
+
+export enum AttendanceApi {
+  TAKE_ATTENDANCE = '/it5023e/take_attendance',
+  GET_ATTENDANCE_LIST = 'get_attendance_list',
+  GET_ATTENDANCE_RECORD = '/it5023e/get_attendance_record',
+  SET_ATTENDANCE_STATUS = '/it5023e/set_attendance_status'
+}

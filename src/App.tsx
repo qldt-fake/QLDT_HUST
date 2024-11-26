@@ -11,6 +11,8 @@ import store, { persistor } from './redux';
 import LoadingOverlay from './components/loadingComponent';
 import { ModalProvider } from './hooks/useBottomModal';
 import { AlertProvider } from './hooks/useAlert';
+import AttendanceScreen from './screens/attendance/Take_Atendance';
+//import AttendanceScreen from './screens/attendance/AttendanceScreen';
 export default function App() {
   useEffect(() => {
     SplashScreen.hide();
@@ -24,6 +26,7 @@ export default function App() {
               <StatusBar backgroundColor={color.sureface} barStyle='dark-content' />
               <NavigationContainer>
                 <AppNavigation />
+                {/* <AttendanceScreen/> */}
               </NavigationContainer>
               <LoadingOverlay />
             </AlertProvider>

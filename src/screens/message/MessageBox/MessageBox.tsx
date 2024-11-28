@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import SockJS from "sockjs-client";
-import Client from "@stomp/stompjs";
+import 'text-encoder';
 import 'fast-text-encoding';
+import SockJS from "sockjs-client";
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -11,25 +11,57 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    ActivityIndicator
 } from "react-native";
-import { getConversationApi, IGetConversationsBody, IMessageResponse } from "src/services/message.services";
+import Client from "@stomp/stompjs"; // Importing StompClient
 import MessageHeader from "src/screens/message/components/MessageHeader";
+import { getConversationApi, IGetConversationsBody, IMessageResponse } from "src/services/message.services";
 
 const MessageBox = ({ route, navigation }: any) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<any>(null); // Stomp client state
     const { partnerId, userName, token, conversationId, receiverId, email, userId } = route.params;
-    const [latestId, setLatestId] = useState<number>(0);
+    const [latestId, setLatestId] = useState<number>();
     const [loadingMore, setLoadingMore] = useState<boolean>(false);
-    const [hasMore, setHasMore] = useState<boolean>(true);
+
+    // Setup SockJS and StompClient connection
+    useEffect(() => {
+        const client = Client.Stomp.over(() => {
+            return new SockJS("http://157.66.24.126:8080/ws");
+        });
+
+        client.connect({}, (frame: any) => {
+            console.log("Connected: " + frame);
+
+            client.subscribe(`/user/${partnerId}/inbox`, (message: any) => {
+                const msg = JSON.parse(message.body);
+                if (msg.sender.id !== userId) {
+                    setLatestId(msg.id + 1);
+                    setMessages((prevMessages) => [
+                        { id: latestId, text: msg.content, sender: "their" },
+                        ...prevMessages,
+                    ]);
+                }
+            });
+
+            // Fetch conversations when the client connects
+            fetchConversations();
+            setStompClient(client);
+        });
+
+        // Cleanup the connection when component unmounts
+        return () => {
+            if (stompClient) {
+                stompClient.disconnect();
+            }
+        };
+    }, [messages]);
 
     // Fetch conversations from the API
-    const fetchConversations = async (loadMore = false) => {
+    const fetchConversations = async () => {
         const requestBody: IGetConversationsBody = {
             token,
-            index: loadMore ? messages.length : 0, // Start at the last message if loading more
+            index: 0,
             count: 14,
             conversation_id: conversationId,
             mark_as_read: true,
@@ -42,12 +74,10 @@ const MessageBox = ({ route, navigation }: any) => {
                 const fetchedMessages = response.data?.conversation.map((msg: IMessageResponse) => ({
                     id: Number(msg.message_id),
                     text: msg.message,
-                    sender: msg.sender.id == userId ? "me" : "their"
+                    sender: msg.sender.id === userId ? "me" : "their"
                 }));
 
-                setMessages((prevMessages) => loadMore ? [...fetchedMessages.reverse(), ...prevMessages] : fetchedMessages.reverse());
-
-                setHasMore(fetchedMessages.length === 14); // If less than PAGE_SIZE, no more messages to load
+                setMessages(fetchedMessages.reverse());
             } else {
                 console.error("Failed to fetch messages:", response.meta?.message);
             }
@@ -56,35 +86,7 @@ const MessageBox = ({ route, navigation }: any) => {
         }
     };
 
-    useEffect(() => {
-        const client = Client.Stomp.over(() => new SockJS("http://157.66.24.126:8080/ws"));
-
-        client.connect({}, (frame: any) => {
-            console.log("Connected: " + frame);
-
-            client.subscribe(`/user/${partnerId}/inbox`, (message: any) => {
-                const msg = JSON.parse(message.body);
-                if (msg.sender.id != userId) {
-                    setMessages((prevMessages) => [
-                        { id: latestId + 1, text: msg.content, sender: "their" },
-                        ...prevMessages
-                    ]);
-                    setLatestId(latestId + 1);
-                }
-            });
-
-            fetchConversations();
-            setLatestId(messages[messages.length - 1].id);
-            setStompClient(client);
-        });
-
-        return () => {
-            if (stompClient) {
-                stompClient.disconnect();
-            }
-        };
-    }, []);
-
+    // Send a message using StompClient
     const sendMessage = () => {
         if (input.trim() && stompClient) {
             const message = {
@@ -95,14 +97,14 @@ const MessageBox = ({ route, navigation }: any) => {
             };
 
             console.log("Sending message:", message);
+
             stompClient.send("/chat/message", {}, JSON.stringify(message));
 
             setMessages([
-                { id: latestId + 1, text: input, sender: "me" },
+                { id: messages.length + 1, text: input, sender: "me" },
                 ...messages,
             ]);
             setInput("");
-            setLatestId(latestId + 1);
         }
     };
 
@@ -125,10 +127,38 @@ const MessageBox = ({ route, navigation }: any) => {
         </View>
     );
 
-    const loadMoreMessages = () => {
-        if (hasMore && !loadingMore) {
+    // Load more messages when scrolled to the top
+    const loadMoreMessages = async () => {
+        if (!loadingMore) {
             setLoadingMore(true);
-            fetchConversations(true);
+
+            const requestBody: IGetConversationsBody = {
+                token,
+                index: messages.length, // Start loading from the last message
+                count: 14,
+                conversation_id: conversationId,
+                mark_as_read: true,
+            };
+
+            try {
+                const response = await getConversationApi(requestBody);
+
+                if (response.meta?.code === "1000") {
+                    const fetchedMessages = response.data?.conversation.map((msg: IMessageResponse) => ({
+                        id: Number(msg.message_id),
+                        text: msg.message,
+                        sender: msg.sender.id === userId ? "me" : "their"
+                    }));
+
+                    setMessages((prevMessages) => [...fetchedMessages.reverse(), ...prevMessages]);
+                } else {
+                    console.error("Failed to fetch more messages:", response.meta?.message);
+                }
+            } catch (error) {
+                console.error("Error loading more messages:", error);
+            } finally {
+                setLoadingMore(false);
+            }
         }
     };
 
@@ -146,16 +176,13 @@ const MessageBox = ({ route, navigation }: any) => {
             <View style={styles.container}>
                 <FlatList
                     data={messages}
-                    keyExtractor={(item) => item.id}
+                    keyExtractor={(item) => item.id.toString()}
                     renderItem={renderMessage}
-                    inverted // Inverted to show latest messages at the bottom
+                    inverted // Inverts the scroll direction
                     contentContainerStyle={{ flexGrow: 1, padding: 10 }}
                     keyboardShouldPersistTaps="handled"
-                    onEndReached={loadMoreMessages} // Trigger loading more when scrolled to bottom
-                    onEndReachedThreshold={0.1}
-                    ListFooterComponent={
-                        loadingMore ? <ActivityIndicator size="small" color="#007bff" /> : null
-                    }
+                    onEndReached={loadMoreMessages} // Trigger load more on scroll to top
+                    onEndReachedThreshold={0.1} // Start loading more when near top
                 />
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -165,7 +192,7 @@ const MessageBox = ({ route, navigation }: any) => {
                         onChangeText={setInput}
                     />
                     <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-                        <Text style={styles.sendButtonText}>Gửi</Text>
+                        <Text style={styles.sendButtonText}>Send</Text>
                     </TouchableOpacity>
                 </View>
             </View>

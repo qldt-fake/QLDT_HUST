@@ -1,42 +1,111 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import SockJS from "sockjs-client";
+import Client from "@stomp/stompjs";
+import 'fast-text-encoding';
 import {
-    View,
-    Text,
     FlatList,
-    TextInput,
-    TouchableOpacity,
-    StyleSheet,
     KeyboardAvoidingView,
     Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
+    ActivityIndicator
 } from "react-native";
+import { getConversationApi, IGetConversationsBody, IMessageResponse } from "src/services/message.services";
 import MessageHeader from "src/screens/message/components/MessageHeader";
 
 const MessageBox = ({ route, navigation }: any) => {
-    // const { user } = route.params;
-    const [messages, setMessages] = useState([
-        { id: "1", text: "Em cảm ơn thầy", sender: "me" },
-        { id: "2", text: "Ok em", sender: "them" },
-    ]);
+    const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
+    const [stompClient, setStompClient] = useState<any>(null); // Stomp client state
+    const { partnerId, userName, token, conversationId, receiverId, email, userId } = route.params;
+    const [latestId, setLatestId] = useState<number>(0);
+    const [loadingMore, setLoadingMore] = useState<boolean>(false);
+    const [hasMore, setHasMore] = useState<boolean>(true);
 
-    const sendMessage = () => {
-        if (input.trim()) {
-            setMessages([
-                ...messages,
-                { id: Date.now().toString(), text: input, sender: "me" },
-            ]);
-            setInput("");
+    // Fetch conversations from the API
+    const fetchConversations = async (loadMore = false) => {
+        const requestBody: IGetConversationsBody = {
+            token,
+            index: loadMore ? messages.length : 0, // Start at the last message if loading more
+            count: 14,
+            conversation_id: conversationId,
+            mark_as_read: true,
+        };
+
+        try {
+            const response = await getConversationApi(requestBody);
+
+            if (response.meta?.code === "1000") {
+                const fetchedMessages = response.data?.conversation.map((msg: IMessageResponse) => ({
+                    id: Number(msg.message_id),
+                    text: msg.message,
+                    sender: msg.sender.id == userId ? "me" : "their"
+                }));
+
+                setMessages((prevMessages) => loadMore ? [...fetchedMessages.reverse(), ...prevMessages] : fetchedMessages.reverse());
+
+                setHasMore(fetchedMessages.length === 14); // If less than PAGE_SIZE, no more messages to load
+            } else {
+                console.error("Failed to fetch messages:", response.meta?.message);
+            }
+        } catch (error) {
+            console.error("Error fetching messages:", error);
         }
     };
-    let user = {
-        name: "test",
-        avatar: "test"
-    } ;
-    React.useLayoutEffect(() => {
-        navigation.setOptions({
-            headerTitle: () => <MessageHeader user={user} />, // Sử dụng component CustomHeader
+
+    useEffect(() => {
+        const client = Client.Stomp.over(() => new SockJS("http://157.66.24.126:8080/ws"));
+
+        client.connect({}, (frame: any) => {
+            console.log("Connected: " + frame);
+
+            client.subscribe(`/user/${partnerId}/inbox`, (message: any) => {
+                const msg = JSON.parse(message.body);
+                if (msg.sender.id != userId) {
+                    setMessages((prevMessages) => [
+                        { id: latestId + 1, text: msg.content, sender: "their" },
+                        ...prevMessages
+                    ]);
+                    setLatestId(latestId + 1);
+                }
+            });
+
+            fetchConversations();
+            setLatestId(messages[messages.length - 1].id);
+            setStompClient(client);
         });
-    }, [navigation, user]);
+
+        return () => {
+            if (stompClient) {
+                stompClient.disconnect();
+            }
+        };
+    }, []);
+
+    const sendMessage = () => {
+        if (input.trim() && stompClient) {
+            const message = {
+                receiver: { id: receiverId },
+                content: input,
+                sender: email, // Replace with the sender's name
+                token: token,
+            };
+
+            console.log("Sending message:", message);
+            stompClient.send("/chat/message", {}, JSON.stringify(message));
+
+            setMessages([
+                { id: latestId + 1, text: input, sender: "me" },
+                ...messages,
+            ]);
+            setInput("");
+            setLatestId(latestId + 1);
+        }
+    };
+
     const renderMessage = ({ item }: any) => (
         <View
             style={[
@@ -56,6 +125,19 @@ const MessageBox = ({ route, navigation }: any) => {
         </View>
     );
 
+    const loadMoreMessages = () => {
+        if (hasMore && !loadingMore) {
+            setLoadingMore(true);
+            fetchConversations(true);
+        }
+    };
+
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerTitle: () => <MessageHeader user={{ name: userName, avatar: "" }} />,
+        });
+    }, [navigation]);
+
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -66,28 +148,22 @@ const MessageBox = ({ route, navigation }: any) => {
                     data={messages}
                     keyExtractor={(item) => item.id}
                     renderItem={renderMessage}
+                    inverted // Inverted to show latest messages at the bottom
                     contentContainerStyle={{ flexGrow: 1, padding: 10 }}
                     keyboardShouldPersistTaps="handled"
+                    onEndReached={loadMoreMessages} // Trigger loading more when scrolled to bottom
+                    onEndReachedThreshold={0.1}
+                    ListFooterComponent={
+                        loadingMore ? <ActivityIndicator size="small" color="#007bff" /> : null
+                    }
                 />
                 <View style={styles.inputContainer}>
-                    <TouchableOpacity style={styles.addButton}>
-                        <Text style={styles.addButtonText}>+</Text>
-                    </TouchableOpacity>
                     <TextInput
                         style={styles.input}
                         placeholder="Type a message..."
                         value={input}
                         onChangeText={setInput}
                     />
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Text>😊</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Text>📷</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.iconButton}>
-                        <Text>🎤</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
                         <Text style={styles.sendButtonText}>Gửi</Text>
                     </TouchableOpacity>
@@ -101,9 +177,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: "#fff",
-    },
-    chat: {
-        padding: 10,
     },
     message: {
         padding: 10,
@@ -135,19 +208,6 @@ const styles = StyleSheet.create({
         borderTopColor: "#ddd",
         backgroundColor: "#fff",
     },
-    addButton: {
-        backgroundColor: "#ff4d4d",
-        width: 30,
-        height: 30,
-        borderRadius: 15,
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 10,
-    },
-    addButtonText: {
-        color: "#fff",
-        fontWeight: "bold",
-    },
     input: {
         flex: 1,
         padding: 10,
@@ -155,9 +215,6 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 20,
         marginRight: 10,
-    },
-    iconButton: {
-        marginHorizontal: 5,
     },
     sendButton: {
         backgroundColor: "#ff4d4d",

@@ -66,7 +66,8 @@ type AppNavigationType = {
   MessageNavigation: {
     screen: MessageNavigationName;
     params: {
-      user: any;
+      userId: any;
+      userName: any;
     }
   }
 };
@@ -169,7 +170,8 @@ type NotificationNavigationType = {
 };
 type MessageNavigationType = {
   MessageBox:{
-    user: any;
+    userId: any;
+    userName: any;
   }
 }
 type HomeNavigationType = {

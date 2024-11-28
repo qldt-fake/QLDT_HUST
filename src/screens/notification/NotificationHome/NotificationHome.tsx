@@ -34,8 +34,6 @@ const NotificationHome: React.FC = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [selectMode, setSelectMode] = useState<boolean>(false);
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [page, setPage] = useState<number>(0);
   const [loadingMore, setLoadingMore] = useState<boolean>(false);
   const [hasMore, setHasMore] = useState<boolean>(true);
@@ -44,14 +42,11 @@ const NotificationHome: React.FC = () => {
   const auth = useSelector(selectAuth);
   const user = auth.user;
   const PAGE_SIZE = 4;
-  const handleForegroundMessages = () => {
-    messaging().onMessage(async (remoteMessage) => {
-      console.log('A new FCM message arrived in foreground!', remoteMessage);
-
-      // Hiển thị thông báo hoặc xử lý tùy ý
-      console.log(remoteMessage);
-    });
-  };
+  // const handleForegroundMessages = () => {
+  //   messaging().onMessage(async (remoteMessage) => {
+  //     console.log('A new FCM message arrived in foreground!', remoteMessage);
+  //   });
+  // };
   const markAsRead = async (id: number) => {
     const updatedNotifications = notifications.map(notification =>
       notification.id === id ? { ...notification, read: true } : notification
@@ -60,7 +55,7 @@ const NotificationHome: React.FC = () => {
       if (user != null)
         await markNotificationAsReadApi({
           token: user.token,
-          notification_ids: [id]
+          notification_id: id
         });
     } catch (err) {
       console.log(err);
@@ -123,7 +118,7 @@ const NotificationHome: React.FC = () => {
   };
 
   useEffect(() => {
-    handleForegroundMessages();
+    // handleForegroundMessages();
     console.log(user?.id);
     console.log(user?.token);
     loadNotifications();
@@ -144,10 +139,9 @@ const NotificationHome: React.FC = () => {
         data={notifications}
         keyExtractor={item => item.id.toString()}
         renderItem={({ item }) => {
-          const isSelected = selectedIds.includes(item.id);
           return (
             <TouchableOpacity
-              style={[styles.notificationItem, isSelected && styles.selectedNotification]}
+              style={[styles.notificationItem]}
               onPress={() => {
                   markAsRead(item.id);
                   navigation.navigate(AppNaviagtionName.NotificationNavigation, {
@@ -204,9 +198,6 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     marginVertical: 5
-  },
-  selectedNotification: {
-    backgroundColor: '#d3d3d3'
   },
   emptyText: {
     textAlign: 'center',

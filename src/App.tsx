@@ -22,7 +22,7 @@ export default function App() {
     }
   }
   useEffect(() => {
-    requestUserPermission();
+    // requestUserPermission();
     SplashScreen.hide();
   }, []);
   return (

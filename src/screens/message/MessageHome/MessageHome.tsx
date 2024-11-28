@@ -11,7 +11,7 @@ import {
 import Icon from "react-native-vector-icons/FontAwesome";
 import { NavigationProp, useNavigation } from "@react-navigation/native";
 import {
-    getConversationsApi,
+    getListConversationsApi,
     IConversation,
 } from "src/services/message.services";
 import { AppNaviagtionName, MessageNavigationName } from "src/common/constants/nameScreen";
@@ -46,7 +46,7 @@ const MessageHome: React.FC = () => {
     const fetchConversations = async (index: number) => {
         setLoading(true);
         try {
-            const response = await getConversationsApi({
+            const response = await getListConversationsApi({
                 token: user?.token ?? "",
                 index,
                 count: 10,
@@ -70,7 +70,7 @@ const MessageHome: React.FC = () => {
             setIsSearching(false);
             return;
         }
-        if (!hasMoreAccounts && page !== 0) return; // Không tải nếu không còn dữ liệu
+        if (!hasMoreAccounts && page !== 0) return;
         setLoading(true);
         setIsSearching(true);
         try {
@@ -105,7 +105,7 @@ const MessageHome: React.FC = () => {
             onPress={() =>
                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                     screen: MessageNavigationName.MessageBox,
-                    params: { accountId: item.account_id },
+                    params: { userId: item.account_id, username: item.first_name + ' ' + item.last_name },
                 })
             }
         >
@@ -152,18 +152,20 @@ const MessageHome: React.FC = () => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             style={styles.userItem}
-                            onPress={() =>
+                            onPress={() => {
+                                console.log(item.id)
                                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                                     screen: MessageNavigationName.MessageBox,
-                                    params: { conversationId: item.id },
+                                    params: {email: user?.email, userId: user?.id, partnerId: item.partner.id, userName: item.partner.name, conversationId: item.id, token: user?.token, receiverId: item.partner.id },
                                 })
+                            }
                             }
                         >
                             <Text style={styles.name}>{item.partner.name}</Text>
                             <Text style={styles.message}>{item.last_message.message}</Text>
                         </TouchableOpacity>
                     )}
-                    onEndReached={() => fetchConversations(accountPage + 1)}
+                    // onEndReached={() => fetchConversations(accountPage + 1)}
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={
                         loading ? <ActivityIndicator size="small" color="#0000ff" /> : null

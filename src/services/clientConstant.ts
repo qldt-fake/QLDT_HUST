@@ -75,7 +75,8 @@ export enum NotificationApi {
   GET_UNREAD_NOTIFICATION_COUNT = '/it5023e/get_unread_notification_count'
 }
 export enum MessageApi {
-  GET_LIST_CONVERSATIONS = '/it5023e/get_list_conversation'
+  GET_LIST_CONVERSATIONS = '/it5023e/get_list_conversation',
+  GET_CONVERSATION = '/it5023e/get_conversation'
 }
 
 export enum ClassApi {

@@ -27,6 +27,7 @@
     "@react-navigation/native-stack": "^6.9.14",
     "@react-navigation/stack": "^6.3.20",
     "@reduxjs/toolkit": "^1.9.7",
+
     "axios": "^1.6.2",
     "buffer": "^6.0.3",
     "dayjs": "^1.11.10",
@@ -100,7 +101,14 @@
     "react-native-typescript-transformer": "^1.2.13",
     "react-test-renderer": "18.2.0",
     "typescript": "4.8.4",
-    "react-native-gifted-chat": "^0.16.3"
+    "@stomp/stompjs": "7.0.0",
+    "text-encoder": "^0.0.4",
+    "text-encoding": "^0.7.0",
+    "fast-text-encoding": "latest",
+    "@types/sockjs-client": "latest",
+    "sockjs-client": "^1.6.1"
+
+
   },
   "engines": {
     "node": ">=16"

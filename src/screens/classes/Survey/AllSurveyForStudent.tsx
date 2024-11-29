@@ -15,12 +15,12 @@ import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import EmptyState from 'src/components/EmptyState';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
-import { SurveyType } from 'src/common/type/navigation';
+import { SurveyNavigationType } from 'src/common/type/navigation';
 
 const AllSurveyForStudent = () => {
   const [assignmentList, setAssignmentList] = React.useState<any[]>([]);
   const [selectedFilter, setSelectedFilter] = React.useState<surveyStatus | null>(null);
-  const navigation: NavigationProp<SurveyType> = useNavigation();
+  const navigation: NavigationProp<SurveyNavigationType> = useNavigation();
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();

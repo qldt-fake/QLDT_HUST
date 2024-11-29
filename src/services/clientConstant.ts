@@ -96,7 +96,7 @@ export enum SurveyApi {
   GET_ALL_SURVEYS = '/it5023e/get_all_surveys',
   EDIT_SURVEY = '/it5023e/edit_survey',
   DELETE_SURVEY = '/it5023e/delete_survey',
-  GET_SURVEY = '/it5023e/get_survey_response',
+  GET_SURVEY_RESPONSE = '/it5023e/get_survey_response',
   GET_SUBMISSION = '/it5023e/get_submission',
   SUBMIT_SURVEY = '/it5023e/submit_survey',
   GET_STUDENT_ASSIGNMENTS = '/it5023e/get_student_assignments',
@@ -108,4 +108,11 @@ export enum MaterialApi {
   GET_MATERIAL_LIST = '/it5023e/get_material_list',
   EDIT_MATERIAL = '/it5023e/edit_material',
   DELETE_MATERIAL = '/it5023e/delete_material'
+}
+
+export enum AbsenceApi {
+  REQUEST_ABSENCE = '/it5023e/request_absence',
+  GET_ABSENCE_REQUESTS = '/it5023e/get_absence_requests',
+  REVIEW_ABSENCE_REQUEST = '/it5023e/review_absence_request',
+  GET_STUDENT_ABSENCE_REQUESTS = '/it5023e/get_student_absence_requests'
 }

@@ -17,7 +17,8 @@ import { useAppDispatch } from 'src/redux';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { DATE_TIME_FORMAT } from 'src/common/constants';
 import { Roles } from 'src/common/enum/commom';
-import { SurveyType } from 'src/common/type/navigation';
+import { SurveyNavigationType } from 'src/common/type/navigation';
+
 
 interface ExcerciseCardProps {
   id: string;
@@ -46,7 +47,7 @@ export const ExcerciseCard = ({
   is_submitted,
   setAssignmentList: setExcerciseList
 }: ExcerciseCardProps) => {
-  const navigation: NavigationProp<SurveyType> = useNavigation();
+  const navigation: NavigationProp<SurveyNavigationType> = useNavigation();
   const auth = useSelector(selectAuth);
   const user = auth.user;
   const { showModal } = useModal();
@@ -91,8 +92,32 @@ export const ExcerciseCard = ({
     }
   };
 
+  const handleNavigate = () => {
+    if (user?.role === Roles.STUDENT) {
+      if (is_submitted)
+        navigation.navigate(SurveyNavigationName.SubmissionDetail as any, { id, title, description, deadline, file_url, class_id, is_submitted });
+      else
+        navigation.navigate(SurveyNavigationName.SubmitSurvey as any, {
+          id: id,
+          title: title,
+          description: description,
+          deadline: deadline,
+          file_url: file_url
+        });
+    } else {
+      navigation.navigate(SurveyNavigationName.SubmissionList, { id: id });
+    }
+  };
+
   const handleEdit = () => {
-    navigation.navigate(SurveyNavigationName.EditSurvey, { id, classId: class_id, title, description, deadline, file_url });
+    navigation.navigate(SurveyNavigationName.EditSurvey, {
+      id,
+      classId: class_id,
+      title,
+      description,
+      deadline,
+      file_url
+    });
   };
 
   const handleDelete = () => {
@@ -107,24 +132,15 @@ export const ExcerciseCard = ({
   return (
     <View style={styles.wrapper}>
       <View style={styles.container}>
-        <TouchableOpacity
-          style={styles.body}
-          onPress={() =>
-            navigation.navigate(SurveyNavigationName.SubmitSurvey as any, {
-              id: id,
-              title: title,
-              description: description,
-              deadline: deadline,
-              file_url: file_url
-            })
-          }
-        >
+        <TouchableOpacity style={styles.body} onPress={handleNavigate}>
           <View style={[styles.colorBlock, { backgroundColor: getRandomColor() }]}>
             <Text style={styles.initials}>{title.slice(0, 2).toUpperCase()}</Text>
           </View>
           <View style={styles.content}>
             <Text style={styles.text}>{title}</Text>
-            <Text style={[styles.text, {color: color.red}]}>{"Hạn: " + formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(deadline))}</Text>
+            <Text style={[styles.text, { color: color.red }]}>
+              {'Hạn: ' + formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(deadline))}
+            </Text>
             <Pressable
               onPressIn={event => {
                 event.stopPropagation();
@@ -157,7 +173,7 @@ const styles = StyleSheet.create({
   wrapper: {
     position: 'relative',
     zIndex: 1,
-    height: 100,
+    height: 100
   },
   container: {
     flex: 1,

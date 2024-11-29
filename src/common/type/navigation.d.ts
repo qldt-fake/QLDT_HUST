@@ -103,13 +103,6 @@ type FriendNavigationType = {
   SuggestionsScreen: undefined;
   AllFriendScreen: undefined;
 };
-type SurveyType = {
-  CreateSurvey: { classId: string };
-  EditSurvey: {  id: string, title: string, description: string, deadline: string, file_url: string; classId: string };
-  StudentAssignment: undefined;
-  SubmitSurvey : { id: string, title: string, description: string, deadline: string, file_url: string }
-  
-};
 type PostNavigationType = {
   CreatePostScreen: { selectedItem: CardData } | undefined;
   EnAScreen: undefined;
@@ -177,14 +170,29 @@ type ClassNavigationType = {
   AddStudent: { token: string, class_id: string },
   GetStudentInfor: { account_id: string }
   RegisterClass: undefined;
+  OthersTabInClass: { classId: string };
 };
 
 
 type SurveyNavigationType = {
-  EditSurvey: { surveyId: string, classId: string },
+  CreateSurvey: { classId: string };
+  EditSurvey: {  id: string, title: string, description: string, deadline: string, file_url: string; classId: string };
+  StudentAssignment: undefined;
+  SubmitSurvey : { id: string, title: string, description: string, deadline: string, file_url: string }
+  SubmissionList: { id: string };
+  SubmissionDetail: { id: string, title: string, deadline: string, file_url: string, description: string, class_id: string, is_submitted: boolean },
+  GradeSubmission: { assignment_id: string, submission_time: string, text_response: string, file_url: string, student_account: any, id: string }
 }
 
 type MaterialNavigationType = {
   EditMaterial: { materialId: string, classId: string },
   UploadMaterial: { classId: string }
+}
+
+type AbsenceNavigationType = {
+  AllAbsenceRequestsForStudent: undefined;
+  AbsenceRequest: { classId: string };
+  ReviewAbsence: { request: any };
+  AbsenceRequestList: { classId: string };
+  AbsenceRequestDetail: { id: string, class_id: string, student_id: string, absence_date: string, reason: string, status: string }
 }

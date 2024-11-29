@@ -119,3 +119,9 @@ export const getSurveyStudentAssignmentsApi = async (
 ): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(SurveyApi.GET_STUDENT_ASSIGNMENTS, data);
 }
+
+export const getSurveyResponseApi = async (
+  data: any
+): Promise<IBodyResponse<any, any>> => {
+  return postMethodApi(SurveyApi.GET_SURVEY_RESPONSE, data);
+}

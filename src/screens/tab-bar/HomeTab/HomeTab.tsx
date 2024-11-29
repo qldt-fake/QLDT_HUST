@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Card, IconButton } from 'react-native-paper';
 import { color } from 'src/common/constants/color';
 import { useNavigation } from '@react-navigation/native';
-import { ClassNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
+import { AbsenceNavigationName, ClassNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
 
 export default function HomeTab() {
   const navigation = useNavigation();
@@ -31,7 +31,7 @@ export default function HomeTab() {
         <Text style={styles.description}>Quản lý thông tin lớp học</Text>
       </Card>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(`` as never)}>
+      <Card style={styles.card} onPress={() => navigation.navigate(AbsenceNavigationName.StudentAbsenceRequests as never)}>
         <View style={styles.iconContainer}>
           <IconButton icon='file-document' iconColor={color.red} size={50} />
         </View>

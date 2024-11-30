@@ -1,0 +1,4 @@
+export enum FCMEnum {
+    MESSAGE = 'MESSAGE',
+    NOTIFICATION = 'NOTIFICATION',
+}

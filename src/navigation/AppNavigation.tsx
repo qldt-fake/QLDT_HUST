@@ -25,6 +25,7 @@ import ClassListPage from 'src/screens/classes/general/ClassListPage';
 import ClassDetail from 'src/screens/classes/general/ClassDeatail';
 import ClassNavigation from './ClassNavigation';
 import NotificationNavigationWrapper from 'src/navigation/NotificationNavigation';
+import MessageNavigationWrapper from "src/navigation/MessageNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -108,6 +109,10 @@ function AppNavigation() {
                 name={AppNaviagtionName.NotificationNavigation}
                 component={NotificationNavigationWrapper}
               />
+                <Stack.Screen
+                    name={AppNaviagtionName.MessageNavigation}
+                    component={MessageNavigationWrapper}
+                />
               <Stack.Screen
                 name={AppNaviagtionName.SearchNavigation}
                 component={SearchNavigationWrapper}

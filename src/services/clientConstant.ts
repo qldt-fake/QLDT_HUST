@@ -74,6 +74,10 @@ export enum NotificationApi {
   MARK_NOTIFICATION_AS_READ = '/it5023e/mark_notification_as_read',
   GET_UNREAD_NOTIFICATION_COUNT = '/it5023e/get_unread_notification_count'
 }
+export enum MessageApi {
+  GET_LIST_CONVERSATIONS = '/it5023e/get_list_conversation',
+  GET_CONVERSATION = '/it5023e/get_conversation'
+}
 
 export enum ClassApi {
   CREATE_CLASS = '/it5023e/create_class',

@@ -1,4 +1,6 @@
 /* eslint-disable no-unused-vars */
+import MessageNavigation from "src/navigation/MessageNavigation";
+
 export enum AppNaviagtionName {
   AuthNavigation = 'AuthNavigation',
   TabNavigation = 'TabNavigation',
@@ -14,7 +16,8 @@ export enum AppNaviagtionName {
   ChangeProfileAfterSign = 'ChangeProfileAfterSign',
   NotFoundScreen = 'NotFoundScreen',
   HomeNavigationName = 'HomeNavigationName',
-  NotificationNavigation = 'NotificationNavigation'
+  NotificationNavigation = 'NotificationNavigation',
+  MessageNavigation = 'MessageNavigation'
 }
 
 export enum AuthNavigationName {
@@ -88,6 +91,9 @@ export enum AddMoneyNavigationName {
 }
 export enum NotificationNavigationName {
   NotificationDetail = 'NotificationDetail'
+}
+export enum MessageNavigationName{
+  MessageBox = 'MessageBox'
 }
 export enum HomeNavigationName {
   Home = 'HomeTab',

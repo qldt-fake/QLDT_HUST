@@ -156,7 +156,7 @@ const MessageHome: React.FC = () => {
                                 console.log(item.id)
                                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                                     screen: MessageNavigationName.MessageBox,
-                                    params: {email: user?.email, userId: user?.id, partnerId: item.partner.id, userName: item.partner.name, conversationId: item.id, token: user?.token, receiverId: item.partner.id },
+                                    params: {email: user?.email, userId: user?.id, userName: item.partner.name, conversationId: item.id, token: user?.token, receiverId: item.partner.id },
                                 })
                             }
                             }

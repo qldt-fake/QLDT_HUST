@@ -9,7 +9,9 @@ import { Provider as ProviderRedux } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './redux';
 import LoadingOverlay from './components/loadingComponent';
+import FCMHandler from "src/services/FCMService";
 import messaging from "@react-native-firebase/messaging";
+import FCMService from "src/services/FCMService";
 export default function App() {
   async function requestUserPermission() {
     const authStatus = await messaging().requestPermission();
@@ -21,8 +23,10 @@ export default function App() {
       console.log('Authorization status:', authStatus);
     }
   }
+
   useEffect(() => {
-    // requestUserPermission();
+    requestUserPermission();
+    FCMService.getInstance();
     SplashScreen.hide();
   }, []);
   return (

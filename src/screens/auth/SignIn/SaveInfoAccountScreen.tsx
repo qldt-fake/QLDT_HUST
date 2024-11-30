@@ -9,6 +9,7 @@ import { login, selectAuth } from 'src/redux/slices/authSlice';
 import { AuthNavigationName } from 'src/common/constants/nameScreen';
 import { getUniqueId } from 'react-native-device-info';
 import messaging from "@react-native-firebase/messaging";
+import FCMService from "src/services/FCMService";
 function SaveInfoAccountScreen() {
   const auth = useAppSelector(selectAuth);
   const routes: RouteProp<AuthNavigationType, AuthNavigationName.SaveInfoAccountScreen> =
@@ -17,9 +18,8 @@ function SaveInfoAccountScreen() {
   const dispatch = useAppDispatch();
   const navigation: NavigationProp<AuthNavigationType, 'Login'> = useNavigation();
   const onPressSaveButton = async () => {
-      const fcmToken = await messaging().getToken();
     const device_id = await getUniqueId();
-    dispatch(login({ password, device_id, email, fcm_token: fcmToken }));
+    dispatch(login({ password, device_id, email, fcm_token: FCMService.getToken() }));
   };
   return (
     <WraperAuthScreen linnerGradient>

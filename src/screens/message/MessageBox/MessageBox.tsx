@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import 'text-encoder';
-import 'fast-text-encoding';
 import SockJS from "sockjs-client";
+import Client from "@stomp/stompjs";
+import "fast-text-encoding";
 import {
     FlatList,
     KeyboardAvoidingView,
@@ -10,59 +10,25 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from "react-native";
-import Client from "@stomp/stompjs"; // Importing StompClient
-import MessageHeader from "src/screens/message/components/MessageHeader";
 import { getConversationApi, IGetConversationsBody, IMessageResponse } from "src/services/message.services";
+import MessageHeader from "src/screens/message/components/MessageHeader";
 
 const MessageBox = ({ route, navigation }: any) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<any>(null); // Stomp client state
-    const { partnerId, userName, token, conversationId, receiverId, email, userId } = route.params;
-    const [latestId, setLatestId] = useState<number>();
-    const [loadingMore, setLoadingMore] = useState<boolean>(false);
-
-    // Setup SockJS and StompClient connection
-    useEffect(() => {
-        const client = Client.Stomp.over(() => {
-            return new SockJS("http://157.66.24.126:8080/ws");
-        });
-
-        client.connect({}, (frame: any) => {
-            console.log("Connected: " + frame);
-
-            client.subscribe(`/user/${partnerId}/inbox`, (message: any) => {
-                const msg = JSON.parse(message.body);
-                if (msg.sender.id !== userId) {
-                    setLatestId(msg.id + 1);
-                    setMessages((prevMessages) => [
-                        { id: latestId, text: msg.content, sender: "their" },
-                        ...prevMessages,
-                    ]);
-                }
-            });
-
-            // Fetch conversations when the client connects
-            fetchConversations();
-            setStompClient(client);
-        });
-
-        // Cleanup the connection when component unmounts
-        return () => {
-            if (stompClient) {
-                stompClient.disconnect();
-            }
-        };
-    }, [messages]);
+    const {userName, token, conversationId, receiverId, email, userId } = route.params;
+    const [latestId, setLatestId] = useState<number>(0);
+    const [hasMore, setHasMore] = useState<boolean>(true);
 
     // Fetch conversations from the API
-    const fetchConversations = async () => {
+    const fetchConversations = async (loadMore = false) => {
         const requestBody: IGetConversationsBody = {
             token,
-            index: 0,
-            count: 14,
+            index: loadMore ? messages.length : 0, // Start at the last message if loading more
+            count: 20,
             conversation_id: conversationId,
             mark_as_read: true,
         };
@@ -74,10 +40,20 @@ const MessageBox = ({ route, navigation }: any) => {
                 const fetchedMessages = response.data?.conversation.map((msg: IMessageResponse) => ({
                     id: Number(msg.message_id),
                     text: msg.message,
-                    sender: msg.sender.id === userId ? "me" : "their"
+                    sender: msg.sender.id == userId ? "me" : "their"
                 }));
 
-                setMessages(fetchedMessages.reverse());
+                setMessages((prevMessages) => {
+                    if(loadMore) {
+                        return [...prevMessages, ...fetchedMessages];
+                    }
+                    else{
+                        setLatestId(fetchedMessages[0].id);
+                        return fetchedMessages;
+                    }
+                });
+
+                setHasMore(fetchedMessages.length === 20); // If less than PAGE_SIZE, no more messages to load
             } else {
                 console.error("Failed to fetch messages:", response.meta?.message);
             }
@@ -86,7 +62,34 @@ const MessageBox = ({ route, navigation }: any) => {
         }
     };
 
-    // Send a message using StompClient
+    useEffect(() => {
+        const client = Client.Stomp.over(() => new SockJS("http://157.66.24.126:8080/ws"));
+
+        client.connect({}, (frame: any) => {
+            console.log("Connected: " + frame);
+            client.subscribe(`/user/${receiverId}/inbox`, (message: any) => {
+                const msg = JSON.parse(message.body);
+
+                if (msg.sender.id != userId) {
+                    setMessages((prevMessages) => [
+                        { id: msg.id, text: msg.content, sender: "their" } , ...prevMessages
+                    ]);
+                    setLatestId(msg);
+                }
+            });
+
+            fetchConversations();
+
+            setStompClient(client);
+        });
+
+        return () => {
+            if (stompClient) {
+                stompClient.disconnect();
+            }
+        };
+    }, []);
+
     const sendMessage = () => {
         if (input.trim() && stompClient) {
             const message = {
@@ -97,14 +100,14 @@ const MessageBox = ({ route, navigation }: any) => {
             };
 
             console.log("Sending message:", message);
-
             stompClient.send("/chat/message", {}, JSON.stringify(message));
 
             setMessages([
-                { id: messages.length + 1, text: input, sender: "me" },
+                { id: latestId + 1, text: input, sender: "me" },
                 ...messages,
             ]);
             setInput("");
+            setLatestId(latestId + 1);
         }
     };
 
@@ -127,38 +130,9 @@ const MessageBox = ({ route, navigation }: any) => {
         </View>
     );
 
-    // Load more messages when scrolled to the top
-    const loadMoreMessages = async () => {
-        if (!loadingMore) {
-            setLoadingMore(true);
-
-            const requestBody: IGetConversationsBody = {
-                token,
-                index: messages.length, // Start loading from the last message
-                count: 14,
-                conversation_id: conversationId,
-                mark_as_read: true,
-            };
-
-            try {
-                const response = await getConversationApi(requestBody);
-
-                if (response.meta?.code === "1000") {
-                    const fetchedMessages = response.data?.conversation.map((msg: IMessageResponse) => ({
-                        id: Number(msg.message_id),
-                        text: msg.message,
-                        sender: msg.sender.id === userId ? "me" : "their"
-                    }));
-
-                    setMessages((prevMessages) => [...fetchedMessages.reverse(), ...prevMessages]);
-                } else {
-                    console.error("Failed to fetch more messages:", response.meta?.message);
-                }
-            } catch (error) {
-                console.error("Error loading more messages:", error);
-            } finally {
-                setLoadingMore(false);
-            }
+    const loadMoreMessages = () => {
+        if (hasMore) {
+            fetchConversations(true);
         }
     };
 
@@ -176,13 +150,13 @@ const MessageBox = ({ route, navigation }: any) => {
             <View style={styles.container}>
                 <FlatList
                     data={messages}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.id}
                     renderItem={renderMessage}
-                    inverted // Inverts the scroll direction
+                    inverted // Inverted to show latest messages at the bottom
                     contentContainerStyle={{ flexGrow: 1, padding: 10 }}
                     keyboardShouldPersistTaps="handled"
-                    onEndReached={loadMoreMessages} // Trigger load more on scroll to top
-                    onEndReachedThreshold={0.1} // Start loading more when near top
+                    onEndReached={loadMoreMessages} // Trigger loading more when scrolled to bottom
+                    onEndReachedThreshold={0.5}
                 />
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -192,7 +166,7 @@ const MessageBox = ({ route, navigation }: any) => {
                         onChangeText={setInput}
                     />
                     <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-                        <Text style={styles.sendButtonText}>Send</Text>
+                        <Text style={styles.sendButtonText}>Gửi</Text>
                     </TouchableOpacity>
                 </View>
             </View>

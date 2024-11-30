@@ -21,6 +21,8 @@ import {
 import { useSelector } from 'react-redux';
 import { selectAuth } from 'src/redux/slices/authSlice';
 import messaging from "@react-native-firebase/messaging";
+import FCMService from "src/services/FCMService";
+import {FCMEnum} from "src/utils/FCMEnum";
 
 type Notification = {
   id: number;
@@ -42,11 +44,6 @@ const NotificationHome: React.FC = () => {
   const auth = useSelector(selectAuth);
   const user = auth.user;
   const PAGE_SIZE = 4;
-  // const handleForegroundMessages = () => {
-  //   messaging().onMessage(async (remoteMessage) => {
-  //     console.log('A new FCM message arrived in foreground!', remoteMessage);
-  //   });
-  // };
   const markAsRead = async (id: number) => {
     const updatedNotifications = notifications.map(notification =>
       notification.id === id ? { ...notification, read: true } : notification
@@ -91,7 +88,6 @@ const NotificationHome: React.FC = () => {
             read: item.status !== 'UNREAD'
           })
         );
-
         if (notificationsData.length < PAGE_SIZE) {
           setHasMore(false);
         } else if (!hasMore) setHasMore(true);
@@ -99,8 +95,9 @@ const NotificationHome: React.FC = () => {
         setNotifications(loadMore ? [...notifications, ...notificationsData] : notificationsData);
         setPage(loadMore ? page + 1 : 1);
       } else {
+        setHasMore(false);
         // @ts-ignore
-        console.error('Failed to load notifications ' + response.meta.code);
+       // console.error('Failed to load notifications ' + response.meta.code);
       }
     } catch (error) {
       console.error('Error loading notifications:', error);
@@ -118,9 +115,36 @@ const NotificationHome: React.FC = () => {
   };
 
   useEffect(() => {
-    // handleForegroundMessages();
     console.log(user?.id);
     console.log(user?.token);
+    const handleNotification = async (data: any) => {
+      if (data.data.type === FCMEnum.NOTIFICATION) {
+        try {
+          if (user != null) {
+            const response = await getNotificationsApi({
+              token: user?.token,
+              index: 0,
+              count: 1
+            });
+            // @ts-ignore
+            if (response.meta.code === '1000') {
+              const notificationsData: Notification[] = response.data.map(
+                  (item: INotificationResponse) => ({
+                    id: item.id,
+                    title: item.type,
+                    content: item.message,
+                    date: item.sent_time,
+                    read: item.status !== 'UNREAD'
+                  }));
+              setNotifications(prevState => [...notificationsData, ...prevState]);
+            }
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    FCMService.getInstance().on('newNotification', handleNotification);
     loadNotifications();
   }, []);
 
@@ -165,7 +189,7 @@ const NotificationHome: React.FC = () => {
         }}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={() => hasMore && loadNotifications(true)}
-        onEndReachedThreshold={0.5}
+        onEndReachedThreshold={0.1}
         ListEmptyComponent={renderEmptyComponent}
         ListFooterComponent={
           loadingMore ? <ActivityIndicator size='small' color='#007bff' /> : null

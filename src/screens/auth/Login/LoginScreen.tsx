@@ -10,7 +10,6 @@ import BaseButton from 'src/components/BaseButton';
 import BaseInputPassword from 'src/components/BaseInputPassword';
 import BaseInputEmail from 'src/components/BaseInputEmail';
 import BaseTextTitle from 'src/components/BaseTextTitle';
-import BaseMetaLogo from 'src/components/BaseMetaLogo';
 import WraperAuthScreen from 'src/components/WraperScreen';
 import BaseForm from 'src/components/BaseForm';
 import styles from './styles';
@@ -21,6 +20,7 @@ import { useAppSelector, useAppDispatch } from 'src/redux';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
+import FCMService from "src/services/FCMService";
 
 
 function LoginScreen() {
@@ -39,12 +39,12 @@ function LoginScreen() {
     }
   }, [isAccountLocked, navigation, dispatch]);
  const onSubmit: SubmitHandler<{ email: string; password: string }> = async (data) => {
-   const fcmToken = await messaging().getToken();
+
     try {
       const device_id = await getUniqueId();
       const loginData: ILoginData = {
         ...data,
-        fcm_token: fcmToken,
+        fcm_token: FCMService.getToken(),
       };
       dispatch(login({
         ...loginData,

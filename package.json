@@ -106,8 +106,8 @@
     "text-encoding": "^0.7.0",
     "fast-text-encoding": "latest",
     "@types/sockjs-client": "latest",
-    "sockjs-client": "^1.6.1"
-
+    "sockjs-client": "^1.6.1",
+    "@notifee/react-native": "7.9.0"
 
   },
   "engines": {

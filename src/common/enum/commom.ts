@@ -101,3 +101,9 @@ export enum Roles {
   LECTURER = 'LECTURER',
   STUDENT = 'STUDENT'
 }
+
+export enum absenceStatus {
+  PENDING = 'PENDING',
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED'
+}

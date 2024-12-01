@@ -16,7 +16,9 @@ import { RefreshControl } from 'react-native';
 import { useAppDispatch } from 'src/redux';
 import {showLoading, hideLoading} from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
-const classDeatailContext = createContext(null);
+import AbsenceRequest from '../Absence/RequestAbsence';
+import OthersTabInClass from '../others/OthersTabInClass';
+export const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
 
 const PostScreen = () => {
@@ -124,7 +126,7 @@ const ClassDetail = ({ route }: { route: any }) => {
       >
         <Tab.Screen name='General' component={PostScreen} />
         <Tab.Screen name='Material'>{() => <MaterialScreen classId={classId} />}</Tab.Screen>
-        <Tab.Screen name='Assignment'>{() => <Assignment classId={classId} />}</Tab.Screen>
+        <Tab.Screen name='Others'>{() => <OthersTabInClass classId={classId} />}</Tab.Screen>
       </Tab.Navigator>
       <FloatingButton
         actions={actions}

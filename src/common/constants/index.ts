@@ -30,7 +30,8 @@ export enum DATE_TIME_FORMAT {
   dddd_vi_L_SPACE = 'dddd, [ngày] L',
   DD_vi_MM = 'DD [Th]MM',
   DD_vi_M_YYYY = 'DD [Th]M YYYY',
-  hh_mm = 'hh:mm'
+  hh_mm = 'hh:mm',
+  hh_mm_ss_vi_DD_MM_YYYY_DOT = 'HH:mm:ss [Ngày] DD.MM.YYYY',
 }
 
 export const FORM_VALIDATION = {

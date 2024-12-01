@@ -25,6 +25,7 @@ import { NO_DATA, USER_IS_EXISTED } from 'src/common/constants/responseCode';
 import BaseModalSuccess from 'src/components/BaseModalSuccess';
 import * as yup from 'yup';
 import { ISignUpData } from 'src/interfaces/auth.interface';
+import FCMService from "src/services/FCMService";
 
 function FirstScreen() {
   const navigation = useNavigation();
@@ -44,7 +45,7 @@ function FirstScreen() {
       const uuid = await getUniqueId();
       setIsLoading(true);
       const { ho, ten, email, password, role } = data;
-      const res = await signUpApi({ ho, ten, email, password, uuid, role, fcm_token: null });
+      const res = await signUpApi({ ho, ten, email, password, uuid, role, fcm_token: FCMService.getToken() });
 
       if (!res.success) {
         if (res.code === USER_IS_EXISTED) return setTextError('Tài khoản đã tồn tại');

@@ -63,3 +63,8 @@ export const getConversationApi = async (
 ): Promise<IBodyResponse<any, any>> => {
     return postMethodApi(MessageApi.GET_CONVERSATION, data);
 };
+export const deleteMessageApi = async (
+    data: any
+):Promise<IBodyResponse<any, any>> => {
+    return postMethodApi(MessageApi.DELETE_MESSAGE, data);
+}

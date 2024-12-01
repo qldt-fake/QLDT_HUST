@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useCallback} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
     View,
     FlatList,
@@ -19,7 +19,8 @@ import {
 import {useSelector} from 'react-redux';
 import {selectAuth} from 'src/redux/slices/authSlice';
 import FCMService from "src/services/FCMService";
-import {FCMEnum} from "src/utils/FCMEnum";
+import {FCMEnum} from "src/common/enum/FCMEnum";
+import {NotificationEnum} from "src/common/enum/NotificationEnum";
 
 type Notification = {
     id: number;
@@ -57,7 +58,25 @@ const NotificationHome: React.FC = () => {
         }
         setNotifications(updatedNotifications);
     };
-
+    const getTitleDetail = (title: string) => {
+        switch (title){
+            case ("ABSENCE") : {
+                title = NotificationEnum.ABSENCE;
+                break;
+            }
+            case ("ACCEPT_ABSENCE_REQUEST") : {
+                title = NotificationEnum.ACCEPT_ABSENCE_REQUEST;
+                break;
+            }
+            case ("REJECT_ABSENCE_REQUEST") : {
+                title = NotificationEnum.REJECT_ABSENCE_REQUEST;
+                break;
+            } case  ("ASSIGNMENT_GRADE") : {
+                title = NotificationEnum.ASSIGNMENT_GRADE;
+            }
+        }
+        return title
+    }
     const loadNotifications = async (loadMore = false) => {
         if ((!hasMore && page !== 0) || user == null) return;
 
@@ -80,7 +99,7 @@ const NotificationHome: React.FC = () => {
                 const notificationsData: Notification[] = response.data.map(
                     (item: INotificationResponse) => ({
                         id: item.id,
-                        title: item.type,
+                        title: getTitleDetail(item.type),
                         content: item.message,
                         date: item.sent_time,
                         read: item.status !== 'UNREAD'
@@ -122,7 +141,7 @@ const NotificationHome: React.FC = () => {
                             const notificationsData: Notification[] = response.data.map(
                                 (item: INotificationResponse) => ({
                                     id: item.id,
-                                    title: item.type,
+                                    title: getTitleDetail(item.type),
                                     content: item.message,
                                     date: item.sent_time,
                                     read: item.status !== 'UNREAD'
@@ -164,7 +183,8 @@ const NotificationHome: React.FC = () => {
                                     params: {
                                         title: item.title,
                                         content: item.content
-                                    }
+                                    },
+                                    navigation: navigation
                                 });
                             }
                             }

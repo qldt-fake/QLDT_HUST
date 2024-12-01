@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import SockJS from "sockjs-client";
 import Client from "@stomp/stompjs";
 import "fast-text-encoding";
 import {
+    Alert,
     FlatList,
     KeyboardAvoidingView,
     Platform,
@@ -10,22 +11,23 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View
 } from "react-native";
-import { getConversationApi, IGetConversationsBody, IMessageResponse } from "src/services/message.services";
+import {getConversationApi, deleteMessageApi, IGetConversationsBody, IMessageResponse} from "src/services/message.services";
 import MessageHeader from "src/screens/message/components/MessageHeader";
 
-const MessageBox = ({ route, navigation }: any) => {
+const MessageBox = ({route, navigation}: any) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<any>(null); // Stomp client state
-    const {userName, token, conversationId, receiverId, email, userId } = route.params;
+    const {userName, token, conversationId, receiverId, email, userId, avatar} = route.params;
     const [latestId, setLatestId] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
 
     // Fetch conversations from the API
     const fetchConversations = async (loadMore = false) => {
-        if(!hasMore&&!loadMore)
+        if (!hasMore && !loadMore)
             return;
         const requestBody: IGetConversationsBody = {
             token,
@@ -46,10 +48,9 @@ const MessageBox = ({ route, navigation }: any) => {
                 }));
 
                 setMessages((prevMessages) => {
-                    if(loadMore) {
+                    if (loadMore) {
                         return [...prevMessages, ...fetchedMessages];
-                    }
-                    else{
+                    } else {
                         setLatestId(fetchedMessages[0].id);
                         return fetchedMessages;
                     }
@@ -73,12 +74,12 @@ const MessageBox = ({ route, navigation }: any) => {
 
                 if (msg.sender.id != userId) {
                     setMessages((prevMessages) => [
-                        { id: msg.id, text: msg.content, sender: "their" } , ...prevMessages
+                        {id: msg.id, text: msg.content, sender: "their"}, ...prevMessages
                     ]);
                     setLatestId(msg);
                 }
             });
-            if(conversationId != null) {
+            if (conversationId != null) {
                 fetchConversations();
             }
 
@@ -95,7 +96,7 @@ const MessageBox = ({ route, navigation }: any) => {
     const sendMessage = () => {
         if (input.trim() && stompClient) {
             const message = {
-                receiver: { id: receiverId },
+                receiver: {id: receiverId},
                 content: input,
                 sender: email, // Replace with the sender's name
                 token: token,
@@ -105,7 +106,7 @@ const MessageBox = ({ route, navigation }: any) => {
             stompClient.send("/chat/message", {}, JSON.stringify(message));
 
             setMessages([
-                { id: latestId + 1, text: input, sender: "me" },
+                {id: latestId + 1, text: input, sender: "me"},
                 ...messages,
             ]);
             setInput("");
@@ -113,36 +114,76 @@ const MessageBox = ({ route, navigation }: any) => {
         }
     };
 
-    const renderMessage = ({ item }: any) => (
-        <View
-            style={[
-                styles.message,
-                item.sender === "me" ? styles.myMessage : styles.theirMessage,
-            ]}
-        >
-            <Text
-                style={
-                    item.sender === "me"
-                        ? styles.myMessageText
-                        : styles.theirMessageText
-                }
-            >
-                {item.text}
-            </Text>
-        </View>
-    );
+    const unSendMessage = async (messageId: any) => {
+        try {
+            const response = await deleteMessageApi({token, message_id: messageId, conversation_id: conversationId});
+            if (response.meta?.code === "1000") {
+                setMessages((prevMessages) =>
+                    prevMessages.map((msg) =>
+                        msg.id === messageId
+                            ? {...msg, text: null}
+                            : msg
+                    )
+                );
+            } else {
+                console.error("Failed to unsend message:", response.meta?.message);
+            }
+        } catch (error) {
+            console.error("Error unsending message:", error);
+        }
+    };
 
+
+    const handleLongPress = (messageId: string) => {
+        Alert.alert(
+            "Gỡ Tin Nhắn",
+            "Bạn có chắc chắn muốn gỡ tin nhắn này không?",
+            [
+                {text: "Hủy", style: "cancel"},
+                {text: "Gỡ", style: "destructive", onPress: () => unSendMessage(messageId)},
+            ]
+        );
+    };
+
+
+    const renderMessage = ({item}: any) => (
+        <TouchableWithoutFeedback
+            onLongPress={() => item.sender == "me" && item.text!=null && handleLongPress(item.id)}
+        >
+            <View
+                style={[
+                    styles.message,
+                    item.sender === "me"
+                        ? styles.myMessage
+                        : styles.theirMessage,
+                    item.text == null && styles.deletedMessage, // Áp dụng style nếu đã gỡ
+                ]}
+            >
+                <Text
+                    style={
+                        item.text == null
+                            ? styles.deletedMessageText // Style đặc biệt cho tin nhắn đã gỡ
+                            : item.sender === "me"
+                                ? styles.myMessageText
+                                : styles.theirMessageText
+                    }
+                >
+                    {item.text != null? item.text : "Tin nhắn đã bị gỡ"}
+                </Text>
+            </View>
+        </TouchableWithoutFeedback>
+    );
 
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            headerTitle: () => <MessageHeader user={{ name: userName, avatar: "" }} />,
+            headerTitle: () => <MessageHeader user={{name: userName, avatar: avatar}}/>,
         });
     }, [navigation]);
 
     return (
         <KeyboardAvoidingView
-            style={{ flex: 1 }}
+            style={{flex: 1}}
             behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
             <View style={styles.container}>
@@ -151,7 +192,7 @@ const MessageBox = ({ route, navigation }: any) => {
                     keyExtractor={(item) => item.id}
                     renderItem={renderMessage}
                     inverted // Inverted to show latest messages at the bottom
-                    contentContainerStyle={{ flexGrow: 1, padding: 10 }}
+                    contentContainerStyle={{flexGrow: 1, padding: 10}}
                     keyboardShouldPersistTaps="handled"
                     onEndReached={() => fetchConversations(true)}
                     onEndReachedThreshold={0.1}
@@ -197,6 +238,17 @@ const styles = StyleSheet.create({
     theirMessageText: {
         color: "#000000",
     },
+    deletedMessage: {
+        backgroundColor: "#e6e6e6", // Màu xám
+        alignSelf: "flex-end",
+
+    },
+    deletedMessageText: {
+        color: "#a0a0a0",
+        fontStyle: "italic",
+        textAlign: "right"
+    },
+
     inputContainer: {
         flexDirection: "row",
         alignItems: "center",

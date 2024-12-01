@@ -1,21 +1,14 @@
 import React from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { Avatar } from "react-native-paper";
+import {convertGoogleDriveLink, getAvatarUri} from "src/utils/helper";
 
-interface CustomHeaderProps {
-    user: {
-        name: string;
-        avatar: string;
-    };
-}
-
-const MessageHeader: React.FC<CustomHeaderProps> = ({ user }) => {
+const MessageHeader = ({ user }: { user: { name: string; avatar: string } }) => {
     return (
         <View style={styles.headerContainer}>
-            {/*<Image*/}
-            {/*    source={{ uri: user.avatar }}*/}
-            {/*    style={styles.avatar}*/}
-            {/*/>*/}
-            <Text style={styles.headerText}>{user.name}</Text>
+                <Avatar.Image source={getAvatarUri(convertGoogleDriveLink(user.avatar != null? user.avatar : "") as string)} size={45}/>
+
+            <Text style={styles.userName}>{user.name}</Text>
         </View>
     );
 };
@@ -25,13 +18,15 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
     },
-    avatar: {
+    placeholderAvatar: {
         width: 40,
         height: 40,
         borderRadius: 20,
+        backgroundColor: "#ccc",
         marginRight: 10,
     },
-    headerText: {
+    userName: {
+        paddingLeft: 8,
         fontSize: 18,
         fontWeight: "bold",
     },

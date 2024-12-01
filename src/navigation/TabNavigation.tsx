@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { StyleSheet } from 'react-native';
+import React, {useState} from 'react';
+import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {StyleSheet} from 'react-native';
 import AntdIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { Avatar } from 'react-native-paper';
-import { color as colors } from 'src/common/constants/color';
+import {Avatar} from 'react-native-paper';
+import {color as colors} from 'src/common/constants/color';
 import WraperScreen from 'src/components/WraperScreen';
 import HomeNavigation from './HomeNavigation';
 import NotificationHome from 'src/screens/notification/NotificationHome';
 import SettingTabNavigation from './SettingTabNavigation';
 import MessageHome from "src/screens/message/MessageHome/MessageHome";
-import { useSelector } from "react-redux";
-import { selectAuth } from "src/redux/slices/authSlice";
-import { getUnreadNotificationApi } from "src/services/noti.services";
-import { useFocusEffect } from '@react-navigation/native';
+import {useSelector} from "react-redux";
+import {selectAuth} from "src/redux/slices/authSlice";
+import {getUnreadNotificationApi} from "src/services/noti.services";
+import {useFocusEffect} from '@react-navigation/native';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -26,7 +26,7 @@ function TabNavigation() {
     const getNotificationCount = async () => {
         if (user != null) {
             try {
-                const response = await getUnreadNotificationApi({ token: user.token });
+                const response = await getUnreadNotificationApi({token: user.token});
                 setCount(Number(response.data));
             } catch (error) {
                 console.error('Failed to fetch notification count:', error);
@@ -48,20 +48,20 @@ function TabNavigation() {
                 tabBarShowIcon: true,
                 tabBarShowLabel: false,
                 tabBarActiveTintColor: colors.primary,
-                tabBarStyle: { backgroundColor: colors.sureface },
+                tabBarStyle: {backgroundColor: colors.sureface},
                 tabBarPressColor: colors.borderColor,
-                tabBarIndicatorStyle: { backgroundColor: colors.primary },
+                tabBarIndicatorStyle: {backgroundColor: colors.primary},
             }}
         >
             <Tab.Screen
                 name="Home"
                 component={HomeNavigation}
                 options={{
-                    tabBarIcon: ({ focused, color }) =>
+                    tabBarIcon: ({focused, color}) =>
                         focused ? (
-                            <FontAwesomeIcon name="home" size={25} color={color} />
+                            <FontAwesomeIcon name="home" size={25} color={color}/>
                         ) : (
-                            <AntdIcon name="home" size={25} />
+                            <AntdIcon name="home" size={25}/>
                         ),
                 }}
             />
@@ -69,18 +69,19 @@ function TabNavigation() {
                 name="Notification"
                 component={NotificationHome}
                 options={{
-                    tabBarIcon: ({ focused, color }) =>
+                    tabBarIcon: ({focused, color}) =>
                         focused ? (
-                            <MaterialIcons name="notifications" size={25} color={color} />
+                            <MaterialIcons name="notifications" size={25} color={color}/>
                         ) : (
                             <>
-                                <MaterialIcons name="notifications-none" size={25} />
-                                <Avatar.Text
-                                    label={count === 0 ? "" : (count > 10 ? "10+" : count.toString())}
-                                    size={21}
+                                <MaterialIcons name="notifications-none" size={25}/>
+                                {count === 0 ? null : <Avatar.Text
+                                    label={(count > 99 ? "99+" : count.toString())}
+                                    size={count < 9 ? 15 : count < 100 ? 21 : 30}
                                     style={style.newIcon}
                                     labelStyle={style.labelNewIcon}
                                 />
+                                }
                             </>
                         ),
                 }}
@@ -89,12 +90,12 @@ function TabNavigation() {
                 name="Message"
                 component={MessageHome}
                 options={{
-                    tabBarIcon: ({ focused, color }) =>
+                    tabBarIcon: ({focused, color}) =>
                         focused ? (
-                            <MaterialIcons name="chat" size={25} color={color} />
+                            <MaterialIcons name="chat" size={25} color={color}/>
                         ) : (
                             <>
-                                <MaterialIcons name="chat" size={25} />
+                                <MaterialIcons name="chat" size={25}/>
                                 {/*<Avatar.Text*/}
                                 {/*    label=""*/}
                                 {/*    size={21}*/}
@@ -109,11 +110,11 @@ function TabNavigation() {
                 name="SettingTabNavigation"
                 component={SettingTabNavigation}
                 options={{
-                    tabBarIcon: ({ focused, color }) =>
+                    tabBarIcon: ({focused, color}) =>
                         focused ? (
-                            <MaterialIcons name="menu" size={25} color={color} />
+                            <MaterialIcons name="menu" size={25} color={color}/>
                         ) : (
-                            <MaterialIcons name="menu" size={25} />
+                            <MaterialIcons name="menu" size={25}/>
                         ),
                 }}
             />
@@ -123,7 +124,7 @@ function TabNavigation() {
 
 const TabNavigationWrapper = () => (
     <WraperScreen paddingBottom={0} paddingHorizontal={0}>
-        <TabNavigation />
+        <TabNavigation/>
     </WraperScreen>
 );
 
@@ -137,5 +138,5 @@ const style = StyleSheet.create({
         top: -6, // Đẩy lên trên
         zIndex: 1, // Đảm bảo Avatar nằm trên biểu tượng
     },
-    labelNewIcon: { fontSize: 10 },
+    labelNewIcon: {fontSize: 10},
 });

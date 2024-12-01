@@ -25,6 +25,8 @@ const MessageBox = ({ route, navigation }: any) => {
 
     // Fetch conversations from the API
     const fetchConversations = async (loadMore = false) => {
+        if(!hasMore&&!loadMore)
+            return;
         const requestBody: IGetConversationsBody = {
             token,
             index: loadMore ? messages.length : 0, // Start at the last message if loading more
@@ -52,8 +54,7 @@ const MessageBox = ({ route, navigation }: any) => {
                         return fetchedMessages;
                     }
                 });
-
-                setHasMore(fetchedMessages.length === 20); // If less than PAGE_SIZE, no more messages to load
+                setHasMore(fetchedMessages.length > 0);
             } else {
                 console.error("Failed to fetch messages:", response.meta?.message);
             }
@@ -77,8 +78,9 @@ const MessageBox = ({ route, navigation }: any) => {
                     setLatestId(msg);
                 }
             });
-
-            fetchConversations();
+            if(conversationId != null) {
+                fetchConversations();
+            }
 
             setStompClient(client);
         });
@@ -130,11 +132,7 @@ const MessageBox = ({ route, navigation }: any) => {
         </View>
     );
 
-    const loadMoreMessages = () => {
-        if (hasMore) {
-            fetchConversations(true);
-        }
-    };
+
 
     React.useLayoutEffect(() => {
         navigation.setOptions({
@@ -155,8 +153,8 @@ const MessageBox = ({ route, navigation }: any) => {
                     inverted // Inverted to show latest messages at the bottom
                     contentContainerStyle={{ flexGrow: 1, padding: 10 }}
                     keyboardShouldPersistTaps="handled"
-                    onEndReached={loadMoreMessages} // Trigger loading more when scrolled to bottom
-                    onEndReachedThreshold={0.5}
+                    onEndReached={() => fetchConversations(true)}
+                    onEndReachedThreshold={0.1}
                 />
                 <View style={styles.inputContainer}>
                     <TextInput

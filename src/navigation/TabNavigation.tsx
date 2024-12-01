@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { StyleSheet } from 'react-native';
 import AntdIcon from 'react-native-vector-icons/AntDesign';
@@ -36,7 +36,7 @@ function TabNavigation() {
 
     useFocusEffect(
         React.useCallback(() => {
-            getNotificationCount(); // Cập nhật khi tab nhận tiêu điểm
+            getNotificationCount();
         }, [])
     );
 

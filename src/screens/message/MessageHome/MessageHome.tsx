@@ -18,6 +18,8 @@ import { AppNaviagtionName, MessageNavigationName } from "src/common/constants/n
 import { useSelector } from "react-redux";
 import { selectAuth } from "src/redux/slices/authSlice";
 import { searchAccount } from "src/services/class.service";
+import {FCMEnum} from "src/utils/FCMEnum";
+import FCMService from "src/services/FCMService";
 
 interface IAccount {
     account_id: string;
@@ -32,31 +34,47 @@ const MessageHome: React.FC = () => {
     const [accounts, setAccounts] = useState<IAccount[]>([]);
     const [searchText, setSearchText] = useState("");
     const [loading, setLoading] = useState(false);
-    const [accountPage, setAccountPage] = useState(0);
-    const [hasMoreAccounts, setHasMoreAccounts] = useState(true); // Có thêm dữ liệu không
+    const [, setAccountPage] = useState<number>(0);
+    const [,setIndex] = useState(0);
+    const [hasMoreAccounts, setHasMoreAccounts] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
-
+    const [hasMoreConversation, setHasMoreConversation] = useState(true);
     const auth = useSelector(selectAuth);
     const user = auth.user;
+    let onEndReachedCalledDuringMomentum = true;
 
     useEffect(() => {
-        fetchConversations(0); // Load initial conversations
-    }, []);
+        const handleNotification = async (data: any) => {
+            if (data.data.type === FCMEnum.MESSAGE) {
+                fetchConversations(0);
+            }
+        }
+        FCMService.getInstance().on('newNotification', handleNotification);
+        const unsubscribe = navigation.addListener("focus", () => {
+            setIndex(() => {
+               fetchConversations(0);
+               return 0;
+            });
+        });
+        return unsubscribe;
+    }, [navigation]);
 
     const fetchConversations = async (index: number) => {
         setLoading(true);
+        if(!hasMoreConversation&&index!=0)
+             return;
         try {
             const response = await getListConversationsApi({
                 token: user?.token ?? "",
                 index,
                 count: 10,
             });
-
             if (response.meta.code === "1000") {
                 const { conversations: newConversations } = response.data;
                 setConversations((prev) =>
                     index === 0 ? newConversations : [...prev, ...newConversations]
                 );
+                setHasMoreConversation(newConversations.length > 0)
             }
         } catch (error) {
             console.error("Error fetching conversations:", error);
@@ -65,32 +83,33 @@ const MessageHome: React.FC = () => {
         }
     };
 
-    const searchAccounts = async (page: number) => {
+    const searchAccounts = async (accountPage: number) => {
         if (searchText.trim() === "") {
             setIsSearching(false);
             return;
         }
-        if (!hasMoreAccounts && page !== 0) return;
+
+        if (!hasMoreAccounts && accountPage !== 0) return;
+
         setLoading(true);
         setIsSearching(true);
         try {
             const response = await searchAccount({
                 search: searchText,
                 pageable_request: {
-                    page,
+                    page: accountPage,
                     page_size: 15,
                 },
             });
             if (response.meta.code === "1000") {
                 const newAccounts: IAccount[] = response.data.page_content.map((item: any) => ({
-                    account_id: item.id,
+                    account_id: item.account_id,
                     first_name: item.first_name,
                     last_name: item.last_name,
                     email: item.email,
                 }));
-                setAccounts((prev) => (page === 0 ? newAccounts : [...prev, ...newAccounts]));
-                setHasMoreAccounts(response.data.page_content.length > 0); // Kiểm tra nếu có thêm dữ liệu
-                setAccountPage(page);
+                setAccounts((prev) => (accountPage === 0 ? newAccounts : [...prev, ...newAccounts]));
+                setHasMoreAccounts(response.data.page_content.length == 15);
             }
         } catch (error) {
             console.error("Error searching accounts:", error);
@@ -99,15 +118,29 @@ const MessageHome: React.FC = () => {
         }
     };
 
+    const handleCancelSearch = () => {
+        setIsSearching(false);
+        setSearchText("");
+        setAccounts([]);
+    };
+
     const renderAccount = ({ item }: { item: IAccount }) => (
         <TouchableOpacity
             style={styles.userItem}
-            onPress={() =>
+            onPress={() => {
+                handleCancelSearch(); // Hủy tìm kiếm trước khi navigate
                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                     screen: MessageNavigationName.MessageBox,
-                    params: { userId: item.account_id, username: item.first_name + ' ' + item.last_name },
-                })
-            }
+                    params: {
+                        email: user?.email,
+                        userId: user?.id,
+                        userName: `${item.first_name} ${item.last_name}`,
+                        token: user?.token,
+                        receiverId: item.account_id,
+                        conversationId: null,
+                    },
+                });
+            }}
         >
             <Text style={styles.name}>{`${item.first_name} ${item.last_name}`}</Text>
             <Text style={styles.email}>{item.email}</Text>
@@ -123,24 +156,45 @@ const MessageHome: React.FC = () => {
                     value={searchText}
                     onChangeText={(text) => {
                         setSearchText(text);
-                        setAccountPage(0);
                         setHasMoreAccounts(true);
                     }}
                 />
                 <TouchableOpacity
                     style={styles.searchIcon}
-                    onPress={() => searchAccounts(0)} // Bắt đầu tìm kiếm
+                    onPress={() => {
+                        setAccounts([]);
+                        setAccountPage(() => {
+                           searchAccounts(0)
+                           return 1;
+                       })
+                    }}
                 >
                     <Icon name="search" size={20} color="#333" />
                 </TouchableOpacity>
+                {isSearching && (
+                    <TouchableOpacity style={styles.cancelIcon} onPress={handleCancelSearch}>
+                        <Text style={styles.cancelText}>Hủy</Text>
+                    </TouchableOpacity>
+                )}
             </View>
             {isSearching ? (
                 <FlatList
                     data={accounts}
                     keyExtractor={(item) => item.account_id}
                     renderItem={renderAccount}
-                    onEndReached={() => searchAccounts(accountPage + 1)} // Tải thêm dữ liệu
-                    onEndReachedThreshold={0.5}
+                    onMomentumScrollBegin={() => {
+                        onEndReachedCalledDuringMomentum = false;
+                    }}
+                    onEndReached={() => {
+                        if (!onEndReachedCalledDuringMomentum) {
+                            setAccountPage((prevPage) => {
+                                searchAccounts(prevPage);
+                                return prevPage+1;
+                            });
+                            onEndReachedCalledDuringMomentum = true;
+                        }
+                    }}
+                    onEndReachedThreshold={0.1}
                     ListFooterComponent={
                         loading ? <ActivityIndicator size="small" color="#0000ff" /> : null
                     }
@@ -151,22 +205,38 @@ const MessageHome: React.FC = () => {
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={({ item }) => (
                         <TouchableOpacity
-                            style={styles.userItem}
+                            style={((item.last_message.unread!==0)&&(item.last_message.sender.id.toString()!==user?.id))?styles.unreadUserItem:styles.userItem}
                             onPress={() => {
-                                console.log(item.id)
                                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                                     screen: MessageNavigationName.MessageBox,
-                                    params: {email: user?.email, userId: user?.id, userName: item.partner.name, conversationId: item.id, token: user?.token, receiverId: item.partner.id },
-                                })
-                            }
-                            }
+                                    params: {
+                                        email: user?.email,
+                                        userId: user?.id,
+                                        userName: item.partner.name,
+                                        conversationId: item.id,
+                                        token: user?.token,
+                                        receiverId: item.partner.id,
+                                    },
+                                });
+                            }}
                         >
                             <Text style={styles.name}>{item.partner.name}</Text>
                             <Text style={styles.message}>{item.last_message.message}</Text>
                         </TouchableOpacity>
                     )}
-                    // onEndReached={() => fetchConversations(accountPage + 1)}
-                    onEndReachedThreshold={0.5}
+                    onEndReachedThreshold={0.1}
+                    onMomentumScrollBegin={() => {
+                        onEndReachedCalledDuringMomentum = false;
+                    }}
+                    onEndReached={() => {
+                        if (!onEndReachedCalledDuringMomentum) {
+                            setIndex(prevState => {
+                                fetchConversations(prevState);
+                                return prevState+1;
+                            })
+                            onEndReachedCalledDuringMomentum = true;
+                        }
+                    }}
                     ListFooterComponent={
                         loading ? <ActivityIndicator size="small" color="#0000ff" /> : null
                     }
@@ -195,14 +265,28 @@ const styles = StyleSheet.create({
         marginLeft: 10,
         padding: 10,
     },
+    cancelIcon: {
+        marginLeft: 10,
+        padding: 10,
+    },
+    cancelText: {
+        fontSize: 16,
+        color: "red",
+    },
+    unreadUserItem: {
+        padding: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: "#ddd",
+        backgroundColor: "#da9898",
+    },
     userItem: {
         padding: 10,
         borderBottomWidth: 1,
         borderBottomColor: "#ddd",
     },
-    name: { fontSize: 16, fontWeight: "bold" },
-    email: { fontSize: 14, color: "#555" },
-    message: { fontSize: 14, color: "#777" },
+    name: { fontSize: 18, fontWeight: "bold" },
+    email: { fontSize: 16, color: "#000000" },
+    message: { fontSize: 16, color: "#000000" },
 });
 
 export default MessageHome;

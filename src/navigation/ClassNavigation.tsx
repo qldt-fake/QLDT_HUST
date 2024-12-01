@@ -1,18 +1,21 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ClassListPage from 'src/screens/classes/classes-for-teacher/ClassListPage';
-import ClassDetail from 'src/screens/classes/classes-for-teacher/ClassDeatail';
-import CreateClass from 'src/screens/classes/classes-for-teacher/CreateClass';
-import EditClass from 'src/screens/classes/classes-for-teacher/EditClass';
-import RegisterClass from 'src/screens/classes/classes-for-teacher/RegisterClass';
+import ClassListPage from 'src/screens/classes/general/ClassListPage';
+import ClassDetail from 'src/screens/classes/general/ClassDeatail';
+import CreateClass from 'src/screens/classes/general/CreateClass';
+import EditClass from 'src/screens/classes/general/EditClass';
+import RegisterClass from 'src/screens/classes/general/RegisterClass';
 import { ClassNavigationName } from 'src/common/constants/nameScreen';
-import ClassHeader from 'src/screens/classes/classes-for-teacher/ClassHeader';
+import ClassHeader from 'src/screens/classes/general/ClassHeader';
 import { color } from 'src/common/constants/color';
 import SurveyNavigation from './SurveyNavigation';
 import MaterialNavigation from './MaterialNavigation';
 import ClassListOpen from 'src/screens/classes/classes-for-teacher/classOpen/ClassOpen';
 import AddStudent from 'src/screens/classes/classes-for-teacher/AddStudent';
 import StudentProfile from 'src/screens/classes/classes-for-teacher/classOpen/studentProfile';
+import { ModalProvider } from 'src/hooks/useBottomModal';
+import AbsenceNavigation from './AbsenceNavigation';
+
 const Stack = createNativeStackNavigator();
 
 const ClassNavigation = () => {
@@ -72,7 +75,7 @@ const ClassNavigation = () => {
           headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Edit Class' />
         }}
-        component={EditClass}
+        component={EditClass as any}
       />
       <Stack.Screen
         name={ClassNavigationName.RegisterClass}
@@ -100,7 +103,7 @@ const ClassNavigation = () => {
         }}
         component={ClassListOpen}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={ClassNavigationName.AddStudent}
         options={{
           headerShown: true,
@@ -113,7 +116,7 @@ const ClassNavigation = () => {
         }}
         component={AddStudent}
       />
-       <Stack.Screen
+      <Stack.Screen
         name={ClassNavigationName.GetStudentInfor}
         options={{
           headerShown: true,
@@ -128,6 +131,7 @@ const ClassNavigation = () => {
       />
       {SurveyNavigation()}
       {MaterialNavigation()}
+      {AbsenceNavigation()}
     </Stack.Group>
   );
 };

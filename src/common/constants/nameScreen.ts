@@ -116,7 +116,12 @@ export enum SurveyNavigationName {
   SurveyList = 'SurveyList',
   CreateSurvey = 'CreateSurvey',
   EditSurvey = 'EditSurvey',
-  SurveyDetail = 'SurveyDetail'
+  SurveyDetail = 'SurveyDetail',
+  SubmitSurvey = 'SubmitSurvey',
+  StudentAssignments = 'StudentAssignments',
+  SubmissionList = 'SubmissionList',
+  GradeSubmission = 'GradeSubmission',
+  SubmissionDetail = 'SubmissionDetail',
 }
 
 export enum MaterialNavigationName {
@@ -125,4 +130,13 @@ export enum MaterialNavigationName {
   MaterialList = 'MaterialList',
   MaterialDetail = 'MaterialDetail',
   EditMaterial = 'EditMaterial'
+}
+
+export enum AbsenceNavigationName {
+  Absence = 'Absence',
+  RequestAbsence = 'RequestAbsence',
+  AbsenceList = 'AbsenceList',
+  ReviewAbsence = 'ReviewAbsence',
+  AbsenceRequestList = 'AbsenceRequestList',
+  StudentAbsenceRequests = 'StudentAbsenceRequests',
 }

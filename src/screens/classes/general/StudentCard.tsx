@@ -10,6 +10,7 @@ import { addStudentToClass } from 'src/services/class.service';
 import { useAppDispatch } from 'src/redux';
 import { showLoading, hideLoading } from 'src/redux/slices/loadingSlice';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { ClassNavigationType } from 'src/common/type/navigation';
 export const StudentCard = ({ props, onAddStudent }: { props: any; onAddStudent?: any }) => {
   const navigation: NavigationProp<ClassNavigationType> = useNavigation();
   const auth = useSelector(selectAuth);

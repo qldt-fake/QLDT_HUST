@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   Alert
 } from 'react-native';
-import ClassHeader from './ClassHeader';
+import ClassHeader from '../general/ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import DateTimePicker from 'react-native-date-picker';
 import { color } from 'src/common/constants/color';
@@ -18,43 +18,31 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
-import { CODE_OK } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { AbsenceRequestProps, IAbsencePayload } from 'src/interfaces/absence.interface';
+import { requestAbsenceApi } from 'src/services/absence.service';
 
-interface NewSurvey {
-  title: string;
-  description: string;
-  file: any;
-  deadline: Date | null;
-}
-
-interface CreateSurveyProps {
-  route: {
-    params: {
-      classId: string;
-    };
-  };
-}
-
-const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
+const AbsenceRequest: React.FC<any> = ({route} : any) => {
   const auth = useSelector(selectAuth);
   const user = auth.user;
-
+  const classId = route?.params?.classId;
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const [newSurvey, setNewSurvey] = useState<NewSurvey>({
+  const [newAbsenceRequest, setNewAbsenceRequest] = useState<IAbsencePayload>({
     title: '',
-    description: '',
+    reason: '',
     file: null,
-    deadline: null
+    date: null
   });
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
 
-  const handleChange = (name: keyof NewSurvey, value: string | object | Date | null | any) => {
-    setNewSurvey(prev => ({
+  const handleChange = (name: keyof IAbsencePayload, value: string | object | Date | null | any) => {
+    setNewAbsenceRequest(prev => ({
       ...prev,
       [name]: value
     }));
@@ -73,27 +61,27 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
 
   const validate = () => {
     // Kiểm tra nếu tên bài kiểm tra không được nhập
-    if (!newSurvey.title.trim()) {
+    if (!newAbsenceRequest?.title?.trim()) {
       Alert.alert('Lỗi', 'Tên bài kiểm tra là trường bắt buộc');
       return false;
     }
 
     // Kiểm tra nếu không có mô tả hoặc tài liệu được tải lên
-    if (!newSurvey.description.trim() && !newSurvey.file) {
+    if (!newAbsenceRequest?.reason?.trim() && !newAbsenceRequest.file) {
       Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
       return false;
     }
 
     // Giới hạn ký tự cho phần mô tả (ví dụ: tối đa 500 ký tự)
     const MAX_DESCRIPTION_LENGTH = 500;
-    if (newSurvey.description.length > MAX_DESCRIPTION_LENGTH) {
+    if ((newAbsenceRequest?.reason?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
 
     // Kiểm tra thời gian bắt đầu và thời gian kết thúc
     const currentTime = new Date();
-    if (newSurvey.deadline && newSurvey.deadline <= currentTime) {
+    if (newAbsenceRequest.date && newAbsenceRequest.date <= currentTime) {
       Alert.alert('Lỗi', 'Thời gian kết thúc phải lớn hơn thời gian hiện tại');
       return false;
     }
@@ -107,61 +95,60 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
     }
 
     try {
-      if (!newSurvey.title || !newSurvey.deadline) {
-        Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
-
+   
       const payload = {
-        token: user?.token, 
-        classId: route.params.classId, 
-        title: newSurvey.title,
-        description: newSurvey.description,
-        deadline: dayjs(newSurvey.deadline).format('YYYY-MM-DDTHH:mm:ss'),
-        file: newSurvey.file
+        token: user?.token,
+        classId: classId,
+        title: newAbsenceRequest.title,
+        reason: newAbsenceRequest.reason,
+        date: dayjs(newAbsenceRequest.date).format('YYYY-MM-DD'),
+        file: newAbsenceRequest.file
       };
-
-      const res = await createSurveyApi(payload);
+      console.log('payload', payload);
+      dispatch(showLoading());
+      const res = await requestAbsenceApi(payload);
+      console.log('res', res);
       if (res) {
-        switch (res.meta.code) {
+        switch (res.meta?.code) {
           case CODE_OK:
-            Alert.alert('Thành công', 'Tạo survey thành công');
+            Alert.alert('Thành công', 'Tạo yêu cầu xin nghỉ thành công');
             navigation.goBack();
             break;
-          case ReponseCode.INVALID_TOKEN:
-            Alert.alert('Error', 'Token không hợp lệ');
+          case INVALID_TOKEN:
+            Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
             break;
-          case ReponseCode.NOT_ACCESS:
-            Alert.alert('Error', 'You do not have permission to create survey');
+          case NOT_ACCESS:
+            Alert.alert('Lỗi', 'Bạn không có quyền tạo đơn xin nghỉ');
             break;
           default:
-            Alert.alert('Error', res.data);
+            Alert.alert('Lỗi', res.data ?? 'Có lỗi xảy ra với sever');
             break;
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to create survey');
+      Alert.alert('Lỗi', 'Lỗi khi tạo yêu cầu xin nghỉ');
       console.error(error);
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Create Survey' />
       <View style={styles.body}>
         <TextInput
           style={styles.name}
-          value={newSurvey.title}
+          value={newAbsenceRequest?.title as string}
           onChangeText={text => handleChange('title', text)}
-          placeholder='Survey Title *'
+          placeholder='Title'
           placeholderTextColor={color.submitBtnRed}
         />
         <TextInput
-          style={[styles.name, styles.description]}
-          value={newSurvey.description}
-          onChangeText={text => handleChange('description', text)}
-          placeholder='Description'
+          style={[styles.name, styles.reason]}
+          value={newAbsenceRequest?.reason as string}
+          onChangeText={text => handleChange('reason', text)}
+          placeholder='Reason'
           multiline
           numberOfLines={6}
           placeholderTextColor={color.submitBtnRed}
@@ -175,20 +162,20 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
               numberOfLines={1}
               ellipsizeMode='tail'
             >
-              {newSurvey?.file ? newSurvey.file.name : 'Upload File'}
+              {newAbsenceRequest?.file ? newAbsenceRequest.file.name : 'Upload File'}
             </Text>
             <Icon name='caret-up' size={20} color='#fff' />
           </>
         </TouchableHighlight>
         {isOpenDatePicker && (
           <DateTimePicker
-            date={newSurvey.deadline ?? new Date()}
+            date={newAbsenceRequest?.date as Date ?? new Date()}
             onConfirm={date => {
               setIsOpenDatePicker(false);
-              handleChange('deadline', date);
+              handleChange('date', date);
             }}
             onCancel={() => setIsOpenDatePicker(false)}
-            mode='datetime'
+            mode='date'
             androidVariant='nativeAndroid'
             textColor={color.red}
             modal
@@ -198,14 +185,14 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
         <View style={styles.period}>
           <TouchableOpacity style={styles.selectPeriod} onPress={handleShowDatePicker}>
             <Text style={{ color: color.borderRed }}>
-              {newSurvey.deadline ? newSurvey.deadline.toLocaleString() : 'Deadline'}
+              {newAbsenceRequest.date ? newAbsenceRequest.date.toLocaleString() : 'Date'}
             </Text>
             <Icon name='caret-down' size={20} color={color.borderRed} />
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={[styles.text, styles.submitButtonText]}>Submit</Text>
+          <Text style={[styles.text, styles.submitButtonText]}>Tạo</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -234,7 +221,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontStyle: 'italic'
   },
-  description: {
+  reason: {
     height: 200,
     textAlignVertical: 'top'
   },
@@ -289,4 +276,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default CreateSurvey;
+export default AbsenceRequest;

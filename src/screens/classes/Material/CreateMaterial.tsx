@@ -8,34 +8,18 @@ import {
   TouchableHighlight,
   Alert
 } from 'react-native';
-import ClassHeader from './ClassHeader';
+import ClassHeader from '../general/ClassHeader';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { color } from 'src/common/constants/color';
 import { createMaterialApi } from 'src/services/material.service';
-import { ReponseCode } from 'src/common/enum/reponseCode';
-// import { useSelector } from 'react-redux';
-// import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
-import { CODE_OK } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
-
-interface NewMaterial {
-  title: string;
-  description: string;
-  file: any;
-  materialType: string;
-}
-
-interface CreateMaterialProps {
-  route: {
-    params: {
-      classId: string;
-    };
-  };
-}
+import { CreateMaterialProps, IMaterialPayload } from 'src/interfaces/material.interface';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
   const auth = useSelector(selectAuth);
@@ -44,14 +28,14 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
 
-  const [newMaterial, setNewMaterial] = useState<NewMaterial>({
+  const [newMaterial, setNewMaterial] = useState<IMaterialPayload>({
     title: '',
     description: '',
     file: null,
     materialType: ''
   });
 
-  const handleChange = (name: keyof NewMaterial, value: string | object | null | any) => {
+  const handleChange = (name: keyof IMaterialPayload, value: string | object | null | any) => {
     setNewMaterial(prev => ({
       ...prev,
       [name]: value
@@ -60,27 +44,31 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
 
   const handleSelectFile = async () => {
     const file = await selectFile();
+    console.log("File",file);
+    console.log("File Name",file.name);
     if (file) {
-      // Extract file extension for materialType
+      // Extract file extension for 
+   
       const fileExtension = file?.name?.split('.').pop()?.toUpperCase() || '';
+      console.log(fileExtension);
       handleChange('file', file);
       handleChange('materialType', fileExtension);
     }
   };
 
   const validate = () => {
-    if (!newMaterial.title.trim()) {
+    if (!newMaterial.title?.trim()) {
       Alert.alert('Lỗi', 'Tên tài liệu là trường bắt buộc');
       return false;
     }
 
-    if (!newMaterial.description.trim() && !newMaterial.file) {
+    if (!newMaterial.description?.trim() && !newMaterial.file) {
       Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
       return false;
     }
 
     const MAX_DESCRIPTION_LENGTH = 500;
-    if (newMaterial.description.length > MAX_DESCRIPTION_LENGTH) {
+    if ((newMaterial.description?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
@@ -107,46 +95,47 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
         file: newMaterial.file,
         materialType: newMaterial.materialType
       };
-
+      dispatch(showLoading());
       const res = await createMaterialApi(payload);
       if (res) {
-        switch (res.meta.code) {
+        switch (res.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Tạo tài liệu thành công');
             navigation.goBack();
             break;
-          case ReponseCode.INVALID_TOKEN:
-            Alert.alert('Error', 'Token không hợp lệ');
+          case INVALID_TOKEN:
+            Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
             break;
-          case ReponseCode.NOT_ACCESS:
-            Alert.alert('Error', 'Bạn không có quyền tạo tài liệu');
+          case NOT_ACCESS:
+            Alert.alert('Lỗi', 'Bạn không có quyền tạo tài liệu');
             break;
           default:
-            Alert.alert('Error', res.data);
+            Alert.alert('Lỗi', res.data);
             break;
         }
       }
     } catch (error) {
-      Alert.alert('Error', 'Không thể tạo tài liệu');
+      Alert.alert('Lỗi', 'Hiện không thể tạo tài liệu');
       console.error(error);
+    } finally {
+      dispatch(hideLoading());
     }
   };
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Create Material' />
       <View style={styles.body}>
         <TextInput
           style={styles.name}
-          value={newMaterial.title}
+          value={newMaterial.title as string}
           onChangeText={text => handleChange('title', text)}
           placeholder='Material Title *'
           placeholderTextColor={color.submitBtnRed}
         />
         <TextInput
           style={[styles.name, styles.description]}
-          value={newMaterial.description}
+          value={newMaterial.description as string}
           onChangeText={text => handleChange('description', text)}
           placeholder='Description'
           multiline

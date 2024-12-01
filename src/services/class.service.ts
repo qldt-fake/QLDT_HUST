@@ -58,6 +58,7 @@ export const addStudentToClass = async (data: any): Promise<IBodyResponse<any, a
 };
 export const getUserInfor = async (data: any): Promise<IBodyResponse<any, any>> => {
   return postMethodApi(ClassApi.GET_USER_INFOR, data);
+  
 };
 
 

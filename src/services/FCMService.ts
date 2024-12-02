@@ -74,7 +74,6 @@ class FCMService {
     private handleBackgroundNotifications(): void {
         messaging().setBackgroundMessageHandler(async (remoteMessage) => {
             console.log('Background Notification:', remoteMessage);
-
             const { notification, data } = remoteMessage;
 
 

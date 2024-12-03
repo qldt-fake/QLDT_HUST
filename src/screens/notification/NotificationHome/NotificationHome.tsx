@@ -27,6 +27,7 @@ type Notification = {
     title: string;
     content: string;
     date: string;
+    image_url: string;
     read: boolean;
 };
 
@@ -102,7 +103,8 @@ const NotificationHome: React.FC = () => {
                         title: getTitleDetail(item.type),
                         content: item.message,
                         date: item.sent_time,
-                        read: item.status !== 'UNREAD'
+                        read: item.status !== 'UNREAD',
+                        image_url: item.image_url
                     })
                 );
                 setHasMore(notificationsData.length === PAGE_SIZE);
@@ -144,7 +146,8 @@ const NotificationHome: React.FC = () => {
                                     title: getTitleDetail(item.type),
                                     content: item.message,
                                     date: item.sent_time,
-                                    read: item.status !== 'UNREAD'
+                                    read: item.status !== 'UNREAD',
+                                    image_url: item.image_url
                                 }));
                             setNotifications(prevState => [...notificationsData, ...prevState]);
                         }
@@ -182,7 +185,8 @@ const NotificationHome: React.FC = () => {
                                     screen: NotificationNavigationName.NotificationDetail,
                                     params: {
                                         title: item.title,
-                                        content: item.content
+                                        content: item.content,
+                                        image: item.image_url
                                     },
                                     navigation: navigation
                                 });

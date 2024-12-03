@@ -19,12 +19,13 @@ import { DATE_TIME_FORMAT } from 'src/common/constants';
 import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import {sendNotificationApi} from "src/services/noti.services";
 
 const GradeSubmission = () => {
   const route = useRoute();
   console.log(route.params);
   const navigation = useNavigation();
-  const { assignment_id, submission_time, id, text_response, file_url, student_account } =
+  const { assignment_id, submission_time, id, text_response, file_url, student_account, title } =
     route.params as any;
 
   const [score, setScore] = useState('');
@@ -56,6 +57,13 @@ const GradeSubmission = () => {
         switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Chấm điểm thành công');
+            await sendNotificationApi({
+              token: auth?.user?.token,
+              //TODO bổ sung thêm mã lớp
+              message: "Bạn được điểm " + score + " assignment " + title,
+              type: " ASSIGNMENT_GRADE",
+              toUser: student_account.student_id
+            });
             navigation.goBack();
             break;
           case INVALID_TOKEN:

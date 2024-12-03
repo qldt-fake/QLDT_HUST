@@ -148,7 +148,7 @@ const MessageBox = ({route, navigation}: any) => {
 
     const renderMessage = ({item}: any) => (
         <TouchableWithoutFeedback
-            onLongPress={() => item.sender == "me" && item.text!=null && handleLongPress(item.id)}
+            onLongPress={() => conversationId!=null && item.sender == "me" && item.text!=null && handleLongPress(item.id)}
         >
             <View
                 style={[

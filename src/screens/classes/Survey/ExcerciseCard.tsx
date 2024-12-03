@@ -105,7 +105,7 @@ export const ExcerciseCard = ({
           file_url: file_url
         });
     } else {
-      navigation.navigate(SurveyNavigationName.SubmissionList, { id: id });
+      navigation.navigate(SurveyNavigationName.SubmissionList, { id: id, title: title });
     }
   };
 

@@ -9,6 +9,7 @@ import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { reviewAbsenceApi } from 'src/services/absence.service';
 import { absenceStatus } from 'src/common/enum/commom';
+import {sendNotificationApi} from "src/services/noti.services";
 
 const AbsenceReview = ({ route }: any) => {
   const navigation = useNavigation();
@@ -34,6 +35,14 @@ const AbsenceReview = ({ route }: any) => {
           case CODE_OK:
             Alert.alert('Thành công', 'Đã cập nhật trạng thái đơn xin nghỉ');
             setCurrentStatus(newStatus);
+            await sendNotificationApi({
+              token: auth?.user?.token,
+              // TODO bổ sung thêm mã lớp
+              message: newStatus == absenceStatus.ACCEPTED? "Giảng viên đã chấp thuận đơn xin nghỉ học" :"Giảng viên đã từ chối đơn xin nghỉ học",
+              type: newStatus == absenceStatus.ACCEPTED?"ACCEPT_ABSENCE_REQUEST":"REJECT_ABSENCE_REQUEST",
+              toUser: id,
+
+            });
             navigation.goBack();
             break;
           case INVALID_TOKEN:

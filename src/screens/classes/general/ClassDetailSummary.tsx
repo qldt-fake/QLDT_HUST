@@ -21,6 +21,7 @@ const ClassDetailSummary: React.FC<ClassDetailSummaryProps> = ({
   class_type,
   student_count,
   lecturer_name
+    //
 }) => {
   return (
     <View style={styles.container}>

@@ -37,6 +37,7 @@ const PostScreen = () => {
         account_id: user?.id,
         class_id: classId
       });
+      console.log(res);
       if (res) {
         switch (res.meta?.code) {
           case CODE_OK:

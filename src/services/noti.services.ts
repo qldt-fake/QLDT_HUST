@@ -1,12 +1,8 @@
 import { postMethodApi } from 'src/services/api';
-import { NotificationApi } from 'src/services/clientConstant';
+import {NotificationApi, SurveyApi} from 'src/services/clientConstant';
+import {ISurveyPayload} from "src/interfaces/survey.interface";
+import axiosInstance from "src/services/axiosInstance";
 
-export interface ISendNotificationBody {
-  token: string;
-  message: string;
-  to_user: number;
-  type: 'ABSENCE' | 'ACCEPT_ABSENCE_REQUEST' | 'REJECT_ABSENCE_REQUEST' | 'ASSIGNMENT_GRADE';
-}
 
 export interface IGetUnreadNotificationBody {
   token: string;
@@ -31,6 +27,7 @@ export interface INotificationResponse {
   message: string;
   recipient_id: number;
   sent_time: string;
+  image_url: string;
 }
 
 export interface IBodyResponse<T> {
@@ -38,10 +35,34 @@ export interface IBodyResponse<T> {
   message: string;
   data: T;
 }
-export const sendNotificationApi = async (
-  data: ISendNotificationBody
-): Promise<IBodyResponse<any>> => {
-  return postMethodApi(NotificationApi.SEND_NOTIFICATIONS, data);
+export const sendNotificationApi = async (payload:any) : Promise<IBodyResponse<any> | null> => {
+  const formData = new FormData();
+
+  // Add basic fields
+  formData.append('token', payload.token as string);
+  // formData.append('title', payload.title as string);
+  formData.append('message', payload.message as string);
+  formData.append('toUser', payload.toUser as string);
+  formData.append('type', payload.type as string);
+
+  // Add file if present
+  if (payload.image) {
+    formData.append('file', payload.image);
+  }
+
+  console.log('formData', formData);
+  try {
+    return await axiosInstance.post(NotificationApi.SEND_NOTIFICATIONS, formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+    );
+  } catch (error) {
+    console.error('Error:', error);
+    return null;
+  }
 };
 
 export const getUnreadNotificationApi = async (

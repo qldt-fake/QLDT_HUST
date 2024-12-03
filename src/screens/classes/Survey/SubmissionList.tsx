@@ -24,7 +24,7 @@ import { SurveyNavigationType } from 'src/common/type/navigation';
 
 
 const SubmissionList = ({ route }: any) => {
-  const { id }: { id: string } = route.params;
+  const { id , title}: { id: string, title: string } = route.params;
   const [submissions, setSubmissions] = useState([]);
   const navigation: NavigationProp<SurveyNavigationType> = useNavigation();
   const auth = useSelector(selectAuth);
@@ -68,7 +68,7 @@ const SubmissionList = ({ route }: any) => {
     const { assignment_id, submission_time, text_response, file_url, student_account, id } = item;
     navigation.navigate(
       SurveyNavigationName.GradeSubmission,
-      { assignment_id, submission_time, id, text_response, file_url, student_account }
+      { assignment_id, submission_time, id, text_response, file_url, student_account, title }
     );
   };
 

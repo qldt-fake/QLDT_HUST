@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import MessageNavigation from "src/navigation/MessageNavigation";
+import MessageNavigation from 'src/navigation/MessageNavigation';
 
 export enum AppNaviagtionName {
   AuthNavigation = 'AuthNavigation',
@@ -92,7 +92,7 @@ export enum AddMoneyNavigationName {
 export enum NotificationNavigationName {
   NotificationDetail = 'NotificationDetail'
 }
-export enum MessageNavigationName{
+export enum MessageNavigationName {
   MessageBox = 'MessageBox'
 }
 export enum HomeNavigationName {
@@ -108,8 +108,10 @@ export enum ClassNavigationName {
   RegisterClass = 'RegisterClass',
   ClassListOpen = 'ClassListOpen',
   AddStudent = 'AddStudent',
-  GetStudentInfor = 'GetStudentInfor'
-
+  GetStudentInfor = 'GetStudentInfor',
+  AttendanceScreen = 'AttendanceScreen',
+  ListDateAttendance = 'ListDateAttendance',
+  GetAttendanceList = 'GetAttendanceList'
 }
 export enum SurveyNavigationName {
   Survey = 'Survey',
@@ -121,7 +123,7 @@ export enum SurveyNavigationName {
   StudentAssignments = 'StudentAssignments',
   SubmissionList = 'SubmissionList',
   GradeSubmission = 'GradeSubmission',
-  SubmissionDetail = 'SubmissionDetail',
+  SubmissionDetail = 'SubmissionDetail'
 }
 
 export enum MaterialNavigationName {
@@ -138,5 +140,13 @@ export enum AbsenceNavigationName {
   AbsenceList = 'AbsenceList',
   ReviewAbsence = 'ReviewAbsence',
   AbsenceRequestList = 'AbsenceRequestList',
-  StudentAbsenceRequests = 'StudentAbsenceRequests',
+  StudentAbsenceRequests = 'StudentAbsenceRequests'
+}
+
+export enum AttendanceNavigationName {
+  AttendanceScreen = 'AttendanceScreen',
+  AttendanceListPage = 'AttendanceListPage',
+  ListDateAttendanceScreen = 'ListDateAttendanceScreen',
+  AttendanceMain = 'AttendanceMain',
+  GetAttendanceRecord = 'GetAttendanceRecord'
 }

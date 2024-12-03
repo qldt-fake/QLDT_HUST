@@ -89,7 +89,9 @@ const ClassListPage = () => {
     }
   };
 
-  const renderItem = ({ item }: { item: any }) => <ClassCard {...item} setClassList={setClassList} />;
+  const renderItem = ({ item }: { item: any }) => (
+    <ClassCard {...item} setClassList={setClassList} />
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -103,25 +105,25 @@ const ClassListPage = () => {
           />
         ) : (
           <EmptyState
-            title={"Bạn hiện chưa " + (role === Roles.LECTURER ? "quản lý " : "đăng ký ") + 'lớp nào trong kỳ học này'}
+            title={
+              'Bạn hiện chưa ' +
+              (role === Roles.LECTURER ? 'quản lý ' : 'đăng ký ') +
+              'lớp nào trong kỳ học này'
+            }
           />
         )}
       </View>
       {totalRecords > 0 && (
         <View style={styles.pagination}>
           <View style={styles.pageButtonContainer}>
-            <Button
-              title="<"
-              onPress={handlePreviousPage}
-              disabled={currentPage === 1}
-            />
+            <Button title='<' onPress={handlePreviousPage} disabled={currentPage === 1} />
           </View>
           <Text style={styles.pageIndicator}>
             {`${currentPage} / ${Math.ceil(totalRecords / itemsPerPage)}`}
           </Text>
           <View style={styles.pageButtonContainer}>
             <Button
-              title=">"
+              title='>'
               onPress={handleNextPage}
               disabled={currentPage === Math.ceil(totalRecords / itemsPerPage)}
             />

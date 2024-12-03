@@ -44,11 +44,11 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
 
   const handleSelectFile = async () => {
     const file = await selectFile();
-    console.log("File",file);
-    console.log("File Name",file.name);
+    console.log('File', file);
+    console.log('File Name', file.name);
     if (file) {
-      // Extract file extension for 
-   
+      // Extract file extension for
+
       const fileExtension = file?.name?.split('.').pop()?.toUpperCase() || '';
       console.log(fileExtension);
       handleChange('file', file);

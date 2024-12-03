@@ -107,3 +107,8 @@ export enum absenceStatus {
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED'
 }
+export enum StatusAttendance {
+  PRESENT = 'PRESENT',
+  EXCUSED_ABSENCE = 'EXCUSED_ABSENCE',
+  UNEXCUSED_ABSENCE = 'UNEXCUSED_ABSENCE',
+}

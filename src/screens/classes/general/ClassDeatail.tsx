@@ -120,7 +120,7 @@ const ClassDetail = ({ route }: { route: any }) => {
     <classDeatailContext.Provider value={classId}>
       <Tab.Navigator
         screenOptions={{
-          tabBarLabelStyle: { fontSize: 12 },
+          tabBarLabelStyle: { fontSize: 8 },
           tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
         }}
       >

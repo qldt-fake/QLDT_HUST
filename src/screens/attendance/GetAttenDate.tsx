@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Alert, FlatList, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Text, Card, IconButton } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -6,7 +6,7 @@ import { CODE_OK } from 'src/common/constants/responseCode';
 import { selectAuth } from 'src/redux/slices/authSlice';
 import { getDateAtendance } from 'src/services/attendance.service';
 import moment from 'moment';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { AttendanceNavigationName } from 'src/common/constants/nameScreen';
 
 interface RouteParams {
@@ -17,10 +17,6 @@ interface RouteParams {
   };
 }
 
-interface AttendanceDate {
-  date: string;
-}
-
 const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
   const { classId } = route.params;
   const [attendanceDates, setAttendanceDates] = useState<string[]>([]); // State to store attendance dates
@@ -29,7 +25,7 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
   const user = auth?.user;
   const navigation: NavigationProp<any> = useNavigation();
 
-  const fetchAttendanceDates = async (): Promise<void> => {
+  const fetchAttendanceDates = useCallback(async (): Promise<void> => {
     try {
       const res = await getDateAtendance({
         token: user?.token,
@@ -43,18 +39,19 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
     } catch (error) {
       console.error('Error fetching attendance dates:', error);
     }
-  };
+  }, [user?.token, classId]);
 
-  useEffect(() => {
-    fetchAttendanceDates();
-  }, []); // Fetch data on component mount
+  useFocusEffect(
+    useCallback(() => {
+      fetchAttendanceDates();
+    }, [fetchAttendanceDates])
+  );
 
   const handleDatePress = (item: string): void => {
     setSelectedDate(item);
     navigation.navigate(AttendanceNavigationName.AttendanceListPage, { classId, item });
   };
 
-  // Function to format date
   const formatDate = (date: string): string => {
     return moment(date).format('DD/MM/YYYY'); // Format date as dd/mm/yyyy
   };
@@ -75,7 +72,7 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
             </Card>
           </TouchableOpacity>
         )}
-        contentContainerStyle={styles.listContainer} // Added padding to list
+        contentContainerStyle={styles.listContainer}
       />
     </View>
   );
@@ -124,7 +121,7 @@ const styles = StyleSheet.create({
     color: '#d32f2f'
   },
   listContainer: {
-    paddingBottom: 80 // Add padding at the bottom of the list
+    paddingBottom: 80
   }
 });
 

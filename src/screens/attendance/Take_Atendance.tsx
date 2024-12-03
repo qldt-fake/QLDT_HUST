@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import DatePicker from 'react-native-date-picker';
 import { useSelector } from 'react-redux';
@@ -8,13 +8,13 @@ import { takeAttendanceApi } from 'src/services/attendance.service';
 import {
   CODE_OK,
   INVALID_TOKEN,
-  NO_DATA,
   NOT_ACCESS,
   PARAM_VALUE_INVALID
 } from 'src/common/constants/responseCode';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { RouteProp } from '@react-navigation/native';
+import { RouteProp, useFocusEffect } from '@react-navigation/native';
 import { useAppDispatch } from 'src/redux';
+import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
 // Định nghĩa kiểu dữ liệu cho navigation stack
 type RootStackParamList = {
@@ -50,21 +50,21 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
   const auth = useSelector(selectAuth);
   const user = auth?.user;
 
-  // Fetch class details and students
   const fetchClassDetail = useCallback(async () => {
     try {
+      dispatch(showLoading());
       const res = await getClassApi({
         token: user?.token,
         role: user?.role,
         account_id: user?.id,
         class_id: classId
       });
-
+      dispatch(hideLoading());
       if (res?.data && res.meta.code === CODE_OK) {
         setAttendanceList(
           res.data.student_accounts.map((student: StudentAccount) => ({
             ...student,
-            present: true // Default attendance status
+            present: true
           }))
         );
       } else {
@@ -76,9 +76,11 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
     }
   }, [user, classId]);
 
-  useEffect(() => {
-    fetchClassDetail();
-  }, [fetchClassDetail]);
+  useFocusEffect(
+    useCallback(() => {
+      fetchClassDetail();
+    }, [fetchClassDetail])
+  );
 
   const toggleAttendance = useCallback((id: string) => {
     setAttendanceList(prevList =>
@@ -87,7 +89,7 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
   }, []);
 
   const handleSave = useCallback(async () => {
-    if (isSubmitting) return; // Prevent multiple submissions
+    if (isSubmitting) return;
     setIsSubmitting(true);
 
     const formattedDate = selectedDate.toISOString().split('T')[0];
@@ -100,7 +102,7 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
 
     try {
       const res = await takeAttendanceApi(attendanceData);
-
+      console.log(res);
       if (res) {
         switch (res.meta?.code) {
           case CODE_OK:
@@ -116,21 +118,22 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
           case PARAM_VALUE_INVALID:
             Alert.alert('Lỗi', 'Ngày điểm danh không hợp lệ');
             break;
+          case '447':
+            Alert.alert('Lỗi', 'Network Error');
+            break;
           default:
-            //console.error('Lỗi:', res.data);
-            Alert.alert('Lỗi', 'Ngày điểm danh không hợp lệ');
+            Alert.alert('Lỗi', 'Đã xảy ra lỗi.');
             break;
         }
       }
     } catch (error) {
       console.error('Lỗi khi điểm danh:', error);
-      Alert.alert('Lỗi', 'Ngày điểm danh không hợp lệ');
+      Alert.alert('Lỗi', 'Đã xảy ra lỗi.');
     }
 
-    setIsSubmitting(false); // Reset submission state
+    setIsSubmitting(false);
   }, [isSubmitting, selectedDate, attendanceList, user?.token, classId]);
 
-  // Kiểm tra nếu không có sinh viên trong lớp
   if (attendanceList.length === 0) {
     return <Text style={styles.noStudents}>Không có sinh viên nào trong lớp.</Text>;
   }

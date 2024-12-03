@@ -18,6 +18,7 @@ import {showLoading, hideLoading} from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import AbsenceRequest from '../Absence/RequestAbsence';
 import OthersTabInClass from '../others/OthersTabInClass';
+import { Roles } from 'src/common/enum/commom';
 export const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
 
@@ -50,7 +51,7 @@ const PostScreen = () => {
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');
             break;
         }
       }
@@ -94,7 +95,7 @@ const PostScreen = () => {
 };
 
 const ClassDetail = ({ route }: { route: any }) => {
-
+  const auth = useSelector(selectAuth);
   const { classId } = route.params;
   const navigation: NavigationProp<any> = useNavigation();
 
@@ -128,10 +129,13 @@ const ClassDetail = ({ route }: { route: any }) => {
         <Tab.Screen name='Material'>{() => <MaterialScreen classId={classId} />}</Tab.Screen>
         <Tab.Screen name='Others'>{() => <OthersTabInClass classId={classId} />}</Tab.Screen>
       </Tab.Navigator>
-      <FloatingButton
-        actions={actions}
-        position={{ bottom: 100, right: 20 }} // Customize position here
-      />
+        {auth.user?.role === Roles.LECTURER && (
+           <FloatingButton
+           actions={actions}
+           position={{ bottom: 100, right: 20 }} // Customize position here
+         />
+        )}
+     
     </classDeatailContext.Provider>
   );
 };

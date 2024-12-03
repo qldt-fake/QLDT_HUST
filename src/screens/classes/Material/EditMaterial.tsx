@@ -146,7 +146,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
             Alert.alert('Lỗi', 'Bạn không có quyền chỉnh sửa tài liệu');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.message ?? 'Có lỗi xảy ra với server');
             break;
         }
       }

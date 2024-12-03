@@ -3,22 +3,32 @@ import { View, Text, StyleSheet } from 'react-native';
 import { Card, IconButton } from 'react-native-paper';
 import { color } from 'src/common/constants/color';
 import { useNavigation } from '@react-navigation/native';
-import { AbsenceNavigationName, ClassNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
+import {
+  AbsenceNavigationName,
+  ClassNavigationName,
+  SurveyNavigationName
+} from 'src/common/constants/nameScreen';
+import { selectAuth } from 'src/redux/slices/authSlice';
+import { useSelector } from 'react-redux';
+import { Roles } from 'src/common/enum/commom';
 
 export default function HomeTab() {
   const navigation = useNavigation();
+  const auth = useSelector(selectAuth);
   return (
     <View style={styles.container}>
-      <Card
-        style={styles.card}
-        onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}
-      >
-        <View style={styles.iconContainer}>
-          <IconButton icon='calendar' iconColor={color.red} size={50} />
-        </View>
-        <Text style={styles.title}>Thời khóa biểu</Text>
-        <Text style={styles.description}>Tra cứu thời khóa biểu, lịch thi</Text>
-      </Card>
+      {auth?.user?.role === Roles.STUDENT && (
+        <Card
+          style={styles.card}
+          onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}
+        >
+          <View style={styles.iconContainer}>
+            <IconButton icon='calendar' iconColor={color.red} size={50} />
+          </View>
+          <Text style={styles.title}>Đăng ký lớp</Text>
+          <Text style={styles.description}>Đăng ký lớp học tập trong kỳ</Text>
+        </Card>
+      )}
 
       <Card
         style={styles.card}
@@ -31,21 +41,30 @@ export default function HomeTab() {
         <Text style={styles.description}>Quản lý thông tin lớp học</Text>
       </Card>
 
-      <Card style={styles.card} onPress={() => navigation.navigate(AbsenceNavigationName.StudentAbsenceRequests as never)}>
-        <View style={styles.iconContainer}>
-          <IconButton icon='file-document' iconColor={color.red} size={50} />
-        </View>
-        <Text style={styles.title}>Biểu mẫu</Text>
-        <Text style={styles.description}>Thông tin các đồ án</Text>
-      </Card>
-
-      <Card style={styles.card} onPress={() => navigation.navigate(SurveyNavigationName.StudentAssignments as never)}>
-        <View style={styles.iconContainer}>
-          <IconButton icon='information' iconColor={color.red} size={50} />
-        </View>
-        <Text style={styles.title}>Bài tập</Text>
-        <Text style={styles.description}>Danh sách bài tập</Text>
-      </Card>
+      {auth?.user?.role === Roles.STUDENT && (
+        <Card
+          style={styles.card}
+          onPress={() => navigation.navigate(AbsenceNavigationName.StudentAbsenceRequests as never)}
+        >
+          <View style={styles.iconContainer}>
+            <IconButton icon='file-document' iconColor={color.red} size={50} />
+          </View>
+          <Text style={styles.title}>Biểu mẫu</Text>
+          <Text style={styles.description}>Thông tin các đồ án</Text>
+        </Card>
+      )}
+      {auth?.user?.role === Roles.STUDENT && (
+        <Card
+          style={styles.card}
+          onPress={() => navigation.navigate(SurveyNavigationName.StudentAssignments as never)}
+        >
+          <View style={styles.iconContainer}>
+            <IconButton icon='information' iconColor={color.red} size={50} />
+          </View>
+          <Text style={styles.title}>Bài tập</Text>
+          <Text style={styles.description}>Danh sách bài tập</Text>
+        </Card>
+      )}
     </View>
   );
 }

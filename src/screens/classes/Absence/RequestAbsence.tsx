@@ -18,14 +18,19 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
-import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import {
+  CODE_OK,
+  INVALID_TOKEN,
+  NOT_ACCESS,
+  PARAM_VALUE_INVALID
+} from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { AbsenceRequestProps, IAbsencePayload } from 'src/interfaces/absence.interface';
 import { requestAbsenceApi } from 'src/services/absence.service';
 
-const AbsenceRequest: React.FC<any> = ({route} : any) => {
+const AbsenceRequest: React.FC<any> = ({ route }: any) => {
   const auth = useSelector(selectAuth);
   const user = auth.user;
   const classId = route?.params?.classId;
@@ -41,7 +46,10 @@ const AbsenceRequest: React.FC<any> = ({route} : any) => {
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false);
 
-  const handleChange = (name: keyof IAbsencePayload, value: string | object | Date | null | any) => {
+  const handleChange = (
+    name: keyof IAbsencePayload,
+    value: string | object | Date | null | any
+  ) => {
     setNewAbsenceRequest(prev => ({
       ...prev,
       [name]: value
@@ -60,12 +68,6 @@ const AbsenceRequest: React.FC<any> = ({route} : any) => {
   };
 
   const validate = () => {
-    // Kiểm tra nếu tên bài kiểm tra không được nhập
-    if (!newAbsenceRequest?.title?.trim()) {
-      Alert.alert('Lỗi', 'Tên bài kiểm tra là trường bắt buộc');
-      return false;
-    }
-
     // Kiểm tra nếu không có mô tả hoặc tài liệu được tải lên
     if (!newAbsenceRequest?.reason?.trim() && !newAbsenceRequest.file) {
       Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
@@ -76,6 +78,12 @@ const AbsenceRequest: React.FC<any> = ({route} : any) => {
     const MAX_DESCRIPTION_LENGTH = 500;
     if ((newAbsenceRequest?.reason?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
+      return false;
+    }
+
+    // Kiểm tra ngày hợp lệ
+    if (!newAbsenceRequest.date || isNaN((newAbsenceRequest.date as Date).getTime())) {
+      Alert.alert('Lỗi', 'Vui lòng chọn ngày hợp lệ');
       return false;
     }
 
@@ -95,7 +103,6 @@ const AbsenceRequest: React.FC<any> = ({route} : any) => {
     }
 
     try {
-   
       const payload = {
         token: user?.token,
         classId: classId,
@@ -122,7 +129,7 @@ const AbsenceRequest: React.FC<any> = ({route} : any) => {
             Alert.alert('Lỗi', 'Bạn không có quyền tạo đơn xin nghỉ');
             break;
           default:
-            Alert.alert('Lỗi', res.data ?? 'Có lỗi xảy ra với sever');
+            Alert.alert('Lỗi', res.meta?.message ?? 'Có lỗi xảy ra với sever');
             break;
         }
       }
@@ -169,7 +176,7 @@ const AbsenceRequest: React.FC<any> = ({route} : any) => {
         </TouchableHighlight>
         {isOpenDatePicker && (
           <DateTimePicker
-            date={newAbsenceRequest?.date as Date ?? new Date()}
+            date={(newAbsenceRequest?.date as Date) ?? new Date()}
             onConfirm={date => {
               setIsOpenDatePicker(false);
               handleChange('date', date);

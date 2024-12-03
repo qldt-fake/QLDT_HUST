@@ -50,7 +50,7 @@ const SubmissionList = ({ route }: any) => {
                 Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
                 break;
               default:
-                Alert.alert('Lỗi', res.data ?? 'Lỗi xảy ra với server');
+                Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi xảy ra với server');
                 break;
             }
           }

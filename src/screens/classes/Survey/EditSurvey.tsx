@@ -94,6 +94,11 @@ const EditSurvey: React.FC<IEditSurveyProps> = ({ route }: any) => {
       return false;
     }
 
+    if (!editSurvey.deadline || isNaN((editSurvey.deadline as Date).getTime())) {
+      Alert.alert('Lỗi', 'Vui lòng chọn ngày hợp lệ');
+      return false;
+    }
+
     return true;
   };
 
@@ -129,7 +134,7 @@ const EditSurvey: React.FC<IEditSurveyProps> = ({ route }: any) => {
             Alert.alert('Lỗi', 'Bạn không có quyền tạo bài kiểm tra');
             break;
           default:
-            Alert.alert('Lỗi', response.data);
+            Alert.alert('Lỗi', response?.meta?.message ?? 'Có lỗi xảy ra với server');
             break;
         }
       }

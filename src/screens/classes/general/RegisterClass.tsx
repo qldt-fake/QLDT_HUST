@@ -14,7 +14,7 @@ import { color } from 'src/common/constants/color';
 import { getBasicClassInfoApi, getClassApi, registerClassApi } from 'src/services/class.service';
 import { ReponseCode } from 'src/common/enum/reponseCode';
 import { Checkbox } from 'react-native-paper';
-import { formatDate } from 'src/utils/helper';
+import { formatDate, formatDateTime } from 'src/utils/helper';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { useSelector } from 'react-redux';
 import { useAppDispatch } from 'src/redux';
@@ -23,7 +23,7 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { ClassNavigationName } from 'src/common/constants/nameScreen';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { ClassNavigationType } from 'src/common/type/navigation';
-import { convertClassStatus, convertRegisterClassStatus, FAILED, SUCCESS } from 'src/common/constants';
+import { convertClassStatus, convertRegisterClassStatus, DATE_TIME_FORMAT, FAILED, SUCCESS } from 'src/common/constants';
 interface ClassItem {
   class_id: string;
   class_name: string;
@@ -167,7 +167,7 @@ const RegisterClass = () => {
             Alert.alert('Lỗi', 'Không có quyền truy cập');
             break;
           default:
-            Alert.alert('Lỗi', response.data ?? "Đã xảy ra lỗi đối với server");
+            Alert.alert('Lỗi', response.meta?.message ?? 'Đã xảy ra lỗi khi đăng ký lớp');
             break;
         }
       }
@@ -267,10 +267,10 @@ const RegisterClass = () => {
                     <Text style={styles.classItemText}>{item.max_student_amount}</Text>
                   </TableCell>
                   <TableCell>
-                    <Text style={styles.classItemText}>{formatDate(item.start_date)}</Text>
+                    <Text style={styles.classItemText}>{formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH,new Date(item.start_date))}</Text>
                   </TableCell>
                   <TableCell>
-                    <Text style={styles.classItemText}>{formatDate(item.end_date)}</Text>
+                    <Text style={styles.classItemText}>{formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(item.end_date))}</Text>
                   </TableCell>
                   <TableCell>
                     <Text style={styles.classItemText}>

@@ -45,7 +45,7 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
   const handleSelectFile = async () => {
     const file = await selectFile();
     console.log("File",file);
-    console.log("File Name",file.name);
+    console.log("File Name",file?.name);
     if (file) {
       // Extract file extension for 
    
@@ -111,7 +111,7 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
             Alert.alert('Lỗi', 'Bạn không có quyền tạo tài liệu');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.message ?? 'Có lỗi xảy ra');
             break;
         }
       }

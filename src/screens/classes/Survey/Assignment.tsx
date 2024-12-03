@@ -58,7 +58,7 @@ const Assignment = ({route} : any) => {
                 Alert.alert('Lỗi', 'Bạn không có quyền xem danh sách bài tập');
                 break;
               default:
-                Alert.alert('Lỗi', res.data);
+                Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');
                 break;
             }
           }

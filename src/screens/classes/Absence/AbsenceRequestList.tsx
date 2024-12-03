@@ -161,7 +161,6 @@ const AbsenceRequestList = ({ route }: any) => {
           data={absenceRequests}
           renderItem={renderItem}
           keyExtractor={(item: any) => item?.id?.toString()}
-          contentContainerStyle={styles.list}
         />
       ) : (
         <EmptyState title='Không có đơn xin nghỉ nào' />
@@ -194,7 +193,6 @@ const AbsenceRequestList = ({ route }: any) => {
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, backgroundColor: color.backgroundColor, paddingBottom: 60 },
   filters: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  list: { paddingBottom: 20, height: 400 },
   card: {
     backgroundColor: color.white,
     borderRadius: 10,

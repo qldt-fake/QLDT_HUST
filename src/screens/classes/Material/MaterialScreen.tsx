@@ -45,7 +45,7 @@ const MaterialScreen = (args: { classId: string }) => {
                 Alert.alert('Lỗi', 'Bạn không có quyền xem tài liệu');
                 break;
               default:
-                Alert.alert('Lỗi', res.data);
+                Alert.alert('Lỗi', res.message ?? 'Lỗi không xác định');
                 break;
             }
           }

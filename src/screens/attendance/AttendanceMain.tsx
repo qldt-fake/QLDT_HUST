@@ -8,7 +8,7 @@ import { Text } from 'react-native-paper';
 // Khai báo Tab Navigator
 const Tab = createMaterialTopTabNavigator();
 
-const AttendanceMain = ({route}) => {
+const AttendanceMain = ({ route }: { route: any }) => {
   const { classId } = route.params;
 
   return (
@@ -23,13 +23,13 @@ const AttendanceMain = ({route}) => {
       {/* Tab điểm danh */}
       <Tab.Screen
         name='Điểm danh'
-        component={AttendanceScreen}
+        component={AttendanceScreen as any}
         initialParams={{ classId }}
       />
 
       <Tab.Screen
         name='Xem lịch sử'
-        component={ListDateAttendanceScreen}
+        component={ListDateAttendanceScreen as any}
         initialParams={{ classId }}
       />
     </Tab.Navigator>

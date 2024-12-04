@@ -168,7 +168,7 @@ const GetAttendanceRecord: React.FC<RouteParams> = ({ route }) => {
       if (res?.data && Array.isArray(res?.data?.absent_dates) && res.meta.code === CODE_OK) {
         // Loại bỏ ngày trùng nhau bằng Set
         const uniqueDates = [...new Set(res?.data?.absent_dates)];
-        setAttendanceDates(uniqueDates); // Gán danh sách đã loại bỏ trùng
+        setAttendanceDates(uniqueDates as string[]); // Gán danh sách đã loại bỏ trùng
       } else {
         Alert.alert('Error', 'Failed to fetch attendance data');
       }
@@ -204,7 +204,12 @@ const GetAttendanceRecord: React.FC<RouteParams> = ({ route }) => {
           <TouchableOpacity onPress={() => handleDatePress(item)}>
             <Card style={[styles.card, selectedDate === item && styles.cardPressed]}>
               <Card.Content style={styles.cardContent}>
-                <IconButton icon='calendar-today' size={24} color='#d32f2f' style={styles.icon} />
+                <IconButton
+                  icon='calendar-today'
+                  size={24}
+                  iconColor='#d32f2f'
+                  style={styles.icon}
+                />
                 <Text style={styles.dateText}>Ngày {formatDate(item)}</Text>
               </Card.Content>
             </Card>
@@ -264,4 +269,3 @@ const styles = StyleSheet.create({
 });
 
 export default GetAttendanceRecord;
-

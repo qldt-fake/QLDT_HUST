@@ -11,10 +11,14 @@ import { color } from 'src/common/constants/color';
 import MaterialScreen from '../Material/MaterialScreen';
 import FloatingButton from '../../../components/FloatingButton/FloatingButton';
 import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
-import { ClassNavigationName, MaterialNavigationName, SurveyNavigationName } from 'src/common/constants/nameScreen';
+import {
+  ClassNavigationName,
+  MaterialNavigationName,
+  SurveyNavigationName
+} from 'src/common/constants/nameScreen';
 import { RefreshControl } from 'react-native';
 import { useAppDispatch } from 'src/redux';
-import {showLoading, hideLoading} from 'src/redux/slices/loadingSlice';
+import { showLoading, hideLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import AbsenceRequest from '../Absence/RequestAbsence';
 import OthersTabInClass from '../others/OthersTabInClass';
@@ -79,14 +83,12 @@ const PostScreen = () => {
       <View style={{ paddingHorizontal: 10, marginTop: 15 }}>
         <Text style={{ fontSize: 18 }}>Danh sách lớp ( {classDetail?.student_count} )</Text>
       </View>
-      <SafeAreaView style ={{flex: 1, paddingBottom: 100}}>
+      <SafeAreaView style={{ flex: 1, paddingBottom: 100 }}>
         <FlatList
           data={classDetail?.student_accounts}
           renderItem={({ item }) => <StudentCard props={item} />}
           keyExtractor={item => item.id}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </SafeAreaView>
     </View>
@@ -94,7 +96,6 @@ const PostScreen = () => {
 };
 
 const ClassDetail = ({ route }: { route: any }) => {
-
   const { classId } = route.params;
   const navigation: NavigationProp<any> = useNavigation();
 
@@ -120,7 +121,7 @@ const ClassDetail = ({ route }: { route: any }) => {
     <classDeatailContext.Provider value={classId}>
       <Tab.Navigator
         screenOptions={{
-          tabBarLabelStyle: { fontSize: 8 },
+          tabBarLabelStyle: { fontSize: 12 },
           tabBarIndicatorStyle: { backgroundColor: '#6200EE' }
         }}
       >

@@ -66,7 +66,12 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
           <TouchableOpacity onPress={() => handleDatePress(item)}>
             <Card style={[styles.card, selectedDate === item && styles.cardPressed]}>
               <Card.Content style={styles.cardContent}>
-                <IconButton icon='calendar-today' size={24} color='#d32f2f' style={styles.icon} />
+                <IconButton
+                  icon='calendar-today'
+                  size={24}
+                  iconColor='#d32f2f'
+                  style={styles.icon}
+                />
                 <Text style={styles.dateText}>Ngày {formatDate(item)}</Text>
               </Card.Content>
             </Card>

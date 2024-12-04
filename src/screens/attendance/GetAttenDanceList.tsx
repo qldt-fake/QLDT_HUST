@@ -19,9 +19,10 @@ import { logout } from 'src/redux/slices/authSlice';
 import { getAttendanceListApi, setAttendanceStatusApi } from 'src/services/attendance.service';
 import EmptyState from 'src/components/EmptyState';
 import { getClassApi } from 'src/services/class.service';
+import { StatusAttendance } from 'src/common/enum/commom';
 
 interface AttendanceItem {
-  attendance_id: number;
+  attendance_id: string;
   student_id: string;
   status: string;
 }
@@ -39,12 +40,12 @@ interface AttendanceStudentInfor {
   first_name: string;
   email: string;
   student_id: string;
-  attendance_id: number;
+  attendance_id: string;
 }
 interface AttendanceListPageProps {
   route: {
     params: {
-      classId: number;
+      classId: string;
       item: string; // Date as string
     };
   };
@@ -77,13 +78,17 @@ const AttendanceListPage: React.FC<AttendanceListPageProps> = ({ route }) => {
         token,
         class_id: classId,
         date: item,
-        pageable_request: { page: currentPage - 1, page_size: itemsPerPage }
+        pageable_request: { page: (currentPage - 1).toString(), page_size: itemsPerPage.toString() }
       });
       if (response?.meta?.code === CODE_OK) {
         setAttendanceList(response.data.attendance_student_details);
         setTotalRecords(response.data.page_info.total_records);
       } else {
-        handleApiError(response);
+        if (response?.meta?.code === INVALID_TOKEN) {
+          dispatch(logout());
+        } else {
+          Alert.alert('Lỗi', response.meta.message);
+        }
       }
     } catch (error) {
       Alert.alert('Lỗi', 'Lấy danh sách điểm danh thất bại');
@@ -95,7 +100,6 @@ const AttendanceListPage: React.FC<AttendanceListPageProps> = ({ route }) => {
   const fetchStudentClassList = useCallback(async () => {
     try {
       dispatch(showLoading());
-
       console.log('//////', {
         token: user?.token,
         role: user?.role,
@@ -112,27 +116,31 @@ const AttendanceListPage: React.FC<AttendanceListPageProps> = ({ route }) => {
         console.log('-----------Minh----------', response.data.student_accounts);
         setClassStudentList(response.data.student_accounts);
       } else {
-        handleApiError(response);
+        if (response?.meta?.code === INVALID_TOKEN) {
+          dispatch(logout());
+        } else {
+          Alert.alert('Lỗi', response.meta.message);
+        }
       }
     } catch (error) {
+      console.log(error);
     } finally {
       dispatch(hideLoading());
     }
   }, [token, classId, dispatch]);
 
-  const handleApiError = (response: any) => {
-    const errorMessages = {
-      [INVALID_TOKEN]: 'Token không hợp lệ',
-      [NOT_ACCESS]: 'Bạn không có quyền truy cập'
-    };
-    const message = errorMessages[response?.meta?.code] || 'Có lỗi xảy ra';
-    Alert.alert('Lỗi', message);
-    if (response?.meta?.code === INVALID_TOKEN) {
-      dispatch(logout());
-    }
-  };
+  //   const errorMessages = {
+  //     [INVALID_TOKEN]: 'Token không hợp lệ',
+  //     [NOT_ACCESS]: 'Bạn không có quyền truy cập'
+  //   };
+  //   const message = errorMessages[response?.meta?.code] || 'Có lỗi xảy ra';
+  //   Alert.alert('Lỗi', message);
+  //   if (response?.meta?.code === INVALID_TOKEN) {
+  //     dispatch(logout());
+  //   }
+  // };
 
-  const handleStatusUpdate = async (attendanceId: number, status: string) => {
+  const handleStatusUpdate = async (attendanceId: string, status: StatusAttendance) => {
     try {
       const response = await setAttendanceStatusApi({ token, attendance_id: attendanceId, status });
       if (response.meta.code === CODE_OK) {
@@ -209,16 +217,59 @@ const AttendanceListPage: React.FC<AttendanceListPageProps> = ({ route }) => {
       </View>
       <View style={styles.infoContainer}>
         <Text style={styles.studentInfo}>{`Họ và tên : ${item.first_name} ${item.last_name}`}</Text>
-        <Text style={styles.studentInfo}>{`Mã sinh viên: ${item.student_id}`}</Text>
+        <Text style={styles.studentInfo}>{`Mã sinh viên: ${item.account_id}`}</Text>
         <Text style={styles.statusInfo}>
-          Trạng thái: <Text style={{ color: getStatusColor(item.status) }}>{item.status}</Text>
+          Trạng thái :
+          <Text style={{ color: getStatusColor(item.status) }}>
+            {
+              // Dịch trạng thái thành tiếng Việt
+              (() => {
+                switch (item.status) {
+                  case 'PRESENT':
+                    return ' Có mặt';
+                  case 'EXCUSED_ABSENCE':
+                    return ' Vắng có phép';
+                  case 'UNEXCUSED_ABSENCE':
+                    return ' Vắng không phép';
+                  default:
+                    return item.status;
+                }
+              })()
+            }
+          </Text>
         </Text>
+
         <View style={styles.statusButtons}>
-          {['PRESENT', 'EXCUSED_ABSENCE', 'UNEXCUSED_ABSENCE'].map(status => (
-            <Pressable key={status} onPress={() => handleStatusUpdate(item.attendance_id, status)}>
-              <Text style={[styles.buttonText, { color: getStatusColor(status) }]}>{status}</Text>
-            </Pressable>
-          ))}
+          {(['PRESENT', 'EXCUSED_ABSENCE', 'UNEXCUSED_ABSENCE'] as StatusAttendance[]).map(
+            status => {
+              // Dịch các trạng thái thành tiếng Việt
+              let statusText = '';
+              switch (status) {
+                case 'PRESENT':
+                  statusText = 'Có mặt';
+                  break;
+                case 'EXCUSED_ABSENCE':
+                  statusText = 'Vắng có phép';
+                  break;
+                case 'UNEXCUSED_ABSENCE':
+                  statusText = 'Vắng không phép';
+                  break;
+                default:
+                  statusText = status;
+              }
+
+              return (
+                <Pressable
+                  key={status}
+                  onPress={() => handleStatusUpdate(item.attendance_id, status)}
+                >
+                  <Text style={[styles.buttonText, { color: getStatusColor(status) }]}>
+                    {statusText}
+                  </Text>
+                </Pressable>
+              );
+            }
+          )}
         </View>
       </View>
     </View>
@@ -233,7 +284,7 @@ const AttendanceListPage: React.FC<AttendanceListPageProps> = ({ route }) => {
             data={matchInfor}
             renderItem={renderItem}
             keyExtractor={item => item.attendance_id.toString()}
-            contentContainerStyle={styles.list}
+            // contentContainerStyle={styles.list}
           />
         ) : (
           <EmptyState title='Không có dữ liệu điểm danh' />

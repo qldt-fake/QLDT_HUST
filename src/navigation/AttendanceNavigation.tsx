@@ -6,7 +6,7 @@ import { color } from 'src/common/constants/color';
 import ClassDetail from 'src/screens/classes/general/ClassDeatail';
 import CreateMaterial from 'src/screens/classes/Material/CreateMaterial';
 import EditMaterial from 'src/screens/classes/Material/EditMaterial';
-import AttendanceListPage from 'src/screens/attendance/GetAttendanceList';
+import AttendanceListPage from 'src/screens/attendance/GetAttenDanceList';
 import AttendanceScreen from 'src/screens/attendance/Take_Atendance';
 import ListDateAttendanceScreen from 'src/screens/attendance/GetAttenDate';
 import AttendanceMain from 'src/screens/attendance/AttendanceMain';
@@ -44,7 +44,7 @@ const AttendanceNavigation = () => {
           headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Danh sách sinh viên' textLogo='HUST' />
         }}
-        component={AttendanceListPage}
+        component={AttendanceListPage as any}
       />
       <Stack.Screen
         name={AttendanceNavigationName.AttendanceScreen}
@@ -57,7 +57,7 @@ const AttendanceNavigation = () => {
           headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Điểm danh' textLogo='HUST' />
         }}
-        component={AttendanceScreen}
+        component={AttendanceScreen as any}
       />
 
       <Stack.Screen
@@ -70,7 +70,7 @@ const AttendanceNavigation = () => {
           headerTitleAlign: 'center',
           headerTitle: () => <ClassHeader title='Ngày điểm danh' textLogo='HUST' />
         }}
-        component={ListDateAttendanceScreen}
+        component={ListDateAttendanceScreen as any}
       />
       <Stack.Screen
         name={AttendanceNavigationName.GetAttendanceRecord}
@@ -82,7 +82,7 @@ const AttendanceNavigation = () => {
           headerTitleAlign: 'center',
           headerTitle: () => <ClassHeader title='Ngày điểm danh' textLogo='HUST' />
         }}
-        component={GetAttendanceRecord}
+        component={GetAttendanceRecord as any}
       />
     </Stack.Group>
   );

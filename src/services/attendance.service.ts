@@ -11,27 +11,27 @@ interface IAttendanceRequest {
 }
 
 interface IPageableRequest {
-  token: string;
-  class_id: string;
-  date: string;
-  pageable_request: {
+  token?: string;
+  class_id?: string;
+  date?: string;
+  pageable_request?: {
     page: string;
     page_size: string;
   };
 }
 interface IAttendanceStatusUpdate {
-  token: string;
-  status: StatusAttendance;
-  attendance_id: string;
+  token?: string;
+  status?: StatusAttendance;
+  attendance_id?: string;
 }
 
 interface IClassAttendanceRequest {
-  token: string;
-  class_id: string;
+  token?: string;
+  class_id?: string;
 }
 interface IDateAttendaceRequest {
-  token: string;
-  class_id: string;
+  token?: string;
+  class_id?: string;
 }
 
 export const takeAttendanceApi = async (data: IAttendanceRequest): Promise<any> => {

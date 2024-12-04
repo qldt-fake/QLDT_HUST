@@ -59,8 +59,8 @@ const GradeSubmission = () => {
             Alert.alert('Thành công', 'Chấm điểm thành công');
             await sendNotificationApi({
               token: auth?.user?.token,
-              //TODO bổ sung thêm mã lớp
-              message: "Bạn được điểm " + score + " assignment " + title,
+              //TODO bổ sung thêm mã lớp (truyền được class detail vào đây để bổ sung vào message)
+              message: "Bạn được điểm " + score + " assignment " + title + " lớp",
               type: " ASSIGNMENT_GRADE",
               toUser: student_account.student_id
             });

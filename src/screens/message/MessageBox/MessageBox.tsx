@@ -3,6 +3,7 @@ import SockJS from "sockjs-client";
 import Client from "@stomp/stompjs";
 import "fast-text-encoding";
 import {
+    ActivityIndicator,
     Alert,
     FlatList,
     KeyboardAvoidingView,
@@ -14,7 +15,12 @@ import {
     TouchableWithoutFeedback,
     View
 } from "react-native";
-import {getConversationApi, deleteMessageApi, IGetConversationsBody, IMessageResponse} from "src/services/message.services";
+import {
+    getConversationApi,
+    deleteMessageApi,
+    IGetConversationsBody,
+    IMessageResponse
+} from "src/services/message.services";
 import MessageHeader from "src/screens/message/components/MessageHeader";
 
 const MessageBox = ({route, navigation}: any) => {
@@ -24,19 +30,21 @@ const MessageBox = ({route, navigation}: any) => {
     const {userName, token, conversationId, receiverId, email, userId, avatar} = route.params;
     const [latestId, setLatestId] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
-
+    const [loading, setLoading] = useState<boolean>(false);
+    const [, setIndex] = useState(0);
     // Fetch conversations from the API
-    const fetchConversations = async (loadMore = false) => {
-        if (!hasMore && !loadMore)
+    let onEndReachedCalledDuringMomentum = false
+    const fetchConversations = async (index: number) => {
+        if (!hasMore)
             return;
         const requestBody: IGetConversationsBody = {
             token,
-            index: loadMore ? messages.length : 0, // Start at the last message if loading more
+            index: index * 20, // Start at the last message if loading more
             count: 20,
             conversation_id: conversationId,
             mark_as_read: true,
         };
-
+        setLoading(true);
         try {
             const response = await getConversationApi(requestBody);
 
@@ -48,13 +56,14 @@ const MessageBox = ({route, navigation}: any) => {
                 }));
 
                 setMessages((prevMessages) => {
-                    if (loadMore) {
+                    if (index != 0) {
                         return [...prevMessages, ...fetchedMessages];
                     } else {
                         setLatestId(fetchedMessages[0].id);
                         return fetchedMessages;
                     }
                 });
+                setLoading(false);
                 setHasMore(fetchedMessages.length > 0);
             } else {
                 console.error("Failed to fetch messages:", response.meta?.message);
@@ -80,7 +89,10 @@ const MessageBox = ({route, navigation}: any) => {
                 }
             });
             if (conversationId != null) {
-                fetchConversations();
+                setIndex(prevState => {
+                    fetchConversations(prevState);
+                    return prevState + 1;
+                })
             }
 
             setStompClient(client);
@@ -148,7 +160,7 @@ const MessageBox = ({route, navigation}: any) => {
 
     const renderMessage = ({item}: any) => (
         <TouchableWithoutFeedback
-            onLongPress={() => conversationId!=null && item.sender == "me" && item.text!=null && handleLongPress(item.id)}
+            onLongPress={() => conversationId != null && item.sender == "me" && item.text != null && handleLongPress(item.id)}
         >
             <View
                 style={[
@@ -168,7 +180,7 @@ const MessageBox = ({route, navigation}: any) => {
                                 : styles.theirMessageText
                     }
                 >
-                    {item.text != null? item.text : "Tin nhắn đã bị gỡ"}
+                    {item.text != null ? item.text : "Tin nhắn đã bị gỡ"}
                 </Text>
             </View>
         </TouchableWithoutFeedback>
@@ -194,8 +206,22 @@ const MessageBox = ({route, navigation}: any) => {
                     inverted // Inverted to show latest messages at the bottom
                     contentContainerStyle={{flexGrow: 1, padding: 10}}
                     keyboardShouldPersistTaps="handled"
-                    onEndReached={() => fetchConversations(true)}
+                    onMomentumScrollBegin={() => {
+                        onEndReachedCalledDuringMomentum = false;
+                    }}
+                    onEndReached={() => {
+                        if (!onEndReachedCalledDuringMomentum) {
+                            setIndex(prevState => {
+                                fetchConversations(prevState);
+                                return prevState + 1;
+                            });
+                            onEndReachedCalledDuringMomentum = false;
+                        }
+                    }}
                     onEndReachedThreshold={0.1}
+                    ListFooterComponent={
+                        loading ? <ActivityIndicator size="small" color="#0000ff"/> : null
+                    }
                 />
                 <View style={styles.inputContainer}>
                     <TextInput
@@ -210,7 +236,8 @@ const MessageBox = ({route, navigation}: any) => {
                 </View>
             </View>
         </KeyboardAvoidingView>
-    );
+    )
+        ;
 };
 
 const styles = StyleSheet.create({

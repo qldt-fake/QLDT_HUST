@@ -35,9 +35,10 @@ const AbsenceReview = ({ route }: any) => {
           case CODE_OK:
             Alert.alert('Thành công', 'Đã cập nhật trạng thái đơn xin nghỉ');
             setCurrentStatus(newStatus);
+            console.log(id);
             await sendNotificationApi({
               token: auth?.user?.token,
-              // TODO bổ sung thêm mã lớp
+              // TODO bổ sung thêm mã lớp (truyền classDetail vào đây)
               message: newStatus == absenceStatus.ACCEPTED? "Giảng viên đã chấp thuận đơn xin nghỉ học" :"Giảng viên đã từ chối đơn xin nghỉ học",
               type: newStatus == absenceStatus.ACCEPTED?"ACCEPT_ABSENCE_REQUEST":"REJECT_ABSENCE_REQUEST",
               toUser: id,

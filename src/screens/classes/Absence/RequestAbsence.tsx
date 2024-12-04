@@ -27,6 +27,7 @@ import {requestAbsenceApi} from 'src/services/absence.service';
 import {getBasicClassInfoApi} from "src/services/class.service";
 import {sendNotificationApi} from "src/services/noti.services";
 
+
 const AbsenceRequest: React.FC<any> = ({route}: any) => {
     const auth = useSelector(selectAuth);
     const user = auth.user;
@@ -113,22 +114,16 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
             if (res) {
                 switch (res.meta?.code) {
                     case CODE_OK:
-                        const basic_class_info = await getBasicClassInfoApi({
-                            token: user?.token,
-                            role: "STUDENT",
-                            account_id: user?.id,
-                            class_id: classId
-                        })
-
                         await sendNotificationApi({
                             token: user?.token,
-                            //TODO bổ sung nội dung
-                            message: newAbsenceRequest.reason,
+                            //TODO truyền classDetails từ trang tab general vào đây
+                            message: "Mã lớp: " + newAbsenceRequest.classId + "\nTên sinh viên:" + user?.name +
+                                "\nTiêu đề: " + newAbsenceRequest.title + "\n Nội dung: " + newAbsenceRequest.reason +
+                                "\nNgay xin nghi: " + newAbsenceRequest.date,
                             type: "ABSENCE",
-                            toUser: basic_class_info.data.lecturer_id,
+                            toUser: "classDetail.lecturer_account_id",
                             image: newAbsenceRequest.file
                         });
-
                         Alert.alert('Thành công', 'Tạo yêu cầu xin nghỉ thành công');
                         navigation.goBack();
                         break;

@@ -20,6 +20,7 @@ import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import {sendNotificationApi} from "src/services/noti.services";
+import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
 
 const GradeSubmission = () => {
   const route = useRoute();
@@ -32,6 +33,8 @@ const GradeSubmission = () => {
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();
+  const classDetails = useSelector(selectClassDetails);
+  console.log(classDetails);
 
   const validateScore = () => {
     if (!score) {
@@ -59,6 +62,7 @@ const GradeSubmission = () => {
             Alert.alert('Thành công', 'Chấm điểm thành công');
             await sendNotificationApi({
               token: auth?.user?.token,
+              // class_id : classDetails?.class_id,
               //TODO bổ sung thêm mã lớp (truyền được class detail vào đây để bổ sung vào message)
               message: "Bạn được điểm " + score + " assignment " + title + " lớp",
               type: " ASSIGNMENT_GRADE",

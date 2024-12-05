@@ -10,6 +10,7 @@ import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/respons
 import { reviewAbsenceApi } from 'src/services/absence.service';
 import { absenceStatus } from 'src/common/enum/commom';
 import {sendNotificationApi} from "src/services/noti.services";
+import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
 
 const AbsenceReview = ({ route }: any) => {
   const navigation = useNavigation();
@@ -18,6 +19,8 @@ const AbsenceReview = ({ route }: any) => {
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();
+  const classDetails = useSelector(selectClassDetails);
+  console.log(classDetails);
 
   const [currentStatus, setCurrentStatus] = useState<absenceStatus>(status);
 
@@ -38,6 +41,7 @@ const AbsenceReview = ({ route }: any) => {
             console.log(id);
             await sendNotificationApi({
               token: auth?.user?.token,
+              // class_id : classDetails?.class_id,
               // TODO bổ sung thêm mã lớp (truyền classDetail vào đây)
               message: newStatus == absenceStatus.ACCEPTED? "Giảng viên đã chấp thuận đơn xin nghỉ học" :"Giảng viên đã từ chối đơn xin nghỉ học",
               type: newStatus == absenceStatus.ACCEPTED?"ACCEPT_ABSENCE_REQUEST":"REJECT_ABSENCE_REQUEST",

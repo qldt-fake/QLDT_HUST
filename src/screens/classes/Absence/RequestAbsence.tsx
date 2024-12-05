@@ -26,6 +26,7 @@ import {AbsenceRequestProps, IAbsencePayload} from 'src/interfaces/absence.inter
 import {requestAbsenceApi} from 'src/services/absence.service';
 import {getBasicClassInfoApi} from "src/services/class.service";
 import {sendNotificationApi} from "src/services/noti.services";
+import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
 
 
 const AbsenceRequest: React.FC<any> = ({route}: any) => {
@@ -34,6 +35,8 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
     const classId = route?.params?.classId;
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
+    const classDetails = useSelector(selectClassDetails);
+    console.log('classDetails', classDetails);
 
     const [newAbsenceRequest, setNewAbsenceRequest] = useState<IAbsencePayload>({
         title: '',
@@ -117,6 +120,7 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
                         await sendNotificationApi({
                             token: user?.token,
                             //TODO truyền classDetails từ trang tab general vào đây
+                            // classDetails: classDetails,
                             message: "Mã lớp: " + newAbsenceRequest.classId + "\nTên sinh viên:" + user?.name +
                                 "\nTiêu đề: " + newAbsenceRequest.title + "\n Nội dung: " + newAbsenceRequest.reason +
                                 "\nNgay xin nghi: " + newAbsenceRequest.date,

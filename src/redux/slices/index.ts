@@ -6,7 +6,7 @@ import notificationReducer from './notificationSlice';
 import settingReducer from './settingSlice';
 import blockSlice from './blockSlice';
 import loadingSlice from './loadingSlice';
-
+import classDetailsReducer from './classDetailsSlice';
 const rootReducer = combineReducers({
   app: appSlice,
   auth: authReducer,
@@ -14,7 +14,8 @@ const rootReducer = combineReducers({
   notification: notificationReducer,
   setting: settingReducer,
   block: blockSlice,
-  loading: loadingSlice
+  loading: loadingSlice,
+  classDetails: classDetailsReducer
 });
 
 export default rootReducer;

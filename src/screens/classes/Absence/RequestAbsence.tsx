@@ -117,15 +117,14 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
             if (res) {
                 switch (res.meta?.code) {
                     case CODE_OK:
+                        if(classDetails != null)
                         await sendNotificationApi({
                             token: user?.token,
-                            //TODO truyền classDetails từ trang tab general vào đây
-                            // classDetails: classDetails,
-                            message: "Mã lớp: " + newAbsenceRequest.classId + "\nTên sinh viên:" + user?.name +
-                                "\nTiêu đề: " + newAbsenceRequest.title + "\n Nội dung: " + newAbsenceRequest.reason +
+                            message: "Mã lớp: " + classDetails.class_id+ "\nTên sinh viên:" + user?.name +
+                                "\nTiêu đề: " + newAbsenceRequest.title + "\nNội dung: " + newAbsenceRequest.reason +
                                 "\nNgay xin nghi: " + newAbsenceRequest.date,
                             type: "ABSENCE",
-                            toUser: "classDetail.lecturer_account_id",
+                            toUser: classDetails.lecturer_account_id,
                             image: newAbsenceRequest.file
                         });
                         Alert.alert('Thành công', 'Tạo yêu cầu xin nghỉ thành công');

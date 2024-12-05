@@ -1,6 +1,6 @@
 import messaging, { FirebaseMessagingTypes } from '@react-native-firebase/messaging';
 import { EventEmitter } from 'eventemitter3';
-import notifee from '@notifee/react-native';
+import notifee, {EventType} from '@notifee/react-native';
 
 interface NotificationData {
     notification?: FirebaseMessagingTypes.Notification;
@@ -76,7 +76,18 @@ class FCMService {
             console.log('Background Notification:', remoteMessage);
             const { notification, data } = remoteMessage;
 
+            notifee.onBackgroundEvent(async ({ type, detail }) => {
+                console.log('Background Event:', type, detail);
 
+
+                if (type === EventType.PRESS) {
+                    console.log('Notification Pressed:', detail.notification);
+
+                } else if (type === EventType.DISMISSED) {
+                    console.log('Notification Dismissed:', detail.notification);
+
+                }
+            });
             await notifee.displayNotification({
                 title: notification?.title || 'New Notification',
                 body: notification?.body || '',
@@ -84,8 +95,8 @@ class FCMService {
                     channelId: 'default',
                 },
             });
-
-            this.eventEmitter.emit('newNotification', { notification, data });
+            const background = true;
+            this.eventEmitter.emit('newNotification', { notification, data, background });
         });
     }
 

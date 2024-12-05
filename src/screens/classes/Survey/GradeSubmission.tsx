@@ -56,18 +56,19 @@ const GradeSubmission = () => {
         survey_id: assignment_id,
         grade: { score, submission_id: id }
       });
+      console.log(student_account.student_id);
       if (res) {
         switch (res.meta?.code) {
           case CODE_OK:
-            Alert.alert('Thành công', 'Chấm điểm thành công');
             await sendNotificationApi({
               token: auth?.user?.token,
               // class_id : classDetails?.class_id,
-              //TODO bổ sung thêm mã lớp (truyền được class detail vào đây để bổ sung vào message)
-              message: "Bạn được điểm " + score + " assignment " + title + " lớp",
+
+              message: "Bài tập: " + title + "\n Mã lớp: " + classDetails?.class_id + "\nĐiểm: "+score,
               type: " ASSIGNMENT_GRADE",
-              toUser: student_account.student_id
+              toUser: student_account.account_id
             });
+            Alert.alert('Thành công', 'Chấm điểm thành công');
             navigation.goBack();
             break;
           case INVALID_TOKEN:

@@ -2,7 +2,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TransitionPresets } from '@react-navigation/stack';
 import { NotificationNavigationName } from 'src/common/constants/nameScreen';
 import WraperScreen from 'src/components/WraperScreen/WraperScreen';
-import NotificationHome from 'src/screens/notification/NotificationHome';
 import NotificationDetail from 'src/screens/notification/NotificationDetails/NotificationDetail';
 
 const Stack = createNativeStackNavigator<NotificationNavigationType>();

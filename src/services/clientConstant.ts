@@ -76,7 +76,8 @@ export enum NotificationApi {
 }
 export enum MessageApi {
   GET_LIST_CONVERSATIONS = '/it5023e/get_list_conversation',
-  GET_CONVERSATION = '/it5023e/get_conversation'
+  GET_CONVERSATION = '/it5023e/get_conversation',
+  DELETE_MESSAGE = '/it5023e/delete_message'
 }
 
 export enum ClassApi {

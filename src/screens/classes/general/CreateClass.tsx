@@ -49,6 +49,10 @@ const CreateClass = () => {
       Alert.alert('Validation Error', 'Mã lớp và tên lớp không được để trống.');
       return false;
     }
+    if (newClass.class_id.length != 6) {
+      Alert.alert('Validation Error', 'Mã lớp phải có 6 ký tự.');
+      return false;
+    }
     if (newClass.class_name.length > 50) {
       Alert.alert('Validation Error', 'Tên lớp không được dài quá 50 ký tự.');
       return false;
@@ -93,7 +97,7 @@ const CreateClass = () => {
             Alert.alert('Thất bại', 'Role của bạn không có quyền tạo lớp.');
             break;
           default:
-            Alert.alert('Thất bại', res.data);
+            Alert.alert('Thất bại', res.meta?.message ?? 'Hiện không thể tạo lớp.');
             break;
         }
       }

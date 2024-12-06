@@ -62,7 +62,7 @@ const ClassListPage = () => {
                 Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
                 break;
               default:
-                console.error('Lỗi:', res.data);
+                console.error('Lỗi:', res.meta?.message ?? 'Lỗi không xác định');
                 break;
             }
           }
@@ -74,7 +74,7 @@ const ClassListPage = () => {
       };
 
       fetchData();
-    }, [token, role, id, currentPage])
+    }, [token, role, id,   currentPage])
   );
 
   const handleNextPage = () => {

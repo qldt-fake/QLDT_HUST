@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from "react";
-import {
-    View,
-    Text,
-    FlatList,
-    StyleSheet,
-    TextInput,
-    TouchableOpacity,
-    ActivityIndicator,
-} from "react-native";
+import React, {useEffect, useState} from "react";
+import {ActivityIndicator, FlatList, StyleSheet, Text, TextInput, TouchableOpacity, View,} from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
-import { NavigationProp, useNavigation } from "@react-navigation/native";
-import {
-    getListConversationsApi,
-    IConversation,
-} from "src/services/message.services";
-import { AppNaviagtionName, MessageNavigationName } from "src/common/constants/nameScreen";
-import { useSelector } from "react-redux";
-import { selectAuth } from "src/redux/slices/authSlice";
-import { searchAccount } from "src/services/class.service";
+import {NavigationProp, useNavigation} from "@react-navigation/native";
+import {getListConversationsApi, IConversation,} from "src/services/message.services";
+import {AppNaviagtionName, MessageNavigationName} from "src/common/constants/nameScreen";
+import {useSelector} from "react-redux";
+import {selectAuth} from "src/redux/slices/authSlice";
+import {searchAccount} from "src/services/class.service";
+
+import FCMService from "src/services/FCMService";
+import {FCMEnum} from "src/common/enum/FCMEnum";
+import { Avatar } from "react-native-paper";
+import {convertGoogleDriveLink, getAvatarUri} from "src/utils/helper";
+import {white} from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 
 interface IAccount {
     account_id: string;
     last_name: string;
     first_name: string;
     email: string;
+    avatar: string;
 }
 
 const MessageHome: React.FC = () => {
@@ -32,31 +28,46 @@ const MessageHome: React.FC = () => {
     const [accounts, setAccounts] = useState<IAccount[]>([]);
     const [searchText, setSearchText] = useState("");
     const [loading, setLoading] = useState(false);
-    const [accountPage, setAccountPage] = useState(0);
-    const [hasMoreAccounts, setHasMoreAccounts] = useState(true); // Có thêm dữ liệu không
+    const [, setAccountPage] = useState<number>(0);
+    const [, setIndex] = useState(0);
+    const [hasMoreAccounts, setHasMoreAccounts] = useState(true);
     const [isSearching, setIsSearching] = useState(false);
-
+    const [hasMoreConversation, setHasMoreConversation] = useState(true);
     const auth = useSelector(selectAuth);
     const user = auth.user;
+    let onEndReachedCalledDuringMomentum = true;
 
     useEffect(() => {
-        fetchConversations(0); // Load initial conversations
-    }, []);
+        const handleNotification = async (data: any) => {
+            if (data.data.type === FCMEnum.MESSAGE) {
+                await fetchConversations(0);
+            }
+        }
+        FCMService.getInstance().on('newNotification', handleNotification);
+        return navigation.addListener("focus", () => {
+            setIndex(() => {
+                fetchConversations(0);
+                return 0;
+            });
+        });
+    }, [navigation]);
 
     const fetchConversations = async (index: number) => {
         setLoading(true);
+        if (!hasMoreConversation && index != 0)
+            return;
         try {
             const response = await getListConversationsApi({
                 token: user?.token ?? "",
-                index,
-                count: 10,
+                index: index * 15,
+                count: 15,
             });
-
             if (response.meta.code === "1000") {
-                const { conversations: newConversations } = response.data;
+                const {conversations: newConversations} = response.data;
                 setConversations((prev) =>
                     index === 0 ? newConversations : [...prev, ...newConversations]
                 );
+                setHasMoreConversation(newConversations.length > 0)
             }
         } catch (error) {
             console.error("Error fetching conversations:", error);
@@ -65,32 +76,34 @@ const MessageHome: React.FC = () => {
         }
     };
 
-    const searchAccounts = async (page: number) => {
+    const searchAccounts = async (accountPage: number) => {
         if (searchText.trim() === "") {
             setIsSearching(false);
             return;
         }
-        if (!hasMoreAccounts && page !== 0) return;
+
+        if (!hasMoreAccounts && accountPage !== 0) return;
+
         setLoading(true);
         setIsSearching(true);
         try {
             const response = await searchAccount({
                 search: searchText,
                 pageable_request: {
-                    page,
+                    page: accountPage,
                     page_size: 15,
                 },
             });
             if (response.meta.code === "1000") {
                 const newAccounts: IAccount[] = response.data.page_content.map((item: any) => ({
-                    account_id: item.id,
+                    account_id: item.account_id,
                     first_name: item.first_name,
                     last_name: item.last_name,
                     email: item.email,
+                    avatar: item.avatar,
                 }));
-                setAccounts((prev) => (page === 0 ? newAccounts : [...prev, ...newAccounts]));
-                setHasMoreAccounts(response.data.page_content.length > 0); // Kiểm tra nếu có thêm dữ liệu
-                setAccountPage(page);
+                setAccounts((prev) => (accountPage === 0 ? newAccounts : [...prev, ...newAccounts]));
+                setHasMoreAccounts(response.data.page_content.length == 15);
             }
         } catch (error) {
             console.error("Error searching accounts:", error);
@@ -99,21 +112,44 @@ const MessageHome: React.FC = () => {
         }
     };
 
-    const renderAccount = ({ item }: { item: IAccount }) => (
+    const handleCancelSearch = () => {
+        setIsSearching(false);
+        setSearchText("");
+        setAccounts([]);
+    };
+
+    const renderAccount = ({item}: { item: IAccount }) => (
         <TouchableOpacity
             style={styles.userItem}
-            onPress={() =>
+            onPress={() => {
+                handleCancelSearch();
                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                     screen: MessageNavigationName.MessageBox,
-                    params: { userId: item.account_id, username: item.first_name + ' ' + item.last_name },
-                })
-            }
+                    params: {
+                        email: user?.email,
+                        userId: user?.id,
+                        userName: `${item.first_name} ${item.last_name}`,
+                        token: user?.token,
+                        receiverId: item.account_id,
+                        conversationId: null,
+                        avatar: item.avatar
+                    },
+                });
+            }}
         >
-            <Text style={styles.name}>{`${item.first_name} ${item.last_name}`}</Text>
-            <Text style={styles.email}>{item.email}</Text>
+            <Avatar.Image
+                source={getAvatarUri(convertGoogleDriveLink(item.avatar !=null ? item.avatar: "" ) as string)}
+                size={40}
+            />
+            <View style={{ marginLeft: 10 }}>
+                <Text style={styles.name}>{`${item.first_name} ${item.last_name}`}</Text>
+                <Text style={styles.email}>{item.email}</Text>
+            </View>
         </TouchableOpacity>
     );
 
+
+    // @ts-ignore
     return (
         <View style={styles.container}>
             <View style={styles.searchContainer}>
@@ -123,52 +159,103 @@ const MessageHome: React.FC = () => {
                     value={searchText}
                     onChangeText={(text) => {
                         setSearchText(text);
-                        setAccountPage(0);
                         setHasMoreAccounts(true);
                     }}
                 />
                 <TouchableOpacity
                     style={styles.searchIcon}
-                    onPress={() => searchAccounts(0)} // Bắt đầu tìm kiếm
+                    onPress={() => {
+                        setAccounts([]);
+                        setAccountPage(() => {
+                            searchAccounts(0)
+                            return 1;
+                        })
+                    }}
                 >
-                    <Icon name="search" size={20} color="#333" />
+                    <Icon name="search" size={20} color="#333"/>
                 </TouchableOpacity>
+                {isSearching && (
+                    <TouchableOpacity style={styles.cancelIcon} onPress={handleCancelSearch}>
+                        <Text style={styles.cancelText}>Hủy</Text>
+                    </TouchableOpacity>
+                )}
             </View>
             {isSearching ? (
                 <FlatList
                     data={accounts}
                     keyExtractor={(item) => item.account_id}
                     renderItem={renderAccount}
-                    onEndReached={() => searchAccounts(accountPage + 1)} // Tải thêm dữ liệu
-                    onEndReachedThreshold={0.5}
+                    onMomentumScrollBegin={() => {
+                        onEndReachedCalledDuringMomentum = false;
+                    }}
+                    onEndReached={() => {
+                        if (!onEndReachedCalledDuringMomentum) {
+                            if(hasMoreAccounts)
+                            setAccountPage((prevPage) => {
+                                searchAccounts(prevPage);
+                                return prevPage + 1;
+                            });
+                            onEndReachedCalledDuringMomentum = true;
+                        }
+                    }}
+                    onEndReachedThreshold={0.1}
                     ListFooterComponent={
-                        loading ? <ActivityIndicator size="small" color="#0000ff" /> : null
+                        loading ? <ActivityIndicator size="small" color="#0000ff"/> : null
                     }
                 />
             ) : (
                 <FlatList
                     data={conversations}
                     keyExtractor={(item) => item.id.toString()}
-                    renderItem={({ item }) => (
+                    renderItem={({item}) => (
                         <TouchableOpacity
                             style={styles.userItem}
                             onPress={() => {
-                                console.log(item.id)
                                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                                     screen: MessageNavigationName.MessageBox,
-                                    params: {email: user?.email, userId: user?.id, userName: item.partner.name, conversationId: item.id, token: user?.token, receiverId: item.partner.id },
-                                })
-                            }
-                            }
+                                    params: {
+                                        email: user?.email,
+                                        userId: user?.id,
+                                        userName: item.partner.name,
+                                        conversationId: item.id,
+                                        token: user?.token,
+                                        receiverId: item.partner.id,
+                                        avatar: item.partner.avatar,
+                                    },
+                                });
+                            }}
                         >
-                            <Text style={styles.name}>{item.partner.name}</Text>
-                            <Text style={styles.message}>{item.last_message.message}</Text>
+                            <View style={styles.conversationContainer}>
+                                <Avatar.Image
+                                    source={getAvatarUri(convertGoogleDriveLink(item.partner.avatar !=null ? item.partner.avatar: "" ) as string)} // URL của avatar
+                                    size={40}
+                                />
+                                <View style={styles.conversationText}>
+                                    <Text style={styles.name}>{item.partner.name}</Text>
+                                    <Text style={[styles.message, (item.last_message.unread==1&& item.last_message.sender.id.toString()!=user?.id) && styles.unreadMessage]}>
+                                        {item.last_message.message != null?item.last_message.message: "Tin nhắn đã bị thu hồi" }
+                                    </Text>
+                                </View>
+                                {(item.last_message.unread==1&& item.last_message.sender.id.toString()!=user?.id) && <View style={styles.unreadDot} />}
+                            </View>
                         </TouchableOpacity>
                     )}
-                    // onEndReached={() => fetchConversations(accountPage + 1)}
-                    onEndReachedThreshold={0.5}
+                    onEndReachedThreshold={0.1}
+                    onMomentumScrollBegin={() => {
+                        onEndReachedCalledDuringMomentum = false;
+                    }}
+                    onEndReached={() => {
+                        if (!onEndReachedCalledDuringMomentum) {
+                            if(hasMoreConversation)
+                            setIndex(prevState => {
+                                fetchConversations(prevState);
+                                return prevState + 1;
+                            })
+                            onEndReachedCalledDuringMomentum = true;
+                        }
+                    }}
                     ListFooterComponent={
-                        loading ? <ActivityIndicator size="small" color="#0000ff" /> : null
+                        loading ? <ActivityIndicator size="small" color="#0000ff"/> : null
                     }
                 />
             )}
@@ -177,32 +264,105 @@ const MessageHome: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-    container: { flex: 1, padding: 10, backgroundColor: "#fff" },
+    container: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: "#f4f5f7",
+    },
     searchContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 10,
+        backgroundColor: "#fff",
+        borderRadius: 10,
+        padding: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+        marginBottom: 15,
     },
     searchInput: {
         flex: 1,
-        height: 40,
-        borderColor: "#ccc",
-        borderWidth: 1,
-        borderRadius: 5,
+        fontSize: 16,
+        paddingVertical: 5,
         paddingHorizontal: 10,
+        color: "#333",
     },
     searchIcon: {
-        marginLeft: 10,
+        backgroundColor: "#ffffff",
+        borderRadius: 8,
         padding: 10,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    cancelIcon: {
+        marginLeft: 10,
+    },
+    cancelText: {
+        fontSize: 14,
+        color: "red",
     },
     userItem: {
-        padding: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: "#ddd",
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#fff",
+        padding: 15,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+        marginBottom: 10,
     },
-    name: { fontSize: 16, fontWeight: "bold" },
-    email: { fontSize: 14, color: "#555" },
-    message: { fontSize: 14, color: "#777" },
+    avatar: {
+        marginRight: 15,
+    },
+    name: {
+        fontSize: 16,
+        fontWeight: "bold",
+        color: "#333",
+    },
+    email: {
+        fontSize: 14,
+        color: "#777",
+    },
+    conversationContainer: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#fff",
+        padding: 15,
+        borderRadius: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+        marginBottom: 10,
+    },
+    conversationText: {
+        flex: 1,
+        marginLeft: 15,
+    },
+    message: {
+        fontSize: 14,
+        color: "#666",
+    },
+    unreadMessage: {
+        fontWeight: "bold",
+        color: "#333",
+    },
+    unreadDot: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: "red",
+    },
+    footer: {
+        marginVertical: 10,
+    },
 });
+
 
 export default MessageHome;

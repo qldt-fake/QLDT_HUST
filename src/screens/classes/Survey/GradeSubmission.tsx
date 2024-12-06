@@ -49,6 +49,7 @@ const GradeSubmission = () => {
   }
 
   const handleGrade = async () => {
+    if (!validateScore()) return;
     try {
       dispatch(showLoading());
       const res = await getSurveyResponseApi({
@@ -78,7 +79,7 @@ const GradeSubmission = () => {
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
             break;
           default:
-            Alert.alert('Lỗi', res.data ?? 'Lỗi xảy ra với server');
+            Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi xảy ra với server');
             break;
         }
       }

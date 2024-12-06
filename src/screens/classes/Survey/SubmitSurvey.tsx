@@ -96,7 +96,7 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
       const res = await submitSurveyApi(payload);
       console.log('res', res);
       if (res) {
-        switch (res.meta.code) {
+        switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Nộp survey thành công');
             navigation.goBack();
@@ -115,7 +115,7 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
             Alert.alert("Lỗi", "Không thể nộp vì hạn của bài kiểm tra đã trôi qua");
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.meta?.message);
             break;
         }
       }

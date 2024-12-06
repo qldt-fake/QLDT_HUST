@@ -148,7 +148,7 @@ const EditClass: React.FC<EditClassProps> = ({ route }) => {
             Alert.alert('Thất bại', 'Role của bạn không có quyền sửa lớp.');
             break;
           default:
-            Alert.alert('Thất bại', res.data);
+            Alert.alert('Thất bại', res.meta?.message ?? 'Có lỗi xảy ra');
             break;
         }
       }

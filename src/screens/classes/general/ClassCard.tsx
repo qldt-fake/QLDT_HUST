@@ -53,7 +53,7 @@ const ClassCard: React.FC<ClassCardProps> = ({ class_name, class_id, class_type,
             Alert.alert('Lỗi', 'Bạn không có quyền xóa lớp');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');
             break;
         }
       }

@@ -1,7 +1,8 @@
 import { View, Text, StyleSheet } from 'react-native';
 import React from 'react';
-import { formatDate } from 'src/utils/helper';
+import { formatDate, formatDateTime } from 'src/utils/helper';
 import { color } from 'src/common/constants/color';
+import { DATE_TIME_FORMAT } from 'src/common/constants';
 
 export type ClassDetailSummaryProps = {
   class_name: string;
@@ -39,11 +40,11 @@ const ClassDetailSummary: React.FC<ClassDetailSummaryProps> = ({
         </View>
         <View style={styles.line}>
           <Text style={styles.row}>Ngày bắt đầu:</Text>
-          <Text style={styles.row}>{formatDate(start_date)}</Text>
+          <Text style={styles.row}>{formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(start_date))}</Text>
         </View>
         <View style={styles.line}>
           <Text style={styles.row}>Ngày kết thúc:</Text>
-          <Text style={styles.row}>{formatDate(end_date)}</Text>
+          <Text style={styles.row}>{formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(end_date))}</Text>
         </View>
         <View style={styles.line}>
           <Text style={styles.row}>Số sinh viên:</Text>

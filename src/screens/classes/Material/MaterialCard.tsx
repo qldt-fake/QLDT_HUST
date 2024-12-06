@@ -59,7 +59,7 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
             Alert.alert('Lỗi', 'Bạn không có quyền xóa tài liệu');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.message ?? 'Lỗi không xác định');
             break;
         }
       }

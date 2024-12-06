@@ -99,6 +99,11 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
       return false;
     }
 
+    if (!newSurvey.deadline || isNaN((newSurvey.deadline as Date).getTime())) {
+      Alert.alert('Lỗi', 'Vui lòng chọn ngày hợp lệ');
+      return false;
+    }
+
     return true;
   };
 
@@ -108,10 +113,6 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
     }
 
     try {
-      if (!newSurvey.title || !newSurvey.deadline) {
-        Alert.alert('Error', 'Please fill in all required fields');
-        return;
-      }
 
       const payload = {
         token: user?.token, 
@@ -138,7 +139,7 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
             Alert.alert('Lỗi', 'Bạn không có quyền tạo bài kiểm tra');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.meta?.message ?? 'Có lỗi xảy ra với server');
             break;
         }
       }

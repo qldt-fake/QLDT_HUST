@@ -80,7 +80,7 @@ export const ExcerciseCard = ({
             Alert.alert('Lỗi', 'Bạn không có quyền xóa bài kiểm tra');
             break;
           default:
-            Alert.alert('Lỗi', res.data);
+            Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');
             break;
         }
       }

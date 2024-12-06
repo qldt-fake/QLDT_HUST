@@ -18,6 +18,7 @@ import {showLoading, hideLoading} from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import AbsenceRequest from '../Absence/RequestAbsence';
 import OthersTabInClass from '../others/OthersTabInClass';
+import { setClassDetails } from 'src/redux/slices/classDetailsSlice';
 import { Roles } from 'src/common/enum/commom';
 export const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
@@ -40,9 +41,14 @@ const PostScreen = () => {
       });
       if (res) {
         switch (res.meta?.code) {
-          case CODE_OK:
-            setClassDetail(res.data);
+          case CODE_OK: {
+            if (res?.data) {
+              const { student_accounts, ...classInfo } = res.data;
+              dispatch(setClassDetails(classInfo));
+              setClassDetail(res.data);
+            }
             break;
+          }
           case INVALID_TOKEN:
             Alert.alert('Lỗi', 'Token không hợp lệ');
             dispatch(logout());
@@ -135,7 +141,7 @@ const ClassDetail = ({ route }: { route: any }) => {
            position={{ bottom: 100, right: 20 }} // Customize position here
          />
         )}
-     
+
     </classDeatailContext.Provider>
   );
 };

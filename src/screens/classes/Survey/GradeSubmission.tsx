@@ -19,18 +19,22 @@ import { DATE_TIME_FORMAT } from 'src/common/constants';
 import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import {sendNotificationApi} from "src/services/noti.services";
+import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
 
 const GradeSubmission = () => {
   const route = useRoute();
   console.log(route.params);
   const navigation = useNavigation();
-  const { assignment_id, submission_time, id, text_response, file_url, student_account } =
+  const { assignment_id, submission_time, id, text_response, file_url, student_account, title } =
     route.params as any;
 
   const [score, setScore] = useState('');
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();
+  const classDetails = useSelector(selectClassDetails);
+  console.log(classDetails);
 
   const validateScore = () => {
     if (!score) {
@@ -53,9 +57,18 @@ const GradeSubmission = () => {
         survey_id: assignment_id,
         grade: { score, submission_id: id }
       });
+      console.log(student_account.student_id);
       if (res) {
         switch (res.meta?.code) {
           case CODE_OK:
+            await sendNotificationApi({
+              token: auth?.user?.token,
+              // class_id : classDetails?.class_id,
+
+              message: "Bài tập: " + title + "\n Mã lớp: " + classDetails?.class_id + "\nĐiểm: "+score,
+              type: " ASSIGNMENT_GRADE",
+              toUser: student_account.account_id
+            });
             Alert.alert('Thành công', 'Chấm điểm thành công');
             navigation.goBack();
             break;

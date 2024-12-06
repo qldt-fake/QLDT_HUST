@@ -11,7 +11,6 @@ import store, { persistor } from './redux';
 import LoadingOverlay from './components/loadingComponent';
 import { ModalProvider } from './hooks/useBottomModal';
 import { AlertProvider } from './hooks/useAlert';
-import FCMHandler from "src/services/FCMService";
 import messaging from "@react-native-firebase/messaging";
 import FCMService from "src/services/FCMService";
 export default function App() {
@@ -20,7 +19,6 @@ export default function App() {
     const enabled =
         authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
         authStatus === messaging.AuthorizationStatus.PROVISIONAL;
-
     if (enabled) {
       console.log('Authorization status:', authStatus);
     }

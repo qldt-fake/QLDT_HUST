@@ -191,9 +191,9 @@ type SurveyNavigationType = {
   EditSurvey: {  id: string, title: string, description: string, deadline: string, file_url: string; classId: string };
   StudentAssignment: undefined;
   SubmitSurvey : { id: string, title: string, description: string, deadline: string, file_url: string }
-  SubmissionList: { id: string };
+  SubmissionList: { id: string, title: string };
   SubmissionDetail: { id: string, title: string, deadline: string, file_url: string, description: string, class_id: string, is_submitted: boolean },
-  GradeSubmission: { assignment_id: string, submission_time: string, text_response: string, file_url: string, student_account: any, id: string }
+  GradeSubmission: { assignment_id: string, submission_time: string, text_response: string, file_url: string, student_account: any, id: string, title: title }
 }
 
 type MaterialNavigationType = {

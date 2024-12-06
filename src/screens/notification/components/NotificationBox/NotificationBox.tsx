@@ -37,7 +37,7 @@ const NotificationBox: React.FC<NotificationProps> = ({ title, content, date, re
       </View>
       <Text style={styles.titleText}>{title}</Text>
       <View style={styles.divider} />
-      <Text style={styles.contentText}>{content}</Text>
+      <Text style={styles.contentText}>{content.split("\n")[0]}</Text>
       <Text style={styles.detailsText}>Chi tiết</Text>
     </View>
   );

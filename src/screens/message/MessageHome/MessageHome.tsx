@@ -44,13 +44,13 @@ const MessageHome: React.FC = () => {
             }
         }
         FCMService.getInstance().on('newNotification', handleNotification);
-        return navigation.addListener("focus", () => {
+
             setIndex(() => {
                 fetchConversations(0);
                 return 0;
             });
-        });
-    }, [navigation]);
+
+    }, []);
 
     const fetchConversations = async (index: number) => {
         setLoading(true);
@@ -211,6 +211,19 @@ const MessageHome: React.FC = () => {
                         <TouchableOpacity
                             style={styles.userItem}
                             onPress={() => {
+                                setConversations((prevMessages) =>
+                                    prevMessages.map((msg) =>
+                                        msg.id === item.id
+                                            ? {
+                                                ...msg,
+                                                last_message: {
+                                                    ...msg.last_message,
+                                                    unread: 0, // Cập nhật trạng thái unread
+                                                },
+                                            }
+                                            : msg
+                                    )
+                                );
                                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                                     screen: MessageNavigationName.MessageBox,
                                     params: {

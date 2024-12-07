@@ -15,6 +15,7 @@ import AddStudent from 'src/screens/classes/classes-for-teacher/AddStudent';
 import StudentProfile from 'src/screens/classes/classes-for-teacher/classOpen/studentProfile';
 import { ModalProvider } from 'src/hooks/useBottomModal';
 import AbsenceNavigation from './AbsenceNavigation';
+import AttendanceNavigation from './AttendanceNavigation';
 
 const Stack = createNativeStackNavigator();
 
@@ -132,6 +133,7 @@ const ClassNavigation = () => {
       {SurveyNavigation()}
       {MaterialNavigation()}
       {AbsenceNavigation()}
+      {AttendanceNavigation()}
     </Stack.Group>
   );
 };

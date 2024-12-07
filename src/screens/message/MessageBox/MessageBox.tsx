@@ -1,7 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import SockJS from "sockjs-client";
 import Client from "@stomp/stompjs";
 import "fast-text-encoding";
+
 import {
     ActivityIndicator,
     Alert,
@@ -22,20 +23,37 @@ import {
     IMessageResponse
 } from "src/services/message.services";
 import MessageHeader from "src/screens/message/components/MessageHeader";
+import {useFocusEffect} from "@react-navigation/native";
+import {delay} from "lodash";
+import {useAppDispatch} from "src/redux";
+import {logout} from "src/redux/slices/authSlice";
+import {INVALID_TOKEN} from "src/common/constants/responseCode";
 
-const MessageBox = ({route, navigation}: any) => {
+const MessageBox = ({route, navigation,}: any) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<any>(null); // Stomp client state
-    const {userName, token, conversationId, receiverId, email, userId, avatar} = route.params;
+    const {
+        userName,
+        token,
+        conversationId,
+        receiverId,
+        email,
+        userId,
+        avatar,
+        markAsRead,
+        updateLastMessages,
+        fetch
+    } = route.params;
     const [latestId, setLatestId] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
     const [, setIndex] = useState(0);
+    const dispatch = useAppDispatch();
     // Fetch conversations from the API
     let onEndReachedCalledDuringMomentum = false
     const fetchConversations = async (index: number) => {
-        if (!hasMore)
+        if (!hasMore || conversationId === null)
             return;
         const requestBody: IGetConversationsBody = {
             token,
@@ -65,14 +83,14 @@ const MessageBox = ({route, navigation}: any) => {
                 });
                 setLoading(false);
                 setHasMore(fetchedMessages.length > 0);
-            } else {
-                console.error("Failed to fetch messages:", response.meta?.message);
+            } else if( response.meta.code === INVALID_TOKEN){
+                Alert.alert('Lỗi', 'Token không hợp lệ');
+                dispatch(logout());
             }
         } catch (error) {
-            console.error("Error fetching messages:", error);
+            Alert.alert('Không có kết nối');
         }
     };
-
     useEffect(() => {
         const client = Client.Stomp.over(() => new SockJS("http://157.66.24.126:8080/ws"));
 
@@ -80,14 +98,15 @@ const MessageBox = ({route, navigation}: any) => {
             console.log("Connected: " + frame);
             client.subscribe(`/user/${receiverId}/inbox`, (message: any) => {
                 const msg = JSON.parse(message.body);
-
                 if (msg.sender.id != userId) {
                     setMessages((prevMessages) => [
                         {id: msg.id, text: msg.content, sender: "their"}, ...prevMessages
                     ]);
                     setLatestId(msg);
+
                 }
             });
+            console.log(conversationId);
             if (conversationId != null) {
                 setIndex(prevState => {
                     fetchConversations(prevState);
@@ -99,13 +118,19 @@ const MessageBox = ({route, navigation}: any) => {
         });
 
         return () => {
+            if (conversationId != null)
+                markAsRead();
+
             if (stompClient) {
                 stompClient.disconnect();
             }
         };
     }, []);
+    function delay(ms: number) {
+        return new Promise( resolve => setTimeout(resolve, ms) );
+    }
 
-    const sendMessage = () => {
+    const sendMessage = async () => {
         if (input.trim() && stompClient) {
             const message = {
                 receiver: {id: receiverId},
@@ -115,14 +140,21 @@ const MessageBox = ({route, navigation}: any) => {
             };
 
             console.log("Sending message:", message);
-            stompClient.send("/chat/message", {}, JSON.stringify(message));
+            await stompClient.send("/chat/message", {}, JSON.stringify(message));
 
             setMessages([
                 {id: latestId + 1, text: input, sender: "me"},
                 ...messages,
             ]);
+
             setInput("");
             setLatestId(latestId + 1);
+            if (updateLastMessages != null)
+                updateLastMessages(input);
+            else {
+                await delay(5);
+                fetch(receiverId, input, 0);
+            }
         }
     };
 
@@ -137,11 +169,16 @@ const MessageBox = ({route, navigation}: any) => {
                             : msg
                     )
                 );
-            } else {
-                console.error("Failed to unsend message:", response.meta?.message);
+
+                if (Number(latestId) === Number(messageId))
+                    updateLastMessages("Tin nhắn đã bị gỡ");
+
+            } else if( response.meta.code === INVALID_TOKEN){
+                Alert.alert('Lỗi', 'Token không hợp lệ');
+                dispatch(logout());
             }
         } catch (error) {
-            console.error("Error unsending message:", error);
+           Alert.alert('Có lỗi khi gỡ tin nhắn');
         }
     };
 
@@ -203,7 +240,7 @@ const MessageBox = ({route, navigation}: any) => {
                     data={messages}
                     keyExtractor={(item) => item.id}
                     renderItem={renderMessage}
-                    inverted // Inverted to show latest messages at the bottom
+                    inverted
                     contentContainerStyle={{flexGrow: 1, padding: 10}}
                     keyboardShouldPersistTaps="handled"
                     onMomentumScrollBegin={() => {

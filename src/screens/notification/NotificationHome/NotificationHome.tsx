@@ -6,7 +6,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
-    RefreshControl
+    RefreshControl, Alert
 } from 'react-native';
 import NotificationBox from 'src/screens/notification/components/NotificationBox/NotificationBox';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
@@ -17,10 +17,13 @@ import {
     markNotificationAsReadApi
 } from 'src/services/noti.services';
 import {useSelector} from 'react-redux';
-import {selectAuth} from 'src/redux/slices/authSlice';
+import {logout, selectAuth} from 'src/redux/slices/authSlice';
 import FCMService from "src/services/FCMService";
 import {FCMEnum} from "src/common/enum/FCMEnum";
 import {NotificationEnum} from "src/common/enum/NotificationEnum";
+import {INVALID_TOKEN} from "src/common/constants/responseCode";
+import {useAppDispatch} from "src/redux";
+
 
 type Notification = {
     id: number;
@@ -43,6 +46,7 @@ const NotificationHome: React.FC = () => {
     const auth = useSelector(selectAuth);
     const user = auth.user;
     const PAGE_SIZE = 10;
+    const dispatch = useAppDispatch();
     let onEndReachedCalledDuringMomentum = true;
     const markAsRead = async (id: number) => {
         const updatedNotifications = notifications.map(notification =>
@@ -60,7 +64,7 @@ const NotificationHome: React.FC = () => {
         setNotifications(updatedNotifications);
     };
     const getTitleDetail = (title: string) => {
-        switch (title){
+        switch (title) {
             case ("ABSENCE") : {
                 title = NotificationEnum.ABSENCE;
                 break;
@@ -72,7 +76,8 @@ const NotificationHome: React.FC = () => {
             case ("REJECT_ABSENCE_REQUEST") : {
                 title = NotificationEnum.REJECT_ABSENCE_REQUEST;
                 break;
-            } case  ("ASSIGNMENT_GRADE") : {
+            }
+            case  ("ASSIGNMENT_GRADE") : {
                 title = NotificationEnum.ASSIGNMENT_GRADE;
             }
         }
@@ -110,9 +115,14 @@ const NotificationHome: React.FC = () => {
                 setHasMore(notificationsData.length === PAGE_SIZE);
                 setNotifications(loadMore ? [...notifications, ...notificationsData] : notificationsData);
                 setPage(loadMore ? page + 1 : 1);
+            } else { // @ts-ignore
+                if (response.meta.code === INVALID_TOKEN) {
+                    Alert.alert('Lỗi', 'Token không hợp lệ');
+                    dispatch(logout());
+                }
             }
         } catch (error) {
-            console.error('Error loading notifications:', error);
+            Alert.alert('Không có kết nối');
             setServerError(true);
         } finally {
             setLoading(false);
@@ -150,6 +160,11 @@ const NotificationHome: React.FC = () => {
                                     image_url: item.image_url
                                 }));
                             setNotifications(prevState => [...notificationsData, ...prevState]);
+                        } else { // @ts-ignore
+                            if (response.meta.code === INVALID_TOKEN) {
+                                Alert.alert('Lỗi', 'Token không hợp lệ');
+                                dispatch(logout());
+                            }
                         }
                     }
                 } catch (error) {

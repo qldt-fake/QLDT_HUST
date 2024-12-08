@@ -61,6 +61,7 @@ type AppNavigationType = {
   NotificationNavigation: {
     screen: NotificationNavigationName;
     params: {
+      image: any;
       title: string;
       content: string;
     };
@@ -164,6 +165,7 @@ type NotificationNavigationType = {
   NotificationDetail: {
     title: string;
     content: string;
+    image: any;
   };
 };
 type MessageNavigationType = {

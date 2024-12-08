@@ -5,17 +5,19 @@ const NotificationDetail = ({route, navigation}: any) => {
     const {title, content, image} = route.params;
     React.useLayoutEffect(() => {
         navigation.setOptions({
-            headerTitle: "Thông báo",
-            headerTitleAlign: "center", // Căn giữa tiêu đề
-            headerStyle: {
-                backgroundColor: "#8B0000", // Màu đỏ đô
-            },
-            headerTitleStyle: {
-                color: "#FFFFFF", // Màu trắng
-                fontWeight: "bold", // In đậm
-                fontSize: 22, // Kích thước lớn hơn
-            },
-            headerTintColor: "#FFFFFF", // Đặt màu mũi tên navigate back là trắng
+            headerTitle: {
+                headerTitle: "Thông báo",
+                headerTitleAlign: "center", // Căn giữa tiêu đề
+                headerStyle: {
+                    backgroundColor: "#8B0000", // Màu đỏ đô
+                },
+                headerTitleStyle: {
+                    color: "#FFFFFF", // Màu trắng
+                    fontWeight: "bold", // In đậm
+                    fontSize: 22, // Kích thước lớn hơn
+                },
+                headerTintColor: "#FFFFFF", // Đặt màu mũi tên navigate back là trắng
+            }
         });
     }, [navigation]);
 

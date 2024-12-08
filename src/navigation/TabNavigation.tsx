@@ -75,7 +75,7 @@ function TabNavigation() {
                         ) : (
                             <>
                                 <MaterialIcons name="notifications-none" size={25}/>
-                                {count === 0 ? null : <Avatar.Text
+                                {count === 0 || isNaN(count) ? null : <Avatar.Text
                                     label={(count > 99 ? "99+" : count.toString())}
                                     size={count < 9 ? 15 : count < 100 ? 21 : 30}
                                     style={style.newIcon}

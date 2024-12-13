@@ -25,7 +25,6 @@ function HomeNavigation() {
         options={{ headerShown: false }}
         component={HomeTab}
       />
-      <Stack.Group></Stack.Group>
     </Stack.Navigator>
   );
 }

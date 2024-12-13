@@ -17,7 +17,6 @@ export default function HomeTab() {
   const auth = useSelector(selectAuth);
   return (
     <View style={styles.container}>
-      {auth?.user?.role === Roles.STUDENT && (
         <Card
           style={styles.card}
           onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}
@@ -28,8 +27,6 @@ export default function HomeTab() {
           <Text style={styles.title}>Đăng ký lớp</Text>
           <Text style={styles.description}>Đăng ký lớp học tập trong kỳ</Text>
         </Card>
-      )}
-
       <Card
         style={styles.card}
         onPress={() => navigation.navigate(ClassNavigationName.ClassList as never)}
@@ -41,7 +38,6 @@ export default function HomeTab() {
         <Text style={styles.description}>Quản lý thông tin lớp học</Text>
       </Card>
 
-      {auth?.user?.role === Roles.STUDENT && (
         <Card
           style={styles.card}
           onPress={() => navigation.navigate(AbsenceNavigationName.StudentAbsenceRequests as never)}
@@ -52,19 +48,16 @@ export default function HomeTab() {
           <Text style={styles.title}>Biểu mẫu</Text>
           <Text style={styles.description}>Thông tin các đồ án</Text>
         </Card>
-      )}
-      {auth?.user?.role === Roles.STUDENT && (
         <Card
           style={styles.card}
           onPress={() => navigation.navigate(SurveyNavigationName.StudentAssignments as never)}
         >
           <View style={styles.iconContainer}>
-            <IconButton icon='information' iconColor={color.red} size={50} />
+            <IconButton icon='book-open' iconColor={color.red} size={50} />
           </View>
           <Text style={styles.title}>Bài tập</Text>
           <Text style={styles.description}>Danh sách bài tập</Text>
         </Card>
-      )}
     </View>
   );
 }

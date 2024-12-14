@@ -11,10 +11,11 @@ import { reviewAbsenceApi } from 'src/services/absence.service';
 import { absenceStatus } from 'src/common/enum/commom';
 import { sendNotificationApi } from "src/services/noti.services";
 import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
+import { AppNaviagtionName } from 'src/common/constants/nameScreen';
 
 const AbsenceReview = ({ route }: any) => {
-  const navigation = useNavigation();
-  const { id, student_account, absence_date, reason, status } = route?.params?.request as any;
+  const navigation : any = useNavigation();
+  const { id, student_account, absence_date, reason, status, file_url } = route?.params?.request as any;
   console.log(route?.params?.request);
 
   const auth = useSelector(selectAuth);
@@ -23,6 +24,15 @@ const AbsenceReview = ({ route }: any) => {
   console.log(classDetails);
 
   const [currentStatus, setCurrentStatus] = useState<absenceStatus>(status);
+
+  const handlePress = () => {
+    if (!file_url) return;
+    
+    navigation.navigate(AppNaviagtionName.WebView as any, {
+      url: file_url,
+      title: 'Minh chứng'
+    } as any);
+  };
 
   const handleReview = async (newStatus: absenceStatus.ACCEPTED | absenceStatus.REJECTED) => {
     try {
@@ -98,6 +108,10 @@ const AbsenceReview = ({ route }: any) => {
           <Text style={styles.label}>Lý do:</Text>
           <Text style={styles.value}>{reason ?? 'Không có lý do'}</Text>
         </View>
+        <TouchableOpacity style={styles.row} onPress = {handlePress}>
+          <Text style={styles.label}>Minh chứng:</Text>
+          <Text style={[styles.value, {color: color.red}] }>{file_url ? "Xem minh chứng" : 'Không có lý do'}</Text>
+        </TouchableOpacity>
         <View style={styles.row}>
           <Text style={styles.label}>Trạng thái hiện tại:</Text>
           <Text

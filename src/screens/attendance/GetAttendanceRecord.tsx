@@ -141,6 +141,7 @@ import { getAttendanceRecordApi } from 'src/services/attendance.service';
 import moment from 'moment';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AttendanceNavigationName } from 'src/common/constants/nameScreen';
+import EmptyState from 'src/components/EmptyState';
 
 interface RouteParams {
   route: {
@@ -172,7 +173,7 @@ const GetAttendanceRecord: React.FC<RouteParams> = ({ route }) => {
       } else {
         Alert.alert('Error', 'Failed to fetch attendance data');
       }
-      if(res?.data && res.meta.code !== CODE_OK) {
+      if (res?.data && res.meta.code !== CODE_OK) {
         Alert.alert(res.meta.message);
       }
     } catch (error) {
@@ -200,26 +201,30 @@ const GetAttendanceRecord: React.FC<RouteParams> = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Danh sách ngày vắng mặt</Text>
-      <FlatList
-        data={attendanceDates} // Hiển thị danh sách đã loại bỏ trùng
-        keyExtractor={(item, index) => `${item}-${index}`} // Key unique cho mỗi item, bao gồm cả trùng
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleDatePress(item)}>
-            <Card style={[styles.card, selectedDate === item && styles.cardPressed]}>
-              <Card.Content style={styles.cardContent}>
-                <IconButton
-                  icon='calendar-today'
-                  size={24}
-                  iconColor='#d32f2f'
-                  style={styles.icon}
-                />
-                <Text style={styles.dateText}>Ngày {formatDate(item)}</Text>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.listContainer} // Added padding to list
-      />
+      {attendanceDates?.length > 0 ? (
+        <FlatList
+          data={attendanceDates} // Hiển thị danh sách đã loại bỏ trùng
+          keyExtractor={(item, index) => `${item}-${index}`} // Key unique cho mỗi item, bao gồm cả trùng
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleDatePress(item)}>
+              <Card style={[styles.card, selectedDate === item && styles.cardPressed]}>
+                <Card.Content style={styles.cardContent}>
+                  <IconButton
+                    icon='calendar-today'
+                    size={24}
+                    iconColor='#d32f2f'
+                    style={styles.icon}
+                  />
+                  <Text style={styles.dateText}>Ngày {formatDate(item)}</Text>
+                </Card.Content>
+              </Card>
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.listContainer} // Added padding to list
+        />
+      ) : (
+        <EmptyState title='Không có ngày điểm danh nào' />
+      )}
     </View>
   );
 };

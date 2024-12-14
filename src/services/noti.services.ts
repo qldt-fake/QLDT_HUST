@@ -47,10 +47,10 @@ export const sendNotificationApi = async (payload:any) : Promise<IBodyResponse<a
 
   // Add file if present
   if (payload.image) {
-    formData.append('file', payload.image);
+    formData.append('image', payload.image);
   }
 
-  console.log('formData', formData);
+  console.log('formDataAsent', formData);
   try {
     return await axiosInstance.post(NotificationApi.SEND_NOTIFICATIONS, formData,
         {

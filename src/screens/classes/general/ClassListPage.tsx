@@ -60,6 +60,7 @@ const ClassListPage = () => {
                 break;
               case NOT_ACCESS:
                 Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+                navigation.goBack()
                 break;
               default:
                 console.error('Lỗi:', res.meta?.message ?? 'Lỗi không xác định');

@@ -12,7 +12,7 @@ import {
   PARAM_VALUE_INVALID
 } from 'src/common/constants/responseCode';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { RouteProp, useFocusEffect } from '@react-navigation/native';
+import { RouteProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 
@@ -40,6 +40,7 @@ interface AttendanceListItem extends StudentAccount {
 }
 
 const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
+  const navigation = useNavigation()
   const dispatch = useAppDispatch();
   const { classId } = route.params;
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -69,6 +70,9 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
         );
       } else {
         Alert.alert('Error', 'Failed to fetch class details');
+      }
+      if (res?.data && res.meta.code !== CODE_OK) {
+        Alert.alert(res.meta.message);
       }
     } catch (error) {
       console.error('Error fetching class detail:', error);
@@ -114,6 +118,7 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+            navigation.goBack();
             break;
           case PARAM_VALUE_INVALID:
             Alert.alert('Lỗi', 'Ngày điểm danh không hợp lệ');

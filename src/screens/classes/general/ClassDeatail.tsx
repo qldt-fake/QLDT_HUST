@@ -28,6 +28,7 @@ export const classDeatailContext = createContext(null);
 const Tab = createMaterialTopTabNavigator();
 
 const PostScreen = () => {
+  const navigation = useNavigation()
   const classId = useContext(classDeatailContext);
   const auth = useSelector(selectAuth);
   const user = auth.user;
@@ -59,6 +60,7 @@ const PostScreen = () => {
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+            navigation.goBack()
             break;
           default:
             Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');

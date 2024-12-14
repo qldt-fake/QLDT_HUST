@@ -15,6 +15,7 @@ import { CODE_OK, INVALID_TOKEN, NOT_ACCESS, PARAM_VALUE_INVALID } from 'src/com
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { ClassNavigationName } from 'src/common/constants/nameScreen';
 
 const CreateClass = () => {
   const { user } = useSelector(selectAuth);
@@ -243,7 +244,12 @@ const CreateClass = () => {
             <Text style={styles.submitButtonText}>Tạo</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
+        <Text
+          onPress={() => navigation.navigate(ClassNavigationName.ClassListOpen as never)}
+          style={styles.footerText}
+        >
+          Thông tin danh sách các lớp mở
+        </Text>
       </View>
     </PaperProvider>
   );
@@ -283,7 +289,14 @@ const styles = StyleSheet.create({
     padding: 15
   },
   submitButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
-  footerText: { textAlign: 'center', marginTop: 20, color: '#aaa' }
+  footerText: {
+    color: '#b30000',
+    textDecorationLine: 'underline',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    fontSize: 16,
+    paddingLeft: 50
+  }
 });
 
 export default CreateClass;

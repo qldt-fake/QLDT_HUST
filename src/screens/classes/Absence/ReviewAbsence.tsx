@@ -9,7 +9,7 @@ import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import { reviewAbsenceApi } from 'src/services/absence.service';
 import { absenceStatus } from 'src/common/enum/commom';
-import {sendNotificationApi} from "src/services/noti.services";
+import { sendNotificationApi } from "src/services/noti.services";
 import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
 
 const AbsenceReview = ({ route }: any) => {
@@ -19,7 +19,7 @@ const AbsenceReview = ({ route }: any) => {
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();
-  const classDetails : any = useSelector(selectClassDetails);
+  const classDetails: any = useSelector(selectClassDetails);
   console.log(classDetails);
 
   const [currentStatus, setCurrentStatus] = useState<absenceStatus>(status);
@@ -32,19 +32,20 @@ const AbsenceReview = ({ route }: any) => {
         request_id: id,
         status: newStatus
       });
-
       if (res) {
         switch (res.meta?.code) {
           case CODE_OK:
             Alert.alert('Thành công', 'Đã cập nhật trạng thái đơn xin nghỉ');
-            setCurrentStatus(newStatus);
             await sendNotificationApi({
               token: auth?.user?.token,
               // class_id : classDetails?.class_id,
-              message: "Mã lớp: " + classDetails?.class_id + "\n" +  newStatus == absenceStatus.ACCEPTED? "Giảng viên đã chấp thuận đơn xin nghỉ học" :"Giảng viên đã từ chối đơn xin nghỉ học",
-              type: newStatus == absenceStatus.ACCEPTED?"ACCEPT_ABSENCE_REQUEST":"REJECT_ABSENCE_REQUEST",
+              message:
+                "Mã lớp: " + classDetails?.class_id + "\n" +
+                (newStatus === absenceStatus.ACCEPTED
+                  ? "Giảng viên đã chấp thuận đơn xin nghỉ học"
+                  : "Giảng viên đã từ chối đơn xin nghỉ học"),
+              type: newStatus === absenceStatus.ACCEPTED ? "ACCEPT_ABSENCE_REQUEST" : "REJECT_ABSENCE_REQUEST",
               toUser: student_account.account_id,
-
             });
             navigation.goBack();
             break;
@@ -53,6 +54,7 @@ const AbsenceReview = ({ route }: any) => {
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+            navigation.goBack()
             break;
           default:
             Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi xảy ra với server');
@@ -104,15 +106,15 @@ const AbsenceReview = ({ route }: any) => {
               currentStatus === absenceStatus.PENDING
                 ? styles.pending
                 : currentStatus === absenceStatus.ACCEPTED
-                ? styles.accepted
-                : styles.rejected
+                  ? styles.accepted
+                  : styles.rejected
             ]}
           >
             {currentStatus === absenceStatus.PENDING
               ? 'Đang chờ'
               : currentStatus === absenceStatus.ACCEPTED
-              ? 'Đã duyệt'
-              : 'Bị từ chối'}
+                ? 'Đã duyệt'
+                : 'Bị từ chối'}
           </Text>
         </View>
       </View>

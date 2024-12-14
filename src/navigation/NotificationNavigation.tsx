@@ -4,6 +4,8 @@ import { NotificationNavigationName } from 'src/common/constants/nameScreen';
 import WraperScreen from 'src/components/WraperScreen/WraperScreen';
 import NotificationDetail from 'src/screens/notification/NotificationDetails/NotificationDetail';
 import {NotificationNavigationType} from "src/common/type/navigation";
+import ClassHeader from 'src/screens/classes/general/ClassHeader';
+import { color } from 'src/common/constants/color';
 
 const Stack = createNativeStackNavigator<NotificationNavigationType>();
 function NotificationNavigation() {
@@ -14,11 +16,20 @@ function NotificationNavigation() {
         ...TransitionPresets.SlideFromRightIOS,
         animation: 'slide_from_right',
         gestureEnabled: true,
-        gestureDirection: 'vertical'
+        gestureDirection: 'vertical',
       }}
     >
       <Stack.Screen
         name={NotificationNavigationName.NotificationDetail}
+        options={{
+          headerShown: true,
+          headerStyle: {
+            backgroundColor: color.bgClassHeader
+          },
+          headerTitleAlign: 'center',
+          headerTintColor: color.white,
+          headerTitle: () => <ClassHeader title='Thông báo' />
+        }}
         component={NotificationDetail}
       />
     </Stack.Navigator>

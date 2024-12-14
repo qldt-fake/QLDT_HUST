@@ -38,8 +38,8 @@ const SubmissionDetail: React.FC<any> = ({ route }: any) => {
         };
         dispatch(showLoading());
         const response = await getSubmissionApi(payload);
-        if(response) {
-          switch(response.meta?.code) {
+        if (response) {
+          switch (response.meta?.code) {
             case CODE_OK:
               setSubmissionData(response.data);
               break;
@@ -154,7 +154,13 @@ const SubmissionDetail: React.FC<any> = ({ route }: any) => {
 
         <View>
           <Text style={styles.label}>Điểm</Text>
-          <Text>{`${submissionData?.grade}/10`}</Text>
+          {
+            submissionData?.grade ? (
+              <Text>{`${submissionData?.grade}/10`}</Text>
+            ) : (
+              <Text>Chưa chấm</Text> 
+            )
+          }
         </View>
       </View>
     </ScrollView>

@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
-import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {StyleSheet} from 'react-native';
+import {createMaterialBottomTabNavigator} from '@react-navigation/material-bottom-tabs';
 import AntdIcon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -10,7 +9,7 @@ import WraperScreen from 'src/components/WraperScreen';
 import HomeNavigation from './HomeNavigation';
 import NotificationHome from 'src/screens/notification/NotificationHome';
 import SettingTabNavigation from './SettingTabNavigation';
-import MessageHome from "src/screens/message/MessageHome/MessageHome";
+import MessageHome from 'src/screens/message/MessageHome/MessageHome';
 import {useSelector} from "react-redux";
 import {selectAuth} from "src/redux/slices/authSlice";
 import {getUnreadNotificationApi} from "src/services/noti.services";
@@ -19,7 +18,7 @@ import {getListConversationsApi} from "src/services/message.services";
 import {FCMEnum} from "src/common/enum/FCMEnum";
 import FCMService from "src/services/FCMService";
 
-const Tab = createMaterialTopTabNavigator();
+const Tab = createMaterialBottomTabNavigator();
 
 function TabNavigation() {
     const [count, setCount] = useState<number>(0);
@@ -37,9 +36,8 @@ function TabNavigation() {
             }
         }
     };
-    const getUnreadMessageCount = async () => {
-        // @ts-ignore
 
+    const getUnreadMessageCount = async () => {
         if (user != null) {
             try {
                 const response = await getListConversationsApi({
@@ -48,12 +46,12 @@ function TabNavigation() {
                     count: 1000,
                 });
                 setCountMessage(Number(response.data.num_new_message));
-
             } catch (error) {
                 return null;
             }
         }
-    }
+    };
+
     useFocusEffect(
         React.useCallback(() => {
             const handleNotification = async (data: any) => {
@@ -72,81 +70,65 @@ function TabNavigation() {
 
     return (
         <Tab.Navigator
-            screenOptions={{
-                lazy: true,
-                swipeEnabled: false,
-                tabBarShowIcon: true,
-                tabBarShowLabel: false,
-                tabBarActiveTintColor: colors.primary,
-                tabBarStyle: {backgroundColor: colors.sureface},
-                tabBarPressColor: colors.borderColor,
-                tabBarIndicatorStyle: {backgroundColor: colors.primary},
-            }}
+            shifting={true} // Thêm hiệu ứng chuyển đổi tab
+            activeColor={colors.primary}
+            inactiveColor={colors.primary}
+            barStyle={{backgroundColor: colors.sureface}}
         >
             <Tab.Screen
                 name="Home"
                 component={HomeNavigation}
                 options={{
-                    tabBarIcon: ({focused, color}) =>
-                        focused ? (
-                            <FontAwesomeIcon name="home" size={25} color={color}/>
-                        ) : (
-                            <AntdIcon name="home" size={25}/>
-                        ),
+                    tabBarIcon: ({color}) => (
+                        <FontAwesomeIcon name="home" size={25} color={color}/>
+                    ),
                 }}
             />
             <Tab.Screen
                 name="Notification"
                 component={NotificationHome}
                 options={{
-                    tabBarIcon: ({focused, color}) =>
-                        focused ? (
+                    tabBarIcon: ({color}) => (
+                        <>
                             <MaterialIcons name="notifications" size={25} color={color}/>
-                        ) : (
-                            <>
-                                <MaterialIcons name="notifications-none" size={25}/>
-                                {count === 0 || isNaN(count) ? null : <Avatar.Text
+                            {count === 0 || isNaN(count) ? null : (
+                                <Avatar.Text
                                     label={(count > 99 ? "99+" : count.toString())}
                                     size={count < 9 ? 15 : count < 100 ? 21 : 30}
                                     style={style.newIcon}
                                     labelStyle={style.labelNewIcon}
                                 />
-                                }
-                            </>
-                        ),
+                            )}
+                        </>
+                    ),
                 }}
             />
             <Tab.Screen
                 name="Message"
                 component={MessageHome}
                 options={{
-                    tabBarIcon: ({focused, color}) =>
-                        focused ? (
+                    tabBarIcon: ({color}) => (
+                        <>
                             <MaterialIcons name="chat" size={25} color={color}/>
-                        ) : (
-                            <>
-                                <MaterialIcons name="chat" size={25}/>
-                                {countMessage === 0 || isNaN(countMessage) ? null : <Avatar.Text
+                            {countMessage === 0 || isNaN(countMessage) ? null : (
+                                <Avatar.Text
                                     label={(countMessage > 99 ? "99+" : countMessage.toString())}
                                     size={countMessage < 9 ? 15 : countMessage < 100 ? 21 : 30}
                                     style={style.newIcon}
                                     labelStyle={style.labelNewIcon}
                                 />
-                                }
-                            </>
-                        ),
+                            )}
+                        </>
+                    ),
                 }}
             />
             <Tab.Screen
                 name="SettingTabNavigation"
                 component={SettingTabNavigation}
                 options={{
-                    tabBarIcon: ({focused, color}) =>
-                        focused ? (
-                            <MaterialIcons name="menu" size={25} color={color}/>
-                        ) : (
-                            <MaterialIcons name="menu" size={25}/>
-                        ),
+                    tabBarIcon: ({color}) => (
+                        <MaterialIcons name="menu" size={25} color={color}/>
+                    ),
                 }}
             />
         </Tab.Navigator>
@@ -161,13 +143,13 @@ const TabNavigationWrapper = () => (
 
 export default TabNavigationWrapper;
 
-const style = StyleSheet.create({
+const style = {
     newIcon: {
-        position: 'absolute',
-        right: -8, // Đẩy sang phải
+        position: 'absolute' as 'absolute',  // Chỉ rõ kiểu nếu cần
+        right: -8,
         backgroundColor: colors.red,
-        top: -6, // Đẩy lên trên
-        zIndex: 1, // Đảm bảo Avatar nằm trên biểu tượng
+        top: -6,
+        zIndex: 1,
     },
-    labelNewIcon: {fontSize: 10},
-});
+    labelNewIcon: { fontSize: 10 },
+};

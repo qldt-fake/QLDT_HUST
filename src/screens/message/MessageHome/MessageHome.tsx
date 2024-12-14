@@ -103,7 +103,7 @@ const MessageHome: React.FC = () => {
                 fetchConversations(0, 15);
                 return 0;
             })
-           // Fetch lại dữ liệu từ đầu
+            // Fetch lại dữ liệu từ đầu
         } catch (error) {
             console.error("Error refreshing conversations:", error);
         } finally {
@@ -125,16 +125,16 @@ const MessageHome: React.FC = () => {
                 setConversations((prev) => {
                         if (count === 1) {
                             return [...newConversations, ...prev];
-                        } else  return  index === 0 ? newConversations : [...prev, ...newConversations];
+                        } else return index === 0 ? newConversations : [...prev, ...newConversations];
                     }
                 );
                 setHasMoreConversation(newConversations.length > 0)
-            } else if( response.meta.code === INVALID_TOKEN){
+            } else if (response.meta.code === INVALID_TOKEN) {
                 Alert.alert('Lỗi', 'Token không hợp lệ');
                 dispatch(logout());
             }
         } catch (error) {
-            Alert.alert('Không có kết nối');
+            console.log("hi");
         } finally {
             setLoading(false);
         }
@@ -168,7 +168,7 @@ const MessageHome: React.FC = () => {
                 }));
                 setAccounts((prev) => (accountPage === 0 ? newAccounts : [...prev, ...newAccounts]));
                 setHasMoreAccounts(response.data.page_content.length == 15);
-            }else if( response.meta.code === INVALID_TOKEN){
+            } else if (response.meta.code === INVALID_TOKEN) {
                 Alert.alert('Lỗi', 'Token không hợp lệ');
                 dispatch(logout());
             }
@@ -184,12 +184,35 @@ const MessageHome: React.FC = () => {
         setSearchText("");
         setAccounts([]);
     };
+    const getConversationId = async (partnerId: any) => {
+        if (user != null) {
+            try {
+                const response = await getListConversationsApi({
+                    token: user.token,
+                    index: 0,
+                    count: 1000,
+                });
+
+                for (const conversation of response.data.conversations) {
+                    if (conversation.partner.id.toString() === partnerId.toString()) {
+                        return conversation.id.toString();
+                    }
+                }
+
+                return null;
+            } catch (error) {
+                console.error('Failed to fetch message count:', error);
+            }
+        }
+    };
 
     const renderAccount = ({item}: { item: IAccount }) => (
         <TouchableOpacity
             style={styles.userItem}
-            onPress={() => {
+            onPress={async () => {
                 handleCancelSearch();
+                let convId = await getConversationId(item.account_id);
+
                 navigation.navigate(AppNaviagtionName.MessageNavigation, {
                     screen: MessageNavigationName.MessageBox,
                     params: {
@@ -198,7 +221,7 @@ const MessageHome: React.FC = () => {
                         userName: `${item.first_name} ${item.last_name}`,
                         token: user?.token,
                         receiverId: item.account_id,
-                        conversationId: null,
+                        conversationId: convId,
                         avatar: item.avatar,
                         fetch: fetch
                     },

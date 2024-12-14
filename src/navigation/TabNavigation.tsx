@@ -15,11 +15,15 @@ import {useSelector} from "react-redux";
 import {selectAuth} from "src/redux/slices/authSlice";
 import {getUnreadNotificationApi} from "src/services/noti.services";
 import {useFocusEffect} from '@react-navigation/native';
+import {getListConversationsApi} from "src/services/message.services";
+import {FCMEnum} from "src/common/enum/FCMEnum";
+import FCMService from "src/services/FCMService";
 
 const Tab = createMaterialTopTabNavigator();
 
 function TabNavigation() {
     const [count, setCount] = useState<number>(0);
+    const [countMessage, setCountMessage] = useState<number>(0);
     const auth = useSelector(selectAuth);
     const user = auth.user;
 
@@ -33,10 +37,36 @@ function TabNavigation() {
             }
         }
     };
+    const getUnreadMessageCount = async () => {
+        // @ts-ignore
 
+        if (user != null) {
+            try {
+                const response = await getListConversationsApi({
+                    token: user.token,
+                    index: 0,
+                    count: 1000,
+                });
+                setCountMessage(Number(response.data.num_new_message));
+
+            } catch (error) {
+                return null;
+            }
+        }
+    }
     useFocusEffect(
         React.useCallback(() => {
+            const handleNotification = async (data: any) => {
+                if (data.data.type === FCMEnum.MESSAGE) {
+                    getUnreadMessageCount();
+                } else if (data.data.type === FCMEnum.NOTIFICATION) {
+                    getNotificationCount();
+                }
+            };
+
+            FCMService.getInstance().on('newNotification', handleNotification);
             getNotificationCount();
+            getUnreadMessageCount();
         }, [])
     );
 
@@ -96,12 +126,13 @@ function TabNavigation() {
                         ) : (
                             <>
                                 <MaterialIcons name="chat" size={25}/>
-                                {/*<Avatar.Text*/}
-                                {/*    label=""*/}
-                                {/*    size={21}*/}
-                                {/*    style={style.newIcon}*/}
-                                {/*    labelStyle={style.labelNewIcon}*/}
-                                {/*/>*/}
+                                {countMessage === 0 || isNaN(countMessage) ? null : <Avatar.Text
+                                    label={(countMessage > 99 ? "99+" : countMessage.toString())}
+                                    size={countMessage < 9 ? 15 : countMessage < 100 ? 21 : 30}
+                                    style={style.newIcon}
+                                    labelStyle={style.labelNewIcon}
+                                />
+                                }
                             </>
                         ),
                 }}

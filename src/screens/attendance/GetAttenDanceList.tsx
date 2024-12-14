@@ -283,7 +283,7 @@ const AttendanceListPage: React.FC<AttendanceListPageProps> = ({ route }) => {
           <FlatList
             data={matchInfor}
             renderItem={renderItem}
-            keyExtractor={item => item.attendance_id.toString()}
+            keyExtractor={item => item!.attendance_id.toString()}
             // contentContainerStyle={styles.list}
           />
         ) : (

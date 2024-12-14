@@ -172,6 +172,9 @@ const GetAttendanceRecord: React.FC<RouteParams> = ({ route }) => {
       } else {
         Alert.alert('Error', 'Failed to fetch attendance data');
       }
+      if(res?.data && res.meta.code !== CODE_OK) {
+        Alert.alert(res.meta.message);
+      }
     } catch (error) {
       console.error(error);
       Alert.alert('Error', 'An error occurred while fetching attendance records');

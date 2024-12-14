@@ -45,6 +45,7 @@ const AllSurveyForStudent = () => {
                 break;
               case NOT_ACCESS:
                 Alert.alert('Lỗi', 'Bạn không có quyền xem danh sách bài tập');
+                navigation.goBack()
                 break;
               default:
                 Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');

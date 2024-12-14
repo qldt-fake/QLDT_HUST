@@ -56,6 +56,7 @@ const Assignment = ({route} : any) => {
                 break;
               case NOT_ACCESS:
                 Alert.alert('Lỗi', 'Bạn không có quyền xem danh sách bài tập');
+                navigation.goBack()
                 break;
               default:
                 Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi không xác định');
@@ -127,7 +128,7 @@ const Assignment = ({route} : any) => {
         <FlatList
           data={assignmentList}
           renderItem={data => (
-            <ExcerciseCard {...data.item!} setAssignmentList={setAssignmentList} />
+            <ExcerciseCard {...data.item!} setAssignmentList={setAssignmentList} isInClass />
           )}
           keyExtractor={item => item?.id}
         />

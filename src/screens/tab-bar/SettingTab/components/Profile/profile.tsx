@@ -77,12 +77,11 @@ const ProfileScreen = () => {
             };
             dispatch(showLoading())
             const result = await sendFileAPI(payload, 'it4788/change_info_after_signup');
+            dispatch(hideLoading())
             if (result.code !== CODE_OK) {
-                dispatch(hideLoading())
                 Alert.alert("Lỗi", result.message)
             } else {
                 dispatch(setImage(result.data.avatar))
-                setTimeout(() => dispatch(hideLoading()), 2000)
                 setTextSuccess("Change Infor success!")
             }
         } catch (error) {

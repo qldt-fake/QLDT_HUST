@@ -11,10 +11,11 @@ import { calculateDateAfterWeeks, formatDateTime } from 'src/utils/helper';
 import { DATE_TIME_FORMAT } from 'src/common/constants';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { color } from 'src/common/constants/color';
-import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS, PARAM_VALUE_INVALID } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { ClassNavigationName } from 'src/common/constants/nameScreen';
 
 const CreateClass = () => {
   const { user } = useSelector(selectAuth);
@@ -95,6 +96,9 @@ const CreateClass = () => {
             break;
           case NOT_ACCESS:
             Alert.alert('Thất bại', 'Role của bạn không có quyền tạo lớp.');
+            break;
+          case PARAM_VALUE_INVALID:
+            Alert.alert('Thất bại', typeof res.data === 'string' ? res.data : 'Dữ liệu không hợp lệ.');
             break;
           default:
             Alert.alert('Thất bại', res.meta?.message ?? 'Hiện không thể tạo lớp.');
@@ -240,7 +244,12 @@ const CreateClass = () => {
             <Text style={styles.submitButtonText}>Tạo</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.footerText}>Thông tin danh sách các lớp mở</Text>
+        <Text
+          onPress={() => navigation.navigate(ClassNavigationName.ClassListOpen as never)}
+          style={styles.footerText}
+        >
+          Thông tin danh sách các lớp mở
+        </Text>
       </View>
     </PaperProvider>
   );
@@ -280,7 +289,14 @@ const styles = StyleSheet.create({
     padding: 15
   },
   submitButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 18 },
-  footerText: { textAlign: 'center', marginTop: 20, color: '#aaa' }
+  footerText: {
+    color: '#b30000',
+    textDecorationLine: 'underline',
+    fontStyle: 'italic',
+    fontWeight: 'bold',
+    fontSize: 16,
+    paddingLeft: 50
+  }
 });
 
 export default CreateClass;

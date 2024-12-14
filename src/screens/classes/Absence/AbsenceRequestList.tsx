@@ -65,6 +65,7 @@ const AbsenceRequestList = ({ route }: any) => {
                 break;
               case NOT_ACCESS:
                 Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+                navigation.goBack()
                 break;
               default:
                 Alert.alert('Lỗi', res.meta?.message ?? 'Có lỗi xảy ra');

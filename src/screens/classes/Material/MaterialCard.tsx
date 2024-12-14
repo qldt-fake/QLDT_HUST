@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { color } from 'src/common/constants/color';
 import { Linking } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { MaterialNavigationName } from 'src/common/constants/nameScreen';
+import { AppNaviagtionName, MaterialNavigationName } from 'src/common/constants/nameScreen';
 import { deleteMaterialApi } from 'src/services/material.service';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
@@ -33,8 +33,16 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({
   const { showAlert } = useAlert();
   const dispatch = useAppDispatch();
 
-  const handlePress = async () => {
-    await Linking.openURL(material_link as string);
+  // const handlePress = async () => {
+  //   await Linking.openURL(material_link as string);
+  // };
+  const handlePress = () => {
+    if (!material_link) return;
+    
+    navigation.navigate(AppNaviagtionName.WebView as any, {
+      url: material_link,
+      title: material_name
+    } as any);
   };
 
   const callDeleteMaterialApi = async () => {

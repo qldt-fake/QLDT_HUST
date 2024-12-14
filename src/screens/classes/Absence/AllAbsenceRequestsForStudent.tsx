@@ -57,6 +57,7 @@ const AllAbsenceRequestsForStudent = () => {
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+            navigation.goBack()
             break;
           default:
             Alert.alert('Lỗi', res.meta?.message ?? 'Có lỗi xảy ra');
@@ -224,7 +225,7 @@ const styles = StyleSheet.create({
     color: color.black
   },
   filters: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  list: { paddingBottom: 20, height: 500 },
+  list: { paddingBottom: 20 },
   card: {
     backgroundColor: color.white,
     borderRadius: 10,

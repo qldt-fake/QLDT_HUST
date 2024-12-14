@@ -21,11 +21,12 @@ import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 import {sendNotificationApi} from "src/services/noti.services";
 import { selectClassDetails } from 'src/redux/slices/classDetailsSlice';
+import { AppNaviagtionName } from 'src/common/constants/nameScreen';
 
 const GradeSubmission = () => {
   const route = useRoute();
   console.log(route.params);
-  const navigation = useNavigation();
+  const navigation : any = useNavigation();
   const { assignment_id, submission_time, id, text_response, file_url, student_account, title } =
     route.params as any;
 
@@ -33,8 +34,17 @@ const GradeSubmission = () => {
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();
-  const classDetails = useSelector(selectClassDetails);
+  const classDetails : any = useSelector(selectClassDetails);
   console.log(classDetails);
+
+  const handlePress = () => {
+    if (!file_url) return;
+    
+    navigation.navigate(AppNaviagtionName.WebView as any, {
+      url: file_url,
+      title: title
+    } as any);
+  };
 
   const validateScore = () => {
     if (!score) {
@@ -77,6 +87,7 @@ const GradeSubmission = () => {
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+            navigation.goBack()
             break;
           default:
             Alert.alert('Lỗi', res.meta?.message ?? 'Lỗi xảy ra với server');
@@ -128,7 +139,7 @@ const GradeSubmission = () => {
         )}
 
         {file_url && (
-          <TouchableOpacity onPress={() => Linking.openURL(file_url)} style={styles.fileButton}>
+          <TouchableOpacity onPress={handlePress} style={styles.fileButton}>
             <Text style={styles.fileButtonText}>Mở file tải lên của sinh viên</Text>
           </TouchableOpacity>
         )}

@@ -21,6 +21,7 @@ import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import FCMService from "src/services/FCMService";
+import { AuthNavigationType } from 'src/common/type/navigation';
 
 
 function LoginScreen() {

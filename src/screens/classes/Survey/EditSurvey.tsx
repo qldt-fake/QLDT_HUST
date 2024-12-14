@@ -35,7 +35,7 @@ const EditSurvey: React.FC<IEditSurveyProps> = ({ route }: any) => {
     description: description,
     file_url: file_url,
     file: null,
-    deadline: deadline,
+    deadline: new Date(deadline),
     id: id
   });
   const dispatch = useAppDispatch();
@@ -187,7 +187,7 @@ const EditSurvey: React.FC<IEditSurveyProps> = ({ route }: any) => {
         </TouchableHighlight>
         {isOpenDatePicker && (
           <DateTimePicker
-            date={new Date(editSurvey.deadline as string) ?? new Date()}
+            date={(editSurvey.deadline as Date) ?? new Date()}
             onConfirm={date => {
               setIsOpenDatePicker(false);
               handleChange('deadline', date);

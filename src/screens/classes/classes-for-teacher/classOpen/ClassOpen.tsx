@@ -123,7 +123,7 @@ const ClassListOpen = () => {
             <View style={styles.container}>
                 {/* Filter Bar */}
                 <View style={styles.filterBar}>
-                    <TextInput
+                    {/* <TextInput
                         style={styles.input}
                         placeholder="Class ID"
                         value={filters.class_id}
@@ -134,7 +134,7 @@ const ClassListOpen = () => {
                         placeholder="Class Name"
                         value={filters.class_name}
                         onChangeText={(text) => setFilters({ ...filters, class_name: text })}
-                    />
+                    /> */}
                     <Menu
                         visible={menuTypeVisible}
                         onDismiss={() => setMenuTypeVisible(false)}

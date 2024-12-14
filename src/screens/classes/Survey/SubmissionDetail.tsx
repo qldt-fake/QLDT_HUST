@@ -22,6 +22,7 @@ import { DATE_TIME_FORMAT } from 'src/common/constants';
 import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
 
 const SubmissionDetail: React.FC<any> = ({ route }: any) => {
+  const navigation = useNavigation()
   const { id, title, deadline, file_url, description } = route?.params as any;
   const auth = useSelector(selectAuth);
   const user = auth.user;
@@ -47,6 +48,7 @@ const SubmissionDetail: React.FC<any> = ({ route }: any) => {
               break;
             case NOT_ACCESS:
               Alert.alert('Lỗi', 'Bạn không có quyền truy cập');
+              navigation.goBack()
               break;
             default:
               Alert.alert('Lỗi', response.data ?? 'Lỗi xảy ra với server');

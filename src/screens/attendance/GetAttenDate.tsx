@@ -36,6 +36,9 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
       } else {
         Alert.alert('Error', 'Failed to fetch class details');
       }
+      if(res?.data && res.meta.code !== CODE_OK) {
+        Alert.alert(res.meta.message);
+      }
     } catch (error) {
       console.error('Error fetching attendance dates:', error);
     }

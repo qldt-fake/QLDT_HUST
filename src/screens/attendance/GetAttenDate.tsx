@@ -8,6 +8,7 @@ import { getDateAtendance } from 'src/services/attendance.service';
 import moment from 'moment';
 import { NavigationProp, useNavigation, useFocusEffect } from '@react-navigation/native';
 import { AttendanceNavigationName } from 'src/common/constants/nameScreen';
+import EmptyState from 'src/components/EmptyState';
 
 interface RouteParams {
   route: {
@@ -36,7 +37,7 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
       } else {
         Alert.alert('Error', 'Failed to fetch class details');
       }
-      if(res?.data && res.meta.code !== CODE_OK) {
+      if (res?.data && res.meta.code !== CODE_OK) {
         Alert.alert(res.meta.message);
       }
     } catch (error) {
@@ -62,26 +63,30 @@ const ListDateAttendanceScreen: React.FC<RouteParams> = ({ route }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Danh sách ngày điểm danh</Text>
-      <FlatList
-        data={attendanceDates}
-        keyExtractor={(item, index) => item.toString()}
-        renderItem={({ item }) => (
-          <TouchableOpacity onPress={() => handleDatePress(item)}>
-            <Card style={[styles.card, selectedDate === item && styles.cardPressed]}>
-              <Card.Content style={styles.cardContent}>
-                <IconButton
-                  icon='calendar-today'
-                  size={24}
-                  iconColor='#d32f2f'
-                  style={styles.icon}
-                />
-                <Text style={styles.dateText}>Ngày {formatDate(item)}</Text>
-              </Card.Content>
-            </Card>
-          </TouchableOpacity>
-        )}
-        contentContainerStyle={styles.listContainer}
-      />
+      {attendanceDates?.length > 0 ? (
+        <FlatList
+          data={attendanceDates}
+          keyExtractor={(item, index) => item.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handleDatePress(item)}>
+              <Card style={[styles.card, selectedDate === item && styles.cardPressed]}>
+                <Card.Content style={styles.cardContent}>
+                  <IconButton
+                    icon='calendar-today'
+                    size={24}
+                    iconColor='#d32f2f'
+                    style={styles.icon}
+                  />
+                  <Text style={styles.dateText}>Ngày {formatDate(item)}</Text>
+                </Card.Content>
+              </Card>
+            </TouchableOpacity>
+          )}
+          contentContainerStyle={styles.listContainer}
+        />
+      ) : (
+        <EmptyState title='Không có ngày điểm danh nào' />
+      )}
     </View>
   );
 };

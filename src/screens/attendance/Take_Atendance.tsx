@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { RouteProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAppDispatch } from 'src/redux';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import EmptyState from 'src/components/EmptyState';
 
 // Định nghĩa kiểu dữ liệu cho navigation stack
 type RootStackParamList = {
@@ -40,7 +41,7 @@ interface AttendanceListItem extends StudentAccount {
 }
 
 const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
-  const navigation = useNavigation()
+  const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { classId } = route.params;
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -140,7 +141,7 @@ const AttendanceScreen: React.FC<AttendanceProps> = ({ route }) => {
   }, [isSubmitting, selectedDate, attendanceList, user?.token, classId]);
 
   if (attendanceList.length === 0) {
-    return <Text style={styles.noStudents}>Không có sinh viên nào trong lớp.</Text>;
+    return <EmptyState title='Không có sinh viên nào' />;
   }
 
   return (

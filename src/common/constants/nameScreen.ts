@@ -17,7 +17,8 @@ export enum AppNaviagtionName {
   NotFoundScreen = 'NotFoundScreen',
   HomeNavigationName = 'HomeNavigationName',
   NotificationNavigation = 'NotificationNavigation',
-  MessageNavigation = 'MessageNavigation'
+  MessageNavigation = 'MessageNavigation',
+  WebView = 'WebView'
 }
 
 export enum AuthNavigationName {

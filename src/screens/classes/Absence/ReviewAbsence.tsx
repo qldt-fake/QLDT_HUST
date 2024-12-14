@@ -19,7 +19,7 @@ const AbsenceReview = ({ route }: any) => {
 
   const auth = useSelector(selectAuth);
   const dispatch = useAppDispatch();
-  const classDetails = useSelector(selectClassDetails);
+  const classDetails : any = useSelector(selectClassDetails);
   console.log(classDetails);
 
   const [currentStatus, setCurrentStatus] = useState<absenceStatus>(status);

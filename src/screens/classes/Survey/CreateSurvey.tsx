@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import { useSelector } from 'react-redux';
 import { logout, selectAuth } from 'src/redux/slices/authSlice';
 import { selectFile } from 'src/utils/helper';
-import { CODE_OK, INVALID_TOKEN, NOT_ACCESS } from 'src/common/constants/responseCode';
+import { CODE_OK, INVALID_TOKEN, NOT_ACCESS, PARAM_VALUE_INVALID } from 'src/common/constants/responseCode';
 import { useAppDispatch } from 'src/redux';
 import { useNavigation } from '@react-navigation/native';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
@@ -137,6 +137,9 @@ const CreateSurvey: React.FC<CreateSurveyProps> = ({ route }) => {
             break;
           case NOT_ACCESS:
             Alert.alert('Lỗi', 'Bạn không có quyền tạo bài kiểm tra');
+            break;
+          case PARAM_VALUE_INVALID:
+            Alert.alert("Lỗi", typeof res.data === 'string' ? res.data : 'Dữ liệu không hợp lệ');
             break;
           default:
             Alert.alert('Lỗi', res.meta?.message ?? 'Có lỗi xảy ra với server');

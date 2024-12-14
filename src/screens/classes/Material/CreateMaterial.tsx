@@ -61,11 +61,11 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
       Alert.alert('Lỗi', 'Tên tài liệu là trường bắt buộc');
       return false;
     }
-
-    if (!newMaterial.description?.trim() && !newMaterial.file) {
-      Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
-      return false;
-    }
+    //
+    // if (!newMaterial.description?.trim() && !newMaterial.file) {
+    //   Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
+    //   return false;
+    // }
 
     const MAX_DESCRIPTION_LENGTH = 500;
     if ((newMaterial.description?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
@@ -97,6 +97,7 @@ const CreateMaterial: React.FC<CreateMaterialProps> = ({ route }) => {
       };
       dispatch(showLoading());
       const res = await createMaterialApi(payload);
+      console.log('response', res);
       if (res) {
         switch (res.code) {
           case CODE_OK:

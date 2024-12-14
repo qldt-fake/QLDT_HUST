@@ -38,7 +38,7 @@ export interface IEditSurveyProps {
     file_url?: string;
     title?: string;
     description?: string;
-    deadline?: string;
+    deadline?: Date | string;
     id?: string;
 }
 

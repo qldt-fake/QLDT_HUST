@@ -127,7 +127,7 @@ const Assignment = ({route} : any) => {
         <FlatList
           data={assignmentList}
           renderItem={data => (
-            <ExcerciseCard {...data.item!} setAssignmentList={setAssignmentList} />
+            <ExcerciseCard {...data.item!} setAssignmentList={setAssignmentList} isInClass />
           )}
           keyExtractor={item => item?.id}
         />

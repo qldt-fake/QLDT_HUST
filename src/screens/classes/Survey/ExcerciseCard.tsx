@@ -5,7 +5,7 @@ import { color } from 'src/common/constants/color';
 import { formatDateTime } from 'src/utils/helper';
 import { Linking } from 'react-native';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { SurveyNavigationName } from 'src/common/constants/nameScreen';
+import { AppNaviagtionName, SurveyNavigationName } from 'src/common/constants/nameScreen';
 import { deleteSurveyApi } from 'src/services/survey.service';
 import { useSelector } from 'react-redux';
 import { ReponseCode } from 'src/common/enum/reponseCode';
@@ -29,6 +29,7 @@ interface ExcerciseCardProps {
   file_url: string;
   setAssignmentList: any;
   is_submitted?: boolean;
+  isInClass ?: boolean;
 }
 
 const colors = [color.primary, color.second, color.green, color.yellow, color.textLike];
@@ -45,6 +46,7 @@ export const ExcerciseCard = ({
   deadline,
   file_url,
   is_submitted,
+  isInClass = false,
   setAssignmentList: setExcerciseList
 }: ExcerciseCardProps) => {
   const navigation: NavigationProp<SurveyNavigationType> = useNavigation();
@@ -54,9 +56,18 @@ export const ExcerciseCard = ({
   const { showAlert } = useAlert();
   const dispatch = useAppDispatch();
 
-  const handleViewSurvey = useCallback(async () => {
-    await Linking.openURL(file_url);
-  }, [file_url]);
+  // const handleViewSurvey = useCallback(async () => {
+  //   await Linking.openURL(file_url);
+  // }, [file_url]);
+
+  const handleViewSurvey = () => {
+    if (!file_url) return;
+
+    navigation.navigate(AppNaviagtionName.WebView as any, {
+      url: file_url,
+      title: title
+    } as any);
+  };
 
   const callDeleteSurveyApi = async () => {
     try {
@@ -137,18 +148,20 @@ export const ExcerciseCard = ({
             <Text style={styles.initials}>{title.slice(0, 2).toUpperCase()}</Text>
           </View>
           <View style={styles.content}>
-            <Text style={styles.text}>{title}</Text>
+            <Text style={styles.text}>{title + (!isInClass ? ' - '+ class_id : '') }</Text>
             <Text style={[styles.text, { color: color.red }]}>
-              {'Hạn: ' + formatDateTime(DATE_TIME_FORMAT.DD_MM_YYYY_DASH, new Date(deadline))}
+              {'Hạn: ' + formatDateTime(DATE_TIME_FORMAT.dddd_vi_DD_MM_YYYY_DASH, new Date(deadline))}
             </Text>
-            <Pressable
-              onPressIn={event => {
-                event.stopPropagation();
-                handleViewSurvey();
-              }}
-            >
-              <Text style={styles.actionText}>Xem tài liệu</Text>
-            </Pressable>
+            {file_url && (
+              <Pressable
+                onPressIn={event => {
+                  event.stopPropagation();
+                  handleViewSurvey();
+                }}
+              >
+                <Text style={styles.actionText}>Xem tài liệu</Text>
+              </Pressable>
+            )}
           </View>
         </TouchableOpacity>
         <View style={styles.iconBox}>

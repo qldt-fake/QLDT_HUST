@@ -131,6 +131,7 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
                             toUser: classDetails.lecturer_account_id,
                             image: newAbsenceRequest.file
                         });
+                        
                         Alert.alert('Thành công', 'Tạo yêu cầu xin nghỉ thành công');
                         navigation.goBack();
                         break;

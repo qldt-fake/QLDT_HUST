@@ -23,8 +23,6 @@ import {
     IMessageResponse
 } from "src/services/message.services";
 import MessageHeader from "src/screens/message/components/MessageHeader";
-import {useFocusEffect} from "@react-navigation/native";
-import {delay} from "lodash";
 import {useAppDispatch} from "src/redux";
 import {logout} from "src/redux/slices/authSlice";
 import {INVALID_TOKEN} from "src/common/constants/responseCode";
@@ -33,7 +31,7 @@ const MessageBox = ({route, navigation,}: any) => {
     const [messages, setMessages] = useState<any[]>([]);
     const [input, setInput] = useState("");
     const [stompClient, setStompClient] = useState<any>(null); // Stomp client state
-    const {
+    let {
         userName,
         token,
         conversationId,
@@ -42,14 +40,16 @@ const MessageBox = ({route, navigation,}: any) => {
         userId,
         avatar,
         markAsRead,
-        updateLastMessages,
-        fetch
+        fetch,
+        getConversationId
+
     } = route.params;
-    const [latestId, setLatestId] = useState<number>(0);
+    const [, setLatestId] = useState<number>(0);
     const [hasMore, setHasMore] = useState<boolean>(true);
     const [loading, setLoading] = useState<boolean>(false);
     const [, setIndex] = useState(0);
     const dispatch = useAppDispatch();
+    const [conId, setConId] = useState<Number>(-1);
     // Fetch conversations from the API
     let onEndReachedCalledDuringMomentum = false
     const fetchConversations = async (index: number) => {
@@ -101,47 +101,37 @@ const MessageBox = ({route, navigation,}: any) => {
             console.log("Connected: " + frame);
             client.subscribe(`/user/${receiverId}/inbox`, (message: any) => {
                 const msg = JSON.parse(message.body);
-                console.log(msg);
-                setLoading(prevState => {
-                    setMessages((prevMessages) => {
 
-                        return [
-                            {
-                                id: msg.id,
-                                text: msg.content,
-                                sender: (msg.sender.id.toString() === userId ? "me":"their")
-                            }, ...prevMessages
-                        ];
-                    });
-                    setLoading(false);
-                    return msg.id;
-                })
+                setMessages((prevMessages) => {
+                    if (msg.sender.id.toString() === userId) fetch(receiverId, msg.content, 0);
+                    return [
+                        {
+                            id: msg.id,
+                            text: msg.content,
+                            sender: (msg.sender.id.toString() === userId ? "me" : "their")
+                        }, ...prevMessages
+                    ];
+                });
             });
-            console.log(conversationId);
-            if (conversationId != null) {
-                setIndex(prevState => {
-                    fetchConversations(prevState);
-                    return prevState + 1;
-                })
-            }
 
-            setStompClient(client);
         });
+        setStompClient(client);
+        if (conversationId != null) {
+            setIndex(prevState => {
+                fetchConversations(prevState);
+                return prevState + 1;
+            })
+            setConId(conversationId);
+        }
 
         return () => {
-            if (conversationId != null)
-                markAsRead();
-
+            markAsRead();
             if (stompClient) {
                 stompClient.disconnect();
             }
         };
     }, []);
-
-    function delay(ms: number) {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
-
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
     const sendMessage = async () => {
         if (input.trim() && stompClient) {
             const message = {
@@ -151,22 +141,22 @@ const MessageBox = ({route, navigation,}: any) => {
                 token: token,
             };
 
+
             console.log("Sending message:", message);
             await stompClient.send("/chat/message", {}, JSON.stringify(message));
             setInput("");
-            setLatestId(latestId + 1);
-            if (updateLastMessages != null)
-                updateLastMessages(input);
-            else {
-                await delay(5);
-                fetch(receiverId, input, 0);
+            if (conId === -1 || conId === null) {
+                await delay(500);
+                getConversationId(receiverId).then((e: React.SetStateAction<Number>) => setConId(e));
             }
+
+
         }
     };
 
     const unSendMessage = async (messageId: any) => {
         try {
-            const response = await deleteMessageApi({token, message_id: messageId, conversation_id: conversationId});
+            const response = await deleteMessageApi({token, message_id: messageId, conversation_id: conId});
             if (response.meta?.code === "1000") {
                 setMessages((prevMessages) =>
                     prevMessages.map((msg) =>
@@ -175,10 +165,7 @@ const MessageBox = ({route, navigation,}: any) => {
                             : msg
                     )
                 );
-
-                if (Number(latestId) === Number(messageId))
-                    updateLastMessages("Tin nhắn đã bị gỡ");
-
+                fetch(receiverId, "Tin nhắn đã bị gỡ");
             } else if (response.meta.code === INVALID_TOKEN) {
                 Alert.alert('Lỗi', 'Token không hợp lệ');
                 dispatch(logout());
@@ -203,7 +190,7 @@ const MessageBox = ({route, navigation,}: any) => {
 
     const renderMessage = ({item}: any) => (
         <TouchableWithoutFeedback
-            onLongPress={() => conversationId != null && item.sender == "me" && item.text != null && handleLongPress(item.id)}
+            onLongPress={() => handleLongPress(item.id)}
         >
             <View
                 style={[

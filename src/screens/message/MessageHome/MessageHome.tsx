@@ -54,7 +54,6 @@ const MessageHome: React.FC = () => {
     const fetch = (notificationPartnerId: any, message: any, isUnread: any) => {
         setConversations((prevConversations) => {
             const updatedConversations = [...prevConversations];
-            console.log(prevConversations[0].partner.id + "test");
             const index = updatedConversations.findIndex(
                 (conversation) => conversation.partner.id === Number(notificationPartnerId)
             );
@@ -70,7 +69,7 @@ const MessageHome: React.FC = () => {
                 updatedConversations.splice(index, 1); // Xóa vị trí cũ
                 return [updatedConversation, ...updatedConversations]; // Đưa lên đầu
             } else {
-                fetchConversations(0, 1);
+                fetchConversations(0, 1, isUnread);
                 return prevConversations;
             }
         });
@@ -110,7 +109,7 @@ const MessageHome: React.FC = () => {
             setRefreshing(false); // Tắt trạng thái làm mới
         }
     };
-    const fetchConversations = async (index: number, count: any) => {
+    const fetchConversations = async (index: number, count: any, isUnread?: any) => {
         setLoading(true);
         if (!hasMoreConversation && index != 0)
             return;
@@ -223,6 +222,22 @@ const MessageHome: React.FC = () => {
                         receiverId: item.account_id,
                         conversationId: convId,
                         avatar: item.avatar,
+                        markAsRead: () => {
+                            setConversations((prevMessages) =>
+                                prevMessages.map((msg) =>
+                                    msg.partner.id.toString() === item.account_id
+                                        ? {
+                                            ...msg,
+                                            last_message: {
+                                                ...msg.last_message,
+                                                unread: 0,
+                                            },
+                                        }
+                                        : msg
+                                )
+                            );
+                        },
+                        getConversationId: getConversationId,
                         fetch: fetch
                     },
                 });
@@ -327,28 +342,7 @@ const MessageHome: React.FC = () => {
                                                 )
                                             );
                                         },
-                                        updateLastMessages: (lastMessage: string) => {
-                                            setConversations((prevMessages) => {
-                                                // Cập nhật nội dung phần tử
-                                                const updatedMessages = prevMessages.map((msg) =>
-                                                    msg.id === item.id
-                                                        ? {
-                                                            ...msg,
-                                                            last_message: {
-                                                                ...msg.last_message,
-                                                                message: lastMessage,
-                                                            },
-                                                        }
-                                                        : msg
-                                                );
-
-
-                                                const updatedAndSortedMessages = updatedMessages.sort((a, b) =>
-                                                    a.id === item.id ? -1 : b.id === item.id ? 1 : 0
-                                                );
-                                                return updatedAndSortedMessages;
-                                            });
-                                        }
+                                        fetch: fetch
 
                                     },
 

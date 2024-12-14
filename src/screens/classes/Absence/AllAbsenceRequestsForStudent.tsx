@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     color: color.black
   },
   filters: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
-  list: { paddingBottom: 20, height: 500 },
+  list: { paddingBottom: 20 },
   card: {
     backgroundColor: color.white,
     borderRadius: 10,

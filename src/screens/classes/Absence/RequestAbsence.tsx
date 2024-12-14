@@ -18,7 +18,7 @@ import dayjs from 'dayjs';
 import {useSelector} from 'react-redux';
 import {logout, selectAuth} from 'src/redux/slices/authSlice';
 import {selectFile} from 'src/utils/helper';
-import {CODE_OK, INVALID_TOKEN, NOT_ACCESS} from 'src/common/constants/responseCode';
+import {CODE_OK, INVALID_TOKEN, NOT_ACCESS, PARAM_VALUE_INVALID} from 'src/common/constants/responseCode';
 import {useAppDispatch} from 'src/redux';
 import {useNavigation} from '@react-navigation/native';
 import {hideLoading, showLoading} from 'src/redux/slices/loadingSlice';
@@ -35,7 +35,7 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
     const classId = route?.params?.classId;
     const navigation = useNavigation();
     const dispatch = useAppDispatch();
-    const classDetails = useSelector(selectClassDetails);
+    const classDetails : any = useSelector(selectClassDetails);
     console.log('classDetails', classDetails);
 
     const [newAbsenceRequest, setNewAbsenceRequest] = useState<IAbsencePayload>({
@@ -68,30 +68,34 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
     const validate = () => {
         // Kiểm tra nếu tên bài kiểm tra không được nhập
         if (!newAbsenceRequest?.title?.trim()) {
-            Alert.alert('Lỗi', 'Tên bài kiểm tra là trường bắt buộc');
+            Alert.alert('Lỗi', 'Tiêu đề là trường bắt buộc');
             return false;
         }
 
         // Kiểm tra nếu không có mô tả hoặc tài liệu được tải lên
         if (!newAbsenceRequest?.reason?.trim() && !newAbsenceRequest.file) {
-            Alert.alert('Lỗi', 'Vui lòng nhập mô tả hoặc tải tài liệu lên');
+            Alert.alert('Lỗi', 'Vui lòng nhập lý do hoặc tải file minh chứng lên');
             return false;
         }
 
         // Giới hạn ký tự cho phần mô tả (ví dụ: tối đa 500 ký tự)
         const MAX_DESCRIPTION_LENGTH = 500;
         if ((newAbsenceRequest?.reason?.trim().length ?? 0) > MAX_DESCRIPTION_LENGTH) {
-            Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
+            Alert.alert('Lỗi', `Lý do không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
             return false;
         }
 
         // Kiểm tra thời gian bắt đầu và thời gian kết thúc
         const currentTime = new Date();
         if (newAbsenceRequest.date && newAbsenceRequest.date <= currentTime) {
-            Alert.alert('Lỗi', 'Thời gian kết thúc phải lớn hơn thời gian hiện tại');
+            Alert.alert('Lỗi', 'Thời gian xin nghỉ phải lớn hơn thời gian hiện tại');
             return false;
         }
 
+        if (!newAbsenceRequest.date || isNaN((newAbsenceRequest.date as Date).getTime())) {
+            Alert.alert('Lỗi', 'Vui lòng chọn ngày hợp lệ');
+            return false;
+          }
         return true;
     };
 
@@ -136,6 +140,9 @@ const AbsenceRequest: React.FC<any> = ({route}: any) => {
                         break;
                     case NOT_ACCESS:
                         Alert.alert('Lỗi', 'Bạn không có quyền tạo đơn xin nghỉ');
+                        break;
+                    case PARAM_VALUE_INVALID: 
+                        Alert.alert('Lỗi', 'Dữ liệu không hợp lệ' + typeof res.data === 'string' ? res.data : (JSON.stringify(res.data) ?? ''));
                         break;
                     default:
                         Alert.alert('Lỗi', res.data ?? 'Có lỗi xảy ra với sever');

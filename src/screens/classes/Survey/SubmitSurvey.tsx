@@ -27,6 +27,7 @@ import {
   ISubmitSurveyProps
 } from 'src/interfaces/survey.interface';
 import { hideLoading, showLoading } from 'src/redux/slices/loadingSlice';
+import { AppNaviagtionName } from 'src/common/constants/nameScreen';
 
 const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
   const { file_url, title, description, deadline, id } = route?.params || {};
@@ -34,7 +35,7 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
   const auth = useSelector(selectAuth);
   const user = auth.user;
 
-  const navigation = useNavigation();
+  const navigation : any = useNavigation();
   const dispatch = useAppDispatch();
 
   const [newSubmit, setNewSubmit] = useState<ISubmitSurveyPayload>({
@@ -67,10 +68,19 @@ const SubmitSurvey: React.FC<ISubmitSurveyProps> = ({ route }: any) => {
     }
   };
 
+  // const handleViewSurvey = () => {
+  //   if (file_url) {
+  //     Linking.openURL(file_url);
+  //   }
+  // };
+
   const handleViewSurvey = () => {
-    if (file_url) {
-      Linking.openURL(file_url);
-    }
+    if (!file_url) return;
+
+    navigation.navigate(AppNaviagtionName.WebView as any, {
+      url: file_url,
+      title: title
+    } as any);
   };
 
   const validate = () => {

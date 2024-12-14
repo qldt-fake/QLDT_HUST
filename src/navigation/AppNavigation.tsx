@@ -13,7 +13,7 @@ import Header from 'src/screens/tab-bar/components/Header';
 import { useAppDispatch, useAppSelector } from 'src/redux';
 import { getProfile, selectAuth, setAuthentication } from 'src/redux/slices/authSlice';
 import { AppNaviagtionName, ClassNavigationName } from 'src/common/constants/nameScreen';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { AccountStatus } from 'src/common/enum/commom';
 import BaseModalError from 'src/components/BaseModalError';
 import { deleteMessage, selectApp, setMessage } from 'src/redux/slices/appSlice';
@@ -26,7 +26,9 @@ import ClassDetail from 'src/screens/classes/general/ClassDeatail';
 import ClassNavigation from './ClassNavigation';
 import NotificationNavigationWrapper from 'src/navigation/NotificationNavigation';
 import MessageNavigationWrapper from "src/navigation/MessageNavigation";
-
+import GlobalWebView from 'src/components/GlobalWebView';
+import { color } from 'src/common/constants/color';
+import ClassHeader from 'src/screens/classes/general/ClassHeader';
 const Stack = createNativeStackNavigator();
 
 function AppNavigation() {
@@ -123,6 +125,19 @@ function AppNavigation() {
                 options={{ headerTitle: 'Không tìm thấy nội dung' }}
               />
               {ClassNavigation()}
+              <Stack.Screen
+                name={AppNaviagtionName.WebView}
+                options={({route} : any) =>({
+                  headerShown: true,
+                  headerStyle: {
+                    backgroundColor: color.bgClassHeader
+                  },
+                  headerTitleAlign: 'center',
+                  headerTintColor: color.white,
+                  headerTitle: () => <ClassHeader title={route?.params?.title as string} />
+                })}
+                component={GlobalWebView}
+              />
             </>
           )
         ) : (

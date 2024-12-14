@@ -38,6 +38,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
   const navigation = useNavigation();
   const { showAlert } = useAlert();
   const dispatch = useAppDispatch();
+  const [materialFileName, setMaterialFileName] = useState<string>('');
   const [material, setMaterial] = useState<IMaterialPayload>({
     title: '',
     description: '',
@@ -55,7 +56,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
           token: user?.token,
           material_id: materialId
         });
-        if(res) {
+        if (res) {
           switch (res.code) {
             case CODE_OK:
               setMaterial({
@@ -66,6 +67,9 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
                 materialLink: res.data.material_link || '',
                 materialId: materialId
               });
+              setMaterialFileName(
+                res.data.material_name + '.' + getTypeOfFile(res.data.material_type as string)
+              );
               break;
             case INVALID_TOKEN:
               Alert.alert('Lỗi', 'Token không hợp lệ');
@@ -112,7 +116,10 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
       Alert.alert('Lỗi', `Mô tả không được vượt quá ${MAX_DESCRIPTION_LENGTH} ký tự`);
       return false;
     }
-
+    if (!material.title?.trim()) {
+      Alert.alert('Lỗi', 'Tên tài liệu là trường bắt buộc');
+      return false;
+    }
     return true;
   };
 
@@ -131,7 +138,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
       };
       dispatch(showLoading());
       const res = await editMaterialApi(payload);
-
+      console.log('response', res);
       if (res) {
         switch (res.code) {
           case CODE_OK:
@@ -146,7 +153,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
             Alert.alert('Lỗi', 'Bạn không có quyền chỉnh sửa tài liệu');
             break;
           default:
-            Alert.alert('Lỗi', res.message ?? 'Có lỗi xảy ra với server');
+            Alert.alert('Lỗi', res.data ?? 'Có lỗi xảy ra');
             break;
         }
       }
@@ -185,9 +192,7 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
         />
         <TouchableOpacity style={styles.viewButton} onPress={handleViewMaterial}>
           <Text style={[styles.text, styles.viewButtonText]}>
-            {material.materialLink
-              ? material.title + '.' + getTypeOfFile(material.materialType as string)
-              : 'No file uploaded'}
+            {material.materialLink ? materialFileName : 'No file uploaded'}
           </Text>
         </TouchableOpacity>
 

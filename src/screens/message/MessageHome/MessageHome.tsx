@@ -134,7 +134,7 @@ const MessageHome: React.FC = () => {
                 dispatch(logout());
             }
         } catch (error) {
-            Alert.alert('Không có kết nối');
+             console.log("hi");
         } finally {
             setLoading(false);
         }

@@ -122,7 +122,7 @@ const NotificationHome: React.FC = () => {
                 }
             }
         } catch (error) {
-            Alert.alert('Không có kết nối');
+            console.log("hi");
             setServerError(true);
         } finally {
             setLoading(false);

@@ -83,12 +83,12 @@ const MessageBox = ({route, navigation,}: any) => {
                 });
                 setLoading(false);
                 setHasMore(fetchedMessages.length > 0);
-            } else if( response.meta.code === INVALID_TOKEN){
+            } else if (response.meta.code === INVALID_TOKEN) {
                 Alert.alert('Lỗi', 'Token không hợp lệ');
                 dispatch(logout());
             }
         } catch (error) {
-            Alert.alert('Không có kết nối');
+            console.log("hi");
         }
     };
     useEffect(() => {
@@ -98,13 +98,21 @@ const MessageBox = ({route, navigation,}: any) => {
             console.log("Connected: " + frame);
             client.subscribe(`/user/${receiverId}/inbox`, (message: any) => {
                 const msg = JSON.parse(message.body);
-                if (msg.sender.id != userId) {
-                    setMessages((prevMessages) => [
-                        {id: msg.id, text: msg.content, sender: "their"}, ...prevMessages
-                    ]);
-                    setLatestId(msg);
+                console.log(msg);
+                setLoading(prevState => {
+                    setMessages((prevMessages) => {
 
-                }
+                        return [
+                            {
+                                id: msg.id,
+                                text: msg.content,
+                                sender: (msg.sender.id.toString() === userId ? "me":"their")
+                            }, ...prevMessages
+                        ];
+                    });
+                    return msg.id;
+                })
+
             });
             console.log(conversationId);
             if (conversationId != null) {
@@ -126,8 +134,9 @@ const MessageBox = ({route, navigation,}: any) => {
             }
         };
     }, []);
+
     function delay(ms: number) {
-        return new Promise( resolve => setTimeout(resolve, ms) );
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     const sendMessage = async () => {
@@ -141,12 +150,6 @@ const MessageBox = ({route, navigation,}: any) => {
 
             console.log("Sending message:", message);
             await stompClient.send("/chat/message", {}, JSON.stringify(message));
-
-            setMessages([
-                {id: latestId + 1, text: input, sender: "me"},
-                ...messages,
-            ]);
-
             setInput("");
             setLatestId(latestId + 1);
             if (updateLastMessages != null)
@@ -173,12 +176,12 @@ const MessageBox = ({route, navigation,}: any) => {
                 if (Number(latestId) === Number(messageId))
                     updateLastMessages("Tin nhắn đã bị gỡ");
 
-            } else if( response.meta.code === INVALID_TOKEN){
+            } else if (response.meta.code === INVALID_TOKEN) {
                 Alert.alert('Lỗi', 'Token không hợp lệ');
                 dispatch(logout());
             }
         } catch (error) {
-           Alert.alert('Có lỗi khi gỡ tin nhắn');
+            Alert.alert('Có lỗi khi gỡ tin nhắn');
         }
     };
 

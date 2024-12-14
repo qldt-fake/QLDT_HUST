@@ -41,8 +41,8 @@ const AbsenceReview = ({ route }: any) => {
             await sendNotificationApi({
               token: auth?.user?.token,
               // class_id : classDetails?.class_id,
-              message: "Mã lớp: " + classDetails?.class_id + "\n" +  newStatus == absenceStatus.ACCEPTED? "Giảng viên đã chấp thuận đơn xin nghỉ học" :"Giảng viên đã từ chối đơn xin nghỉ học",
-              type: newStatus == absenceStatus.ACCEPTED?"ACCEPT_ABSENCE_REQUEST":"REJECT_ABSENCE_REQUEST",
+              message: "Mã lớp: " + classDetails?.class_id + "\n" +  newStatus === absenceStatus.ACCEPTED? "Giảng viên đã chấp thuận đơn xin nghỉ học" :"Giảng viên đã từ chối đơn xin nghỉ học",
+              type: newStatus === absenceStatus.ACCEPTED?"ACCEPT_ABSENCE_REQUEST":"REJECT_ABSENCE_REQUEST",
               toUser: student_account.account_id,
 
             });

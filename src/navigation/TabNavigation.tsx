@@ -16,6 +16,8 @@ import {selectAuth} from "src/redux/slices/authSlice";
 import {getUnreadNotificationApi} from "src/services/noti.services";
 import {useFocusEffect} from '@react-navigation/native';
 import {getListConversationsApi} from "src/services/message.services";
+import {FCMEnum} from "src/common/enum/FCMEnum";
+import FCMService from "src/services/FCMService";
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -36,6 +38,8 @@ function TabNavigation() {
         }
     };
     const getUnreadMessageCount = async () => {
+        // @ts-ignore
+
         if (user != null) {
             try {
                 const response = await getListConversationsApi({
@@ -44,13 +48,23 @@ function TabNavigation() {
                     count: 1000,
                 });
                 setCountMessage(Number(response.data.num_new_message));
+
             } catch (error) {
-                console.error('Failed to fetch message count:', error);
+                return null;
             }
         }
     }
     useFocusEffect(
         React.useCallback(() => {
+            const handleNotification = async (data: any) => {
+                if (data.data.type === FCMEnum.MESSAGE) {
+                    getUnreadMessageCount();
+                } else if (data.data.type === FCMEnum.NOTIFICATION) {
+                    getNotificationCount();
+                }
+            };
+
+            FCMService.getInstance().on('newNotification', handleNotification);
             getNotificationCount();
             getUnreadMessageCount();
         }, [])

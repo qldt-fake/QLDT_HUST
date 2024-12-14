@@ -74,6 +74,7 @@ const MessageBox = ({route, navigation,}: any) => {
                 }));
 
                 setMessages((prevMessages) => {
+                    setLoading(false);
                     if (index != 0) {
                         return [...prevMessages, ...fetchedMessages];
                     } else {
@@ -81,14 +82,16 @@ const MessageBox = ({route, navigation,}: any) => {
                         return fetchedMessages;
                     }
                 });
-                setLoading(false);
                 setHasMore(fetchedMessages.length > 0);
+
             } else if (response.meta.code === INVALID_TOKEN) {
                 Alert.alert('Lỗi', 'Token không hợp lệ');
                 dispatch(logout());
             }
         } catch (error) {
             console.log("hi");
+        } finally {
+
         }
     };
     useEffect(() => {
@@ -110,9 +113,9 @@ const MessageBox = ({route, navigation,}: any) => {
                             }, ...prevMessages
                         ];
                     });
+                    setLoading(false);
                     return msg.id;
                 })
-
             });
             console.log(conversationId);
             if (conversationId != null) {

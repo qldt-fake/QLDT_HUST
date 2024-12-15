@@ -40,7 +40,7 @@ const MaterialNavigation = () => {
           headerTintColor: color.white,
           headerTitle: () => <ClassHeader title='Create Material' textLogo='HUST' />
         }}
-        component={CreateMaterial}
+        component={CreateMaterial as any}
       />
 
       <Stack.Screen
@@ -51,9 +51,9 @@ const MaterialNavigation = () => {
             backgroundColor: color.bgClassHeader
           },
           headerTitleAlign: 'center',
-          headerTitle: () => <ClassHeader title='Edit Survey' textLogo='HUST' />
+          headerTitle: () => <ClassHeader title='Edit Material' textLogo='HUST' />
         }}
-        component={EditMaterial}
+        component={EditMaterial as any}
       />
     </Stack.Group>
   );

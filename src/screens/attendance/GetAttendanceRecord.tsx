@@ -142,6 +142,7 @@ import moment from 'moment';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { AttendanceNavigationName } from 'src/common/constants/nameScreen';
 import EmptyState from 'src/components/EmptyState';
+import { Roles } from 'src/common/enum/commom';
 
 interface RouteParams {
   route: {
@@ -190,6 +191,7 @@ const GetAttendanceRecord: React.FC<RouteParams> = ({ route }) => {
   // Handle date selection
   const handleDatePress = (item: string): void => {
     setSelectedDate(item);
+    if(auth?.user?.role === Roles.LECTURER) 
     navigation.navigate(AttendanceNavigationName.AttendanceListPage, { classId, item });
   };
 

@@ -172,7 +172,6 @@ const EditMaterial: React.FC<EditMaterialProps> = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <ClassHeader title='Edit Material' />
       <View style={styles.body}>
         <TextInput
           style={styles.name}

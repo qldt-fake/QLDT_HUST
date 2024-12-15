@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Card, IconButton } from 'react-native-paper';
 import { color } from 'src/common/constants/color';
 import { useNavigation } from '@react-navigation/native';
@@ -17,10 +17,16 @@ export default function HomeTab() {
   const auth = useSelector(selectAuth);
   return (
     <View style={styles.container}>
-        <Card
-          style={styles.card}
-          onPress={() => navigation.navigate(ClassNavigationName.RegisterClass as never)}
-        >
+      <Card
+        style={styles.card}
+        onPress={() => {
+          if (auth?.user?.role === Roles.STUDENT) {
+            navigation.navigate(ClassNavigationName.RegisterClass as never)
+          } else {
+            Alert.alert('Thông báo', 'Chức năng này chỉ dành cho sinh viên');
+          }
+        }}
+      >
           <View style={styles.iconContainer}>
             <IconButton icon='calendar' iconColor={color.red} size={50} />
           </View>

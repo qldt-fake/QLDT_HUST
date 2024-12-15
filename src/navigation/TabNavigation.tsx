@@ -71,9 +71,13 @@ function TabNavigation() {
     return (
         <Tab.Navigator
             shifting={true} // Thêm hiệu ứng chuyển đổi tab
+            labeled={false}
             activeColor={colors.primary}
             inactiveColor={colors.primary}
-            barStyle={{backgroundColor: colors.sureface}}
+            barStyle={{
+                backgroundColor: colors.sureface,
+                height: 70
+            }}
         >
             <Tab.Screen
                 name="Home"
